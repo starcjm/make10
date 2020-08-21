@@ -8,9 +8,10 @@ using UnityEngine.EventSystems;
 public class BlockMove : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, 
                                         IPointerDownHandler, IPointerUpHandler
 {
-    //시작 좌표
-    private Vector2 oriPos;
-
+    //드래그 블럭 드래그 시작 좌표
+    private Vector2 dragOriPos;
+    
+    //드래그 블럭 터치 시작 좌표
     private Vector2 touchOriPos;
 
     public E_BLOCK_SHAPE_TYPE shapeType = E_BLOCK_SHAPE_TYPE.ONE;
@@ -21,7 +22,9 @@ public class BlockMove : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
     {
         if(shapeType != E_BLOCK_SHAPE_TYPE.ONE)
         {
-            touchOriPos = eventData.position;
+            Vector3 pos = Camera.main.ScreenToWorldPoint(eventData.position);
+            pos.z = 0;
+            touchOriPos = pos;
         }
     }
 
@@ -30,20 +33,21 @@ public class BlockMove : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
         //타겟 블럭 터치 할떄 -90도씩 회전
         if (shapeType != E_BLOCK_SHAPE_TYPE.ONE)
         {
-            if (touchOriPos == eventData.position)
+            Vector3 pos = Camera.main.ScreenToWorldPoint(eventData.position);
+            pos.z = 0;
+            if (touchOriPos == (Vector2)pos)
             {
                 Vector3 rot = new Vector3(0.0f, 0.0f, -90.0f);
                 transform.Rotate(rot, Space.Self);
                 touchOriPos = Vector3.zero;
-                var blocks = transform.GetComponentsInChildren<Transform>();
-                for(int i = 0; i < blocks.Length; ++i)
+
+                for(int i = 0; i < transform.childCount; ++i)
                 {
-                    if(blocks[i] != this.transform)
-                    {
-                        //하위 개체는 회전 반대값
-                        Vector3 rRot = new Vector3(0.0f, 0.0f, 90.0f);
-                        blocks[i].Rotate(rRot, Space.Self);
-                    }
+                    var blocks = transform.GetChild(i);
+
+                    //하위 개체는 회전 반대값 그래야 숫자가 정상적으로 보임
+                    Vector3 rRot = new Vector3(0.0f, 0.0f, 90.0f);
+                    blocks.Rotate(rRot, Space.Self);
                 }
             }
         }
@@ -51,22 +55,25 @@ public class BlockMove : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
 
     public void OnBeginDrag(PointerEventData eventData)
     {
-        oriPos = transform.position;
+        Vector3 pos = Camera.main.ScreenToWorldPoint(eventData.position);
+        pos.z = 0;
+        dragOriPos = pos;
     }
 
     public void OnDrag(PointerEventData eventData)
     {
-        transform.position = eventData.position;
+        Vector3 pos = Camera.main.ScreenToWorldPoint(eventData.position);
+        pos.z = 0;
+        transform.position = pos;
 
     }
 
     public void OnEndDrag(PointerEventData eventData)
     {
         //타켓 블록과 그리드공간에 매칭 검사
-        var blocks = transform.GetComponentsInChildren<Transform>();
-        for (int i = 0; i < blocks.Length; ++i)
+        for (int i = 0; i < transform.childCount; ++i)
         {
-            Transform block = blocks[i];
+            Transform block = transform.GetChild(i);
             RaycastHit2D rayHit = Physics2D.Raycast(block.position, block.forward,
             float.NaN, LayerMask.GetMask("Grid"));
             if (rayHit)
@@ -81,12 +88,12 @@ public class BlockMove : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
         }
 
         //타겟 블록 갯수와 그리드 빈공간의 갯수가 일치 하다면 그리드에 블록 배치
-        if(tempGrids.Count == blocks.Length)
+        if(tempGrids.Count == transform.childCount)
         {
             //todo 유효성 검사를 해야 할지도
-            for(int i = 0; i < blocks.Length; ++i)
+            for(int i = 0; i < transform.childCount; ++i)
             {
-                var blockData = blocks[i].GetComponent<BlockData>();
+                var blockData = transform.GetChild(i).GetComponent<BlockData>();
                 if(blockData)
                 {
                     GridData gridData = tempGrids[i].GetComponent<GridData>();
@@ -104,13 +111,14 @@ public class BlockMove : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
         else
         {
             //블록 중에 하나라도 안맞는다면 리셋
-            DataReset();
+            DragDataReset();
         }
     }
 
-    private void DataReset()
+    private void DragDataReset()
     {
-        transform.position = oriPos;
+        transform.position = dragOriPos;
+        touchOriPos = Vector3.zero;
         tempGrids.Clear();
     }
 }

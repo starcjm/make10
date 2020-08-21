@@ -33,6 +33,7 @@ public class GridGenerator : Singleton<GridGenerator>
                 GameObject cloneGrid = (GameObject)Instantiate(prefabBlock);
                 cloneGrid.name = string.Format("BG_GRID{0}-{1}", i + 1, j + 1);
                 cloneGrid.transform.SetParent(grid.transform);
+                cloneGrid.transform.localScale = Vector3.one;
                 GridData data = cloneGrid.GetComponent<GridData>();
                 if(data)
                 {

@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class GameManager : Singleton<GameManager>
 {
+    public float screenAspect = 1.775F;
+
     //타겟 블록 좌표
     public GameObject targetBlockPos;
     public GameObject targetBlockLayer;
@@ -14,8 +16,17 @@ public class GameManager : Singleton<GameManager>
 
     private void Awake()
     {
+        ScreenInit();
         CreteGrid();
         CreateTargetBlock();
+    }
+
+    private void ScreenInit()
+    {
+        //Screen.SetResolution(Const.screenWidth, Const.screenHeight, true);
+        screenAspect = (((float)Screen.height) / ((float)Screen.width));
+
+        Application.targetFrameRate = Const.GAME_FRAME_RATE;
     }
 
     private void CreteGrid()
@@ -30,8 +41,8 @@ public class GameManager : Singleton<GameManager>
         {
             BlockGenerator.Instance.SettingDataClear();
             int shape = Random.Range((int)E_BLOCK_SHAPE_TYPE.ONE, (int)E_BLOCK_SHAPE_TYPE._MAX_);
-            var targetBlock = BlockGenerator.Instance.CreateRandomBlock((E_BLOCK_SHAPE_TYPE)shape, range);
-            targetBlock.transform.SetParent(targetBlockLayer.transform);
+            var targetBlock = BlockGenerator.Instance.CreateRandomBlock((E_BLOCK_SHAPE_TYPE)shape, range,
+                                                                        targetBlockLayer.transform);
             targetBlock.transform.position = targetBlockPos.transform.position;
         }
     }
@@ -41,8 +52,7 @@ public class GameManager : Singleton<GameManager>
     {
         if (targetBlockPos)
         {
-            var targetBlock = BlockGenerator.Instance.CreateGridOverBlock(type);
-            targetBlock.transform.SetParent(blockLayer.transform);
+            var targetBlock = BlockGenerator.Instance.CreateGridOverBlock(type, blockLayer.transform);
             targetBlock.transform.position = gridPos;
         }
     }

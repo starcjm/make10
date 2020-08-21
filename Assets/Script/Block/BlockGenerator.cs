@@ -10,9 +10,6 @@ public class BlockGenerator : Singleton<BlockGenerator>
 
     //생성될 타겟 블록 프리팹 
     public GameObject[] prefabBlock;
-    //public GameObject   prefabBlockOne;
-    //public GameObject[] prefabBlockTwo;
-    //public GameObject[] prefabBlockThree;
 
     //숫자 블록 이미지
     public Sprite[] blockSprite;
@@ -24,39 +21,46 @@ public class BlockGenerator : Singleton<BlockGenerator>
     }
     
     //그리드에 올라갈 단일 블록
-    public GameObject CreateGridOverBlock(E_BLOCK_TYPE blockType)
+    public GameObject CreateGridOverBlock(E_BLOCK_TYPE blockType, Transform parent)
     {
         GameObject cloneBlock = (GameObject)Instantiate(gridOverBlock);
+        cloneBlock.transform.SetParent(parent.transform);
+        cloneBlock.transform.localScale = Vector3.one;
+        BlockData blockData = cloneBlock.GetComponent<BlockData>();
+        if (blockData)
+        {
+            blockData.type = blockType;
+        }
         Image image = cloneBlock.GetComponent<Image>();
         if (image)
         {
+            int value = 0;
             if (blockType > E_BLOCK_TYPE.NONE)
             {
-                image.sprite = blockSprite[(int)blockType];
+                value = (int)blockType - 1;
             }
-            else
-            {
-                image.sprite = blockSprite[(int)E_BLOCK_TYPE.ONE - 1];
-            }
+            image.sprite = blockSprite[value];
         }
         return cloneBlock;
     }
 
     //타입에 맞게 타겟 블록 생성
 
-    public GameObject CreateRandomBlock(E_BLOCK_SHAPE_TYPE type, int range)
+    public GameObject CreateRandomBlock(E_BLOCK_SHAPE_TYPE type, int range, Transform parent)
     {
-        GameObject oBlock = SettingBlockData(type, range);
+        GameObject oBlock = SettingBlockData(type, range, parent);
         return oBlock;
     }
 
-    //블록 데이터 셋팅
-    private GameObject SettingBlockData(E_BLOCK_SHAPE_TYPE shppeType, int range)
+    //모양 블록 데이터 셋팅
+    private GameObject SettingBlockData(E_BLOCK_SHAPE_TYPE shppeType, int range, Transform parent)
     {
         CreateBlockValue(shppeType, range);
 
         GameObject prefabBlock = this.prefabBlock[(int)shppeType];
         GameObject cloneBlock = (GameObject)Instantiate(prefabBlock);
+        cloneBlock.transform.SetParent(parent);
+        cloneBlock.transform.localScale = Vector3.one;
         int childCnt = cloneBlock.transform.childCount;
         for (int i = 0; i < childCnt; ++i)
         {
@@ -74,7 +78,7 @@ public class BlockGenerator : Singleton<BlockGenerator>
                 Image image = childObj.GetComponentInChildren<Image>();
                 if (image)
                 {
-                    image.sprite = blockSprite[(int)blockType];
+                    image.sprite = blockSprite[(int)blockType - 1];
                 }
             }
         }
