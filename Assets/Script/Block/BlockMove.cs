@@ -33,8 +33,18 @@ public class BlockMove : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
             if (touchOriPos == eventData.position)
             {
                 Vector3 rot = new Vector3(0.0f, 0.0f, -90.0f);
-                transform.Rotate(rot, Space.World);
+                transform.Rotate(rot, Space.Self);
                 touchOriPos = Vector3.zero;
+                var blocks = transform.GetComponentsInChildren<Transform>();
+                for(int i = 0; i < blocks.Length; ++i)
+                {
+                    if(blocks[i] != this.transform)
+                    {
+                        //하위 개체는 회전 반대값
+                        Vector3 rRot = new Vector3(0.0f, 0.0f, 90.0f);
+                        blocks[i].Rotate(rRot, Space.Self);
+                    }
+                }
             }
         }
     }
@@ -93,7 +103,7 @@ public class BlockMove : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
         }
         else
         {
-            //블록 갯수 중에 하나라도 안맞는다면 리셋
+            //블록 중에 하나라도 안맞는다면 리셋
             DataReset();
         }
     }
