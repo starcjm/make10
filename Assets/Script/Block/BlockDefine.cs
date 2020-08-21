@@ -36,6 +36,4 @@ public enum E_BLOCK_SHAPE_TYPE
 
 public static class BlockDefine
 {
-    public static int gridMaxColumn = 7;
-    public static int gridMaxRow = 7;
 }

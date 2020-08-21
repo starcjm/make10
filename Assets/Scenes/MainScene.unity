@@ -193,7 +193,7 @@ GameObject:
   m_Component:
   - component: {fileID: 73785805}
   m_Layer: 0
-  m_Name: Game
+  m_Name: GameControll
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -260,7 +260,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   columnCnt: 7
-  rowId: 7
+  rowCnt: 7
   grid: {fileID: 63708882}
   prefabBlock: {fileID: 3314927141314008018, guid: 2f7227a299ebdd840bf5c804b9349f4c, type: 3}
 --- !u!1 &357926944

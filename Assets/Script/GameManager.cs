@@ -9,9 +9,6 @@ public class GameManager : Singleton<GameManager>
     public GameObject targetBlockLayer;
     public GameObject blockLayer;
 
-    private GridData[ , ] gridData = new GridData[BlockDefine.gridMaxColumn,
-                                                  BlockDefine.gridMaxRow];
-
     //현재 생성될 블록의 최대값
     private int range = 4;
 
@@ -26,6 +23,7 @@ public class GameManager : Singleton<GameManager>
         GridGenerator.Instance.Init();
     }
 
+    //타겟블록 생성
     public void CreateTargetBlock()
     {
         if (targetBlockPos)
@@ -38,6 +36,7 @@ public class GameManager : Singleton<GameManager>
         }
     }
 
+    //그리드위에 배치할 블록 생성
     public void CreateGridOverBlock(Vector3 gridPos, E_BLOCK_TYPE type)
     {
         if (targetBlockPos)
@@ -46,5 +45,11 @@ public class GameManager : Singleton<GameManager>
             targetBlock.transform.SetParent(blockLayer.transform);
             targetBlock.transform.position = gridPos;
         }
+    }
+
+    //현재 화면에 생성될 블록의 최대값 설정
+    public void SetBlockRangeMax(int maxRange)
+    {
+        range = maxRange;
     }
 }

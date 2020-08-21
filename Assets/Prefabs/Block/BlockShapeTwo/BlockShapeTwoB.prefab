@@ -127,7 +127,7 @@ GameObject:
   - component: {fileID: 3297199809346716351}
   - component: {fileID: 7842538518638492706}
   m_Layer: 9
-  m_Name: BlockShapeTwoA 1
+  m_Name: BlockShapeTwoB
   m_TagString: Block
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -166,6 +166,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a2acfcdce2573e94e995efc02ffa2e62, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  shapeType: 6
 --- !u!1 &7272847511504902195
 GameObject:
   m_ObjectHideFlags: 0
