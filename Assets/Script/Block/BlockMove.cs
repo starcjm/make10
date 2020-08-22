@@ -117,7 +117,7 @@ public class BlockMove : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
 
     private void DragDataReset()
     {
-        transform.position = dragOriPos;
+        transform.position = GameManager.Instance.targetBlockPos.transform.position;
         touchOriPos = Vector3.zero;
         tempGrids.Clear();
     }

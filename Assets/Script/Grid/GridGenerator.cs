@@ -21,7 +21,7 @@ public class GridGenerator : Singleton<GridGenerator>
     //bg 블록 프리팹
     public GameObject prefabBlock;
 
-    //key = 그리드 키클래스 해쉬코드  value= 그리드 오브젝트
+    //key = 그리드 키,  value= 그리드 오브젝트
     public Dictionary<int, GameObject> gridObject = new Dictionary<int, GameObject>();
 
     public void Init()

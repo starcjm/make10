@@ -17,6 +17,11 @@ public class GameManager : Singleton<GameManager>
     private void Awake()
     {
         ScreenInit();
+       
+    }
+
+    private void Start()
+    {
         CreteGrid();
         CreateTargetBlock();
     }
