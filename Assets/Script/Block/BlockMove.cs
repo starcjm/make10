@@ -7,21 +7,40 @@ using UnityEngine.EventSystems;
 //선택 오브젝트 움직임 제어
 public class BlockMove : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, 
                                         IPointerDownHandler, IPointerUpHandler
-{
-    //드래그 블럭 드래그 시작 좌표
-    private Vector2 dragOriPos;
-    
+{  
     //드래그 블럭 터치 시작 좌표
     private Vector2 touchOriPos;
 
+    //현재 드래그하고 있는 블록 모양 타입
     public E_BLOCK_SHAPE_TYPE shapeType = E_BLOCK_SHAPE_TYPE.ONE;
+
+    //모양 블록 회전용 터치에 대한 up down 거리값
+    private float touchRecognitionDis = 0.15f;
+
+    //모양 블록 터치 초기화 시간
+    private float touchInitTime = 0.15f;
+
+    //누르고 있을때 모양 블록 터치 초기화값
+    private bool isTouch = false;
     
+    //현재 드래그 하고 있는 블록들 검사용 공간
     private List<Transform> tempGrids = new List<Transform>();
+
+
+    private void TouchInit()
+    {
+        isTouch = false;
+    }
 
     public void OnPointerDown(PointerEventData eventData)
     {
         if(shapeType != E_BLOCK_SHAPE_TYPE.ONE)
         {
+            isTouch = true;
+            if (isTouch)
+            {
+                Invoke("TouchInit", touchInitTime);
+            }
             Vector3 pos = Camera.main.ScreenToWorldPoint(eventData.position);
             pos.z = 0;
             touchOriPos = pos;
@@ -29,19 +48,21 @@ public class BlockMove : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
     }
 
     public void OnPointerUp(PointerEventData eventData)
-    {
+    {   
         //타겟 블럭 터치 할떄 -90도씩 회전
-        if (shapeType != E_BLOCK_SHAPE_TYPE.ONE)
+        if (isTouch && shapeType != E_BLOCK_SHAPE_TYPE.ONE)
         {
             Vector3 pos = Camera.main.ScreenToWorldPoint(eventData.position);
             pos.z = 0;
-            if (touchOriPos == (Vector2)pos)
+            //float tempDis = 0.0f;
+            float tempDis = math.distance(touchOriPos, (Vector2)pos);
+            if (tempDis < touchRecognitionDis)
             {
                 Vector3 rot = new Vector3(0.0f, 0.0f, -90.0f);
                 transform.Rotate(rot, Space.Self);
                 touchOriPos = Vector3.zero;
 
-                for(int i = 0; i < transform.childCount; ++i)
+                for (int i = 0; i < transform.childCount; ++i)
                 {
                     var blocks = transform.GetChild(i);
 
@@ -55,17 +76,16 @@ public class BlockMove : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
 
     public void OnBeginDrag(PointerEventData eventData)
     {
-        Vector3 pos = Camera.main.ScreenToWorldPoint(eventData.position);
-        pos.z = 0;
-        dragOriPos = pos;
     }
 
     public void OnDrag(PointerEventData eventData)
     {
-        Vector3 pos = Camera.main.ScreenToWorldPoint(eventData.position);
-        pos.z = 0;
-        transform.position = pos;
-
+        if(!isTouch)
+        {
+            Vector3 pos = Camera.main.ScreenToWorldPoint(eventData.position);
+            pos.z = 0;
+            transform.position = pos;
+        }
     }
 
     public void OnEndDrag(PointerEventData eventData)
@@ -115,6 +135,7 @@ public class BlockMove : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
         }
     }
 
+    //드래그 후에 데이터 초기화
     private void DragDataReset()
     {
         transform.position = GameManager.Instance.targetBlockPos.transform.position;
