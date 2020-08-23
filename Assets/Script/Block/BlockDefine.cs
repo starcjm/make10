@@ -36,6 +36,7 @@ public enum E_BLOCK_SHAPE_TYPE
 
 public static class BlockDefine
 {
+    //블록 좌표로 키값 만듬
     public static int GetGridKey(int column, int row)
     {
         return column * 1000 + row;

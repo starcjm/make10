@@ -7,8 +7,19 @@ using UnityEngine;
 /// </summary>
 public class BlockMerge
 {
-    //머지 데이터
-    private Dictionary<int, BlockData> mergeBlock = new Dictionary<int, BlockData>();
+    //머지 데이터 int = key
+    private List<int> mergeBlock = new List<int>();
+
+    public List<int> GetMergeData()
+    {
+        return mergeBlock;
+    }
+
+    //데이터 머지 후에 초기화
+    public void DataClear()
+    {
+        mergeBlock.Clear();
+    }
 
     //사방향으로 같은 블록이 있나 검사
     public void CheckBlock(BlockData blockData)
@@ -59,14 +70,14 @@ public class BlockMerge
     {
         var blockObject = GameManager.Instance.GetBlockObject();
         int key = BlockDefine.GetGridKey(blockData.column, blockData.row);
-        if(!mergeBlock.ContainsKey(key))
+        if(!mergeBlock.Contains(key))
         {
             if (blockObject.ContainsKey(key))
             {
                 Block block = blockObject[key].GetComponent<Block>();
                 if (block.data.blockType == blockData.blockType)
                 {
-                    mergeBlock.Add(key, blockData);
+                    mergeBlock.Add(key);
                     CheckBlock(blockData);
                 }
             }

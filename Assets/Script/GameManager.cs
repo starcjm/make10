@@ -36,8 +36,6 @@ public class GameManager : Singleton<GameManager>
         if (gridObject.ContainsKey(key))
         {
             Grid grid = gridObject[key].GetComponent<Grid>();
-            grid.data.column = 0;
-            grid.data.row = 0;
             grid.data.blockType = E_BLOCK_TYPE.NONE;
         }
     }
@@ -124,7 +122,36 @@ public class GameManager : Singleton<GameManager>
             {
                 BlockMerge blockMerge = new BlockMerge();
                 blockMerge.CheckBlock(block.data);
+                if(MergeBlock(blockMerge.GetMergeData()))
+                {
+                    SetBlockRangeMax((int)block.data.blockType + 1);
+                    //블록 머지된곳에 새로운 상위값 블록 생성
+                    if (block.data.blockType < E_BLOCK_TYPE.STAR) //블록 최대값이면 그냥 삭제
+                    {
+                        GridData gridData = new GridData();
+                        gridData.column = block.data.column;
+                        gridData.row = block.data.row;
+                        gridData.blockType = block.data.blockType + 1;
+                        CreateGridOverBlock(gridData, gridObject[key].transform.position);
+                    }
+                }
+                blockMerge.DataClear();
             }
         }
+    }
+
+
+    //머지 데이터가 자신 포함 3개 이상일때 블록 삭제 후 생성
+    private bool MergeBlock(List<int> mergeBlock)
+    {
+        if(mergeBlock.Count > 2)
+        {
+            for (int i = 0; i < mergeBlock.Count; ++i)
+            {
+                RemoveBlockData(mergeBlock[i]);
+            }
+            return true;
+        }
+        return false;
     }
 }
