@@ -18,7 +18,6 @@ public class SoundManager : Singleton<SoundManager>
 
     private GameObject _soundSourceManager = null;
 
-
     public void Init()
     {
         _soundSourceManager = new GameObject("soundSourceManager");

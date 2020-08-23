@@ -23,6 +23,7 @@ public class BlockGenerator : Singleton<BlockGenerator>
     public GameObject CreateGridOverBlock(GridData gridData, Transform parent)
     {
         GameObject cloneBlock = (GameObject)Instantiate(gridOverBlock);
+        cloneBlock.name = string.Format("BLOCK{0}-{1}", gridData.column, gridData.row);
         cloneBlock.transform.SetParent(parent.transform);
         cloneBlock.transform.localScale = Vector3.one;
         Block block = cloneBlock.GetComponent<Block>();

@@ -128,18 +128,20 @@ public class GameManager : Singleton<GameManager>
                     //블록 머지된곳에 새로운 상위값 블록 생성
                     if (block.data.blockType < E_BLOCK_TYPE.STAR) //블록 최대값이면 그냥 삭제
                     {
-                        GridData gridData = new GridData();
-                        gridData.column = block.data.column;
-                        gridData.row = block.data.row;
-                        gridData.blockType = block.data.blockType + 1;
-                        CreateGridOverBlock(gridData, gridObject[key].transform.position);
+                        if(gridObject.ContainsKey(key))
+                        {
+                            //외부에서 그리드에 올릴 블럭 타입 설정 하고 생성
+                            var grid = gridObject[key].GetComponent<Grid>();
+                            grid.data.blockType = block.data.blockType + 1;
+                            CreateGridOverBlock(grid.data, gridObject[key].transform.position);
+                        }
+                        
                     }
                 }
                 blockMerge.DataClear();
             }
         }
     }
-
 
     //머지 데이터가 자신 포함 3개 이상일때 블록 삭제 후 생성
     private bool MergeBlock(List<int> mergeBlock)

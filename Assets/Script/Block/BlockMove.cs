@@ -89,7 +89,7 @@ public class BlockMove : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
     public void OnEndDrag(PointerEventData eventData)
     {
         //현재 드래그 하고 있는 블록들 검사용 공간
-        List<Transform> tempGrids = new List<Transform>();
+        List<GameObject> tempGrids = new List<GameObject>();
 
         //타켓 블록과 그리드공간에 매칭 검사
         for (int i = 0; i < transform.childCount; ++i)
@@ -103,7 +103,7 @@ public class BlockMove : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
                 //빈공간이라면 그리드 데이터 수집
                 if (grid.data.blockType == E_BLOCK_TYPE.NONE)
                 {
-                    tempGrids.Add(rayHit.transform);
+                    tempGrids.Add(rayHit.transform.gameObject);
                 }
             }
         }
@@ -121,7 +121,7 @@ public class BlockMove : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
                     if (grid)
                     {
                         grid.data.blockType = block.data.blockType;
-                        GameManager.Instance.CreateGridOverBlock(grid.data, tempGrids[i].position);
+                        GameManager.Instance.CreateGridOverBlock(grid.data, tempGrids[i].transform.position);
                     }
                 }
             }
