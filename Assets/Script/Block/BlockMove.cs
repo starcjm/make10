@@ -4,7 +4,9 @@ using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-//선택 오브젝트 움직임 제어
+/// <summary>
+/// 선택한 모양 블럭 움직임 클래스
+/// </summary>
 public class BlockMove : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, 
                                         IPointerDownHandler, IPointerUpHandler
 {  
@@ -22,10 +24,6 @@ public class BlockMove : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
 
     //누르고 있을때 모양 블록 터치 초기화값
     private bool isTouch = false;
-    
-    //현재 드래그 하고 있는 블록들 검사용 공간
-    private List<Transform> tempGrids = new List<Transform>();
-
 
     private void TouchInit()
     {
@@ -90,6 +88,9 @@ public class BlockMove : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
 
     public void OnEndDrag(PointerEventData eventData)
     {
+        //현재 드래그 하고 있는 블록들 검사용 공간
+        List<Transform> tempGrids = new List<Transform>();
+
         //타켓 블록과 그리드공간에 매칭 검사
         for (int i = 0; i < transform.childCount; ++i)
         {
@@ -98,9 +99,9 @@ public class BlockMove : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
             float.NaN, LayerMask.GetMask("Grid"));
             if (rayHit)
             {
-                GridData gridData = rayHit.transform.GetComponent<GridData>();
+                Grid grid = rayHit.transform.GetComponent<Grid>();
                 //빈공간이라면 그리드 데이터 수집
-                if (gridData.blockType == E_BLOCK_TYPE.NONE)
+                if (grid.data.blockType == E_BLOCK_TYPE.NONE)
                 {
                     tempGrids.Add(rayHit.transform);
                 }
@@ -113,14 +114,14 @@ public class BlockMove : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
             //todo 유효성 검사를 해야 할지도
             for(int i = 0; i < transform.childCount; ++i)
             {
-                var blockData = transform.GetChild(i).GetComponent<BlockData>();
-                if(blockData)
+                var block = transform.GetChild(i).GetComponent<Block>();
+                if(block)
                 {
-                    GridData gridData = tempGrids[i].GetComponent<GridData>();
-                    if (gridData)
+                    Grid grid = tempGrids[i].GetComponent<Grid>();
+                    if (grid)
                     {
-                        gridData.blockType = blockData.blockType;
-                        GameManager.Instance.CreateGridOverBlock(gridData, tempGrids[i].position);
+                        grid.data.blockType = block.data.blockType;
+                        GameManager.Instance.CreateGridOverBlock(grid.data, tempGrids[i].position);
                     }
                 }
             }
@@ -128,8 +129,8 @@ public class BlockMove : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
             //숫자 매칭 검사
             for(int i = 0; i < tempGrids.Count; ++i)
             {
-                GridData gridData = tempGrids[i].GetComponent<GridData>();
-                GameManager.Instance.MergeCheck(gridData.column, gridData.row);
+                Grid grid = tempGrids[i].GetComponent<Grid>();
+                GameManager.Instance.MergeCheck(grid.data.column, grid.data.row);
             }
 
             //매칭이 잘되엇다면 새 모양 블록 만들어주고 자신 삭제
@@ -138,6 +139,7 @@ public class BlockMove : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
         }
         else
         {
+            tempGrids.Clear();
             //블록 중에 하나라도 안맞는다면 리셋
             DragDataReset();
         }
@@ -148,6 +150,5 @@ public class BlockMove : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
     {
         transform.position = GameManager.Instance.targetBlockPos.transform.position;
         touchOriPos = Vector3.zero;
-        tempGrids.Clear();
     }
 }

@@ -1,15 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using UnityEngine;
 
 public class GameManager : Singleton<GameManager>
 {
-    enum E_CHECK_TYPE
-    {
-        COLUMN,
-        ROW,
-    }
-
     public float screenAspect = 1.775F;
 
     //타겟 블록 좌표용 오브젝트
@@ -20,18 +15,36 @@ public class GameManager : Singleton<GameManager>
     //현재 생성될 블록의 최대값
     private int range = 4;
 
-    //key = 그리드 키,  value = 블록 오브젝트
+    //key = 그리드 키,  value = 블록 오브젝트  현재 배치되 있는 블록
     private Dictionary<int, GameObject> blockObject = new Dictionary<int, GameObject>();
 
-    //key = 그리드 키,  value = 그리드 오브젝트
+    //key = 그리드 키,  value = 그리드 오브젝트 
     private Dictionary<int, GameObject> gridObject = new Dictionary<int, GameObject>();
-
-    //가로 세로 삭제할 블록들
-    private List<GameObject> destroyBlock = new List<GameObject>();
 
     public void AddBlockData(int key, GameObject block)
     {
         blockObject.Add(key, block);
+    }
+
+    public void RemoveBlockData(int key)
+    {
+        //오브젝트 삭제후 딕셔너리에서 삭제
+        Destroy(blockObject[key]);
+        blockObject.Remove(key);
+
+        //그리드가 가지고 있는 블록 데이터 초기화
+        if (gridObject.ContainsKey(key))
+        {
+            Grid grid = gridObject[key].GetComponent<Grid>();
+            grid.data.column = 0;
+            grid.data.row = 0;
+            grid.data.blockType = E_BLOCK_TYPE.NONE;
+        }
+    }
+
+    public Dictionary<int, GameObject> GetBlockObject()
+    {
+        return blockObject;
     }
 
     public void AddGridData(int key, GameObject block)
@@ -39,10 +52,14 @@ public class GameManager : Singleton<GameManager>
         gridObject.Add(key, block);
     }
 
+    public Dictionary<int, GameObject> GetGridObject()
+    {
+        return gridObject;
+    }
+
     private void Awake()
     {
         ScreenInit();
-       
     }
 
     private void Start()
@@ -102,54 +119,12 @@ public class GameManager : Singleton<GameManager>
         int key = BlockDefine.GetGridKey(column, row);
         if (blockObject.ContainsKey(key))
         {
-            BlockData blockData = blockObject[key].GetComponent<BlockData>();
-            if(blockData)
+            Block block = blockObject[key].GetComponent<Block>();
+            if(block)
             {
+                BlockMerge blockMerge = new BlockMerge();
+                blockMerge.CheckBlock(block.data);
             }
         }
     }
-
-    private void CheckBlock(E_CHECK_TYPE checkType, E_BLOCK_TYPE blockType, int value)
-    {
-    }
-
-    //private void CheckBlock(E_CHECK_TYPE checkType, E_BLOCK_TYPE blockType, int value)
-    //{
-    //    //블록 머지용 매치용 임시 키값들
-    //    List<int> tempBlockKey = new List<int>();
-
-    //    for(int i = 0; i < Const.GRID_COLUMN_COUNT; ++i)
-    //    {
-    //        int key = 0;
-    //        if(checkType == E_CHECK_TYPE.COLUMN)
-    //        {
-    //            key = BlockDefine.GetGridKey(value, i + 1);
-    //        }
-    //        else
-    //        {
-    //            key = BlockDefine.GetGridKey(i+1, value);
-    //        }
-
-    //        if(blockObject.ContainsKey(key))
-    //        {
-    //            BlockData blockData = blockObject[key].GetComponent<BlockData>();
-    //            if(blockData.blockType == blockType)
-    //            {
-    //                tempBlockKey.Add(key);
-    //            }
-    //        }
-    //        else
-    //        {
-    //            //연속된 블록 갯수가 3개이상일때는 블록 머지
-    //            if(tempBlockKey.Count >= Const.MERGE_COUNT)
-    //            {
-    //                break;
-    //            }
-    //            else
-    //            {
-    //                tempBlockKey.Clear();
-    //            }
-    //        }
-    //    }
-    //}
 }

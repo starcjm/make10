@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+/// <summary>
+/// 블럭 생성 클래스
+/// </summary>
 public class BlockGenerator : Singleton<BlockGenerator>
 {
     //그리드위에 올라갈 단일 블록
@@ -15,10 +18,6 @@ public class BlockGenerator : Singleton<BlockGenerator>
     public Sprite[] blockSprite;
 
     private List<int> blockTempValue = new List<int>();
-
-    public void Init()
-    {
-    }
     
     //그리드에 올라갈 단일 블록
     public GameObject CreateGridOverBlock(GridData gridData, Transform parent)
@@ -26,24 +25,24 @@ public class BlockGenerator : Singleton<BlockGenerator>
         GameObject cloneBlock = (GameObject)Instantiate(gridOverBlock);
         cloneBlock.transform.SetParent(parent.transform);
         cloneBlock.transform.localScale = Vector3.one;
-        BlockData blockData = cloneBlock.GetComponent<BlockData>();
-        if (blockData)
+        Block block = cloneBlock.GetComponent<Block>();
+        if (block)
         {
-            blockData.blockType = gridData.blockType;
-            blockData.column = gridData.column;
-            blockData.row = gridData.row;
+            block.data.blockType = gridData.blockType;
+            block.data.column = gridData.column;
+            block.data.row = gridData.row;
         }
         Image image = cloneBlock.GetComponent<Image>();
         if (image)
         {
             int value = 0;
-            if (blockData.blockType > E_BLOCK_TYPE.NONE)
+            if (block.data.blockType > E_BLOCK_TYPE.NONE)
             {
                 value = (int)gridData.blockType - 1;
             }
             image.sprite = blockSprite[value];
         }
-        int key = BlockDefine.GetGridKey(blockData.column, blockData.row);
+        int key = BlockDefine.GetGridKey(block.data.column, block.data.row);
         GameManager.Instance.AddBlockData(key, cloneBlock);
         return cloneBlock;
     }
@@ -74,10 +73,10 @@ public class BlockGenerator : Singleton<BlockGenerator>
                 var childObj = cloneBlock.transform.GetChild(i);
 
                 //생성될 블록 값
-                BlockData blockData = childObj.GetComponent<BlockData>();
-                if (blockData)
+                Block block = childObj.GetComponent<Block>();
+                if (block)
                 {
-                    blockData.blockType = blockType;
+                    block.data.blockType = blockType;
                 }
                 Image image = childObj.GetComponentInChildren<Image>();
                 if (image)

@@ -1,13 +1,13 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+/// <summary>
+/// 그리드 생성 클래스
+/// </summary>
 public class GridGenerator : Singleton<GridGenerator>
 {
-    
-
     //bg 블록 그리드
-    public GameObject grid;
+    public GameObject BgGrid;
     //bg 블록 프리팹
     public GameObject prefabBlock;
 
@@ -19,15 +19,15 @@ public class GridGenerator : Singleton<GridGenerator>
             {
                 GameObject cloneGrid = (GameObject)Instantiate(prefabBlock);
                 cloneGrid.name = string.Format("BG_GRID{0}-{1}", i + 1, j + 1);
-                cloneGrid.transform.SetParent(grid.transform);
+                cloneGrid.transform.SetParent(BgGrid.transform);
                 cloneGrid.transform.localScale = Vector3.one;
-                GridData data = cloneGrid.GetComponent<GridData>();
-                if(data)
+                Grid grid = cloneGrid.GetComponent<Grid>();
+                if(grid)
                 {
-                    data.column = j + 1;
-                    data.row = i + 1;
-                    data.blockType = E_BLOCK_TYPE.NONE;
-                    int key = BlockDefine.GetGridKey(data.column, data.row);
+                    grid.data.column = j + 1;
+                    grid.data.row = i + 1;
+                    grid.data.blockType = E_BLOCK_TYPE.NONE;
+                    int key = BlockDefine.GetGridKey(grid.data.column, grid.data.row);
                     GameManager.Instance.AddGridData(key, cloneGrid);
                 }
             }

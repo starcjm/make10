@@ -36,8 +36,8 @@ public enum E_BLOCK_SHAPE_TYPE
 
 public static class BlockDefine
 {
-    public static int GetGridKey(int x, int y)
+    public static int GetGridKey(int column, int row)
     {
-        return x * 1000 + y;
+        return column * 1000 + row;
     }
 }

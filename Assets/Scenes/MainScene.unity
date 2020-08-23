@@ -259,9 +259,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f8a87ef8e3fb8db40afeb1ef81c63506, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  columnCnt: 7
-  rowCnt: 7
-  grid: {fileID: 63708882}
+  BgGrid: {fileID: 63708882}
   prefabBlock: {fileID: 3314927141314008018, guid: 2f7227a299ebdd840bf5c804b9349f4c, type: 3}
 --- !u!1 &357926944
 GameObject:
