@@ -21,7 +21,7 @@ public class BlockGenerator : Singleton<BlockGenerator>
     }
     
     //그리드에 올라갈 단일 블록
-    public GameObject CreateGridOverBlock(E_BLOCK_TYPE blockType, Transform parent)
+    public GameObject CreateGridOverBlock(GridData gridData, Transform parent)
     {
         GameObject cloneBlock = (GameObject)Instantiate(gridOverBlock);
         cloneBlock.transform.SetParent(parent.transform);
@@ -29,18 +29,22 @@ public class BlockGenerator : Singleton<BlockGenerator>
         BlockData blockData = cloneBlock.GetComponent<BlockData>();
         if (blockData)
         {
-            blockData.type = blockType;
+            blockData.blockType = gridData.blockType;
+            blockData.column = gridData.column;
+            blockData.row = gridData.row;
         }
         Image image = cloneBlock.GetComponent<Image>();
         if (image)
         {
             int value = 0;
-            if (blockType > E_BLOCK_TYPE.NONE)
+            if (blockData.blockType > E_BLOCK_TYPE.NONE)
             {
-                value = (int)blockType - 1;
+                value = (int)gridData.blockType - 1;
             }
             image.sprite = blockSprite[value];
         }
+        int key = BlockDefine.GetGridKey(blockData.column, blockData.row);
+        GameManager.Instance.AddBlockData(key, cloneBlock);
         return cloneBlock;
     }
 
@@ -73,7 +77,7 @@ public class BlockGenerator : Singleton<BlockGenerator>
                 BlockData blockData = childObj.GetComponent<BlockData>();
                 if (blockData)
                 {
-                    blockData.type = blockType;
+                    blockData.blockType = blockType;
                 }
                 Image image = childObj.GetComponentInChildren<Image>();
                 if (image)

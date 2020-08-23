@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BlockData : MonoBehaviour
+public class BlockData : BlockParentData
 {
-    public E_BLOCK_TYPE type;
 }

@@ -119,12 +119,20 @@ public class BlockMove : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
                     GridData gridData = tempGrids[i].GetComponent<GridData>();
                     if (gridData)
                     {
-                        gridData.blockType = blockData.type;
-                        GameManager.Instance.CreateGridOverBlock(tempGrids[i].position, blockData.type);
+                        gridData.blockType = blockData.blockType;
+                        GameManager.Instance.CreateGridOverBlock(gridData, tempGrids[i].position);
                     }
                 }
             }
-            //매칭이 잘되엇다면 새 타겟 블록 만들어주고 자신 삭제
+
+            //숫자 매칭 검사
+            for(int i = 0; i < tempGrids.Count; ++i)
+            {
+                GridData gridData = tempGrids[i].GetComponent<GridData>();
+                GameManager.Instance.MergeCheck(gridData.column, gridData.row);
+            }
+
+            //매칭이 잘되엇다면 새 모양 블록 만들어주고 자신 삭제
             GameManager.Instance.CreateTargetBlock();
             Destroy(this.gameObject);
         }

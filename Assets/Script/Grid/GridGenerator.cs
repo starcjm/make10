@@ -4,31 +4,18 @@ using UnityEngine;
 
 public class GridGenerator : Singleton<GridGenerator>
 {
-    public struct GridKey
-    {
-        public int key;
-        public GridKey(int x, int y)
-        {
-            key = x * 1000 + y;
-        }
-    }
-
-    public int columnCnt;
-    public int rowCnt;
+    
 
     //bg 블록 그리드
     public GameObject grid;
     //bg 블록 프리팹
     public GameObject prefabBlock;
 
-    //key = 그리드 키,  value= 그리드 오브젝트
-    public Dictionary<int, GameObject> gridObject = new Dictionary<int, GameObject>();
-
     public void Init()
     {
-        for(int i = 0; i < columnCnt; ++i)
+        for(int i = 0; i < Const.GRID_COLUMN_COUNT; ++i)
         {
-            for(int j = 0; j < rowCnt; ++j)
+            for(int j = 0; j < Const.GRID_ROW_COUNT; ++j)
             {
                 GameObject cloneGrid = (GameObject)Instantiate(prefabBlock);
                 cloneGrid.name = string.Format("BG_GRID{0}-{1}", i + 1, j + 1);
@@ -37,11 +24,11 @@ public class GridGenerator : Singleton<GridGenerator>
                 GridData data = cloneGrid.GetComponent<GridData>();
                 if(data)
                 {
-                    data.column = i + 1;
-                    data.row = j + 1;
+                    data.column = j + 1;
+                    data.row = i + 1;
                     data.blockType = E_BLOCK_TYPE.NONE;
-                    GridKey key = new GridKey(data.column, data.row);
-                    gridObject.Add(key.key, cloneGrid);
+                    int key = BlockDefine.GetGridKey(data.column, data.row);
+                    GameManager.Instance.AddGridData(key, cloneGrid);
                 }
             }
         }
