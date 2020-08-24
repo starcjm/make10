@@ -28,6 +28,14 @@ public class BlockMove : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
     //모양 블럭이 드래그 할떄 손에 가려져서 살짝 위로
     private float dragYDelta = 1.0f;
 
+    //선행 블록일때는 터지 안되야댐
+    private bool isTouchFlag = false;
+
+    public void SetTouchFlag(bool flag)
+    {
+        isTouchFlag = flag;
+    }
+
     private void TouchInit()
     {
         isTouch = false;
@@ -35,41 +43,47 @@ public class BlockMove : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
 
     public void OnPointerDown(PointerEventData eventData)
     {
-        if(shapeType != E_BLOCK_SHAPE_TYPE.ONE)
+        if(isTouchFlag)
         {
-            isTouch = true;
-            if (isTouch)
+            if (shapeType != E_BLOCK_SHAPE_TYPE.ONE)
             {
-                Invoke("TouchInit", touchInitTime);
+                isTouch = true;
+                if (isTouch)
+                {
+                    Invoke("TouchInit", touchInitTime);
+                }
+                Vector3 pos = Camera.main.ScreenToWorldPoint(eventData.position);
+                pos.z = 0;
+                touchOriPos = pos;
             }
-            Vector3 pos = Camera.main.ScreenToWorldPoint(eventData.position);
-            pos.z = 0;
-            touchOriPos = pos;
         }
     }
 
     public void OnPointerUp(PointerEventData eventData)
-    {   
-        //타겟 블럭 터치 할떄 -90도씩 회전
-        if (isTouch && shapeType != E_BLOCK_SHAPE_TYPE.ONE)
+    {
+        if (isTouchFlag)
         {
-            Vector3 pos = Camera.main.ScreenToWorldPoint(eventData.position);
-            pos.z = 0;
-            //float tempDis = 0.0f;
-            float tempDis = math.distance(touchOriPos, (Vector2)pos);
-            if (tempDis < touchRecognitionDis)
+            //타겟 블럭 터치 할떄 -90도씩 회전
+            if (isTouch && shapeType != E_BLOCK_SHAPE_TYPE.ONE)
             {
-                Vector3 rot = new Vector3(0.0f, 0.0f, -90.0f);
-                transform.Rotate(rot, Space.Self);
-                touchOriPos = Vector3.zero;
-
-                for (int i = 0; i < transform.childCount; ++i)
+                Vector3 pos = Camera.main.ScreenToWorldPoint(eventData.position);
+                pos.z = 0;
+                //float tempDis = 0.0f;
+                float tempDis = math.distance(touchOriPos, (Vector2)pos);
+                if (tempDis < touchRecognitionDis)
                 {
-                    var blocks = transform.GetChild(i);
+                    Vector3 rot = new Vector3(0.0f, 0.0f, -90.0f);
+                    transform.Rotate(rot, Space.Self);
+                    touchOriPos = Vector3.zero;
 
-                    //하위 개체는 회전 반대값 그래야 숫자가 정상적으로 보임
-                    Vector3 rRot = new Vector3(0.0f, 0.0f, 90.0f);
-                    blocks.Rotate(rRot, Space.Self);
+                    for (int i = 0; i < transform.childCount; ++i)
+                    {
+                        var blocks = transform.GetChild(i);
+
+                        //하위 개체는 회전 반대값 그래야 숫자가 정상적으로 보임
+                        Vector3 rRot = new Vector3(0.0f, 0.0f, 90.0f);
+                        blocks.Rotate(rRot, Space.Self);
+                    }
                 }
             }
         }
@@ -81,79 +95,90 @@ public class BlockMove : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
 
     public void OnDrag(PointerEventData eventData)
     {
-        if(!isTouch)
+        if (isTouchFlag)
         {
-            Vector3 pos = Camera.main.ScreenToWorldPoint(eventData.position);
-            pos.z = 0;
-            pos.y += dragYDelta;
-            transform.position = pos;
+            if (!isTouch)
+            {
+                Vector3 pos = Camera.main.ScreenToWorldPoint(eventData.position);
+                pos.z = 0;
+                pos.y += dragYDelta;
+                transform.position = pos;
+            }
         }
     }
 
     public void OnEndDrag(PointerEventData eventData)
     {
-        //현재 드래그 하고 있는 블록들 검사용 공간
-        List<GameObject> tempGrids = new List<GameObject>();
-
-        //타켓 블록과 그리드공간에 매칭 검사
-        for (int i = 0; i < transform.childCount; ++i)
+        if (isTouchFlag)
         {
-            Transform block = transform.GetChild(i);
-            RaycastHit2D rayHit = Physics2D.Raycast(block.position, block.forward,
-            float.NaN, LayerMask.GetMask("Grid"));
-            if (rayHit)
-            {
-                Grid grid = rayHit.transform.GetComponent<Grid>();
-                //빈공간이라면 그리드 데이터 수집
-                if (grid.data.blockType == E_BLOCK_TYPE.NONE)
-                {
-                    tempGrids.Add(rayHit.transform.gameObject);
-                }
-            }
-        }
+            //현재 드래그 하고 있는 블록들 검사용 공간
+            List<GameObject> tempGrids = new List<GameObject>();
 
-        //타겟 블록 갯수와 그리드 빈공간의 갯수가 일치 하다면 그리드에 블록 배치
-        if(tempGrids.Count == transform.childCount)
-        {
-            //todo 유효성 검사를 해야 할지도
-            for(int i = 0; i < transform.childCount; ++i)
+            //타켓 블록과 그리드공간에 매칭 검사
+            for (int i = 0; i < transform.childCount; ++i)
             {
-                var block = transform.GetChild(i).GetComponent<Block>();
-                if(block)
+                Transform block = transform.GetChild(i);
+                RaycastHit2D rayHit = Physics2D.Raycast(block.position, block.forward,
+                float.NaN, LayerMask.GetMask("Grid"));
+                if (rayHit)
                 {
-                    Grid grid = tempGrids[i].GetComponent<Grid>();
-                    if (grid)
+                    Grid grid = rayHit.transform.GetComponent<Grid>();
+                    //빈공간이라면 그리드 데이터 수집
+                    if (grid.data.blockType == E_BLOCK_TYPE.NONE)
                     {
-                        //외부에서 그리드에 올릴 블럭 타입 설정 하고 생성
-                        grid.data.blockType = block.data.blockType;
-                        GameManager.Instance.CreateGridOverBlock(grid.data, tempGrids[i].transform.position);
+                        tempGrids.Add(rayHit.transform.gameObject);
                     }
                 }
             }
 
-            //숫자 매칭 검사
-            for(int i = 0; i < tempGrids.Count; ++i)
+            //타겟 블록 갯수와 그리드 빈공간의 갯수가 일치 하다면 그리드에 블록 배치
+            if (tempGrids.Count == transform.childCount)
             {
-                Grid grid = tempGrids[i].GetComponent<Grid>();
-                GameManager.Instance.MergeCheck(grid.data.column, grid.data.row);
-            }
+                //todo 유효성 검사를 해야 할지도
+                for (int i = 0; i < transform.childCount; ++i)
+                {
+                    var block = transform.GetChild(i).GetComponent<Block>();
+                    if (block)
+                    {
+                        Grid grid = tempGrids[i].GetComponent<Grid>();
+                        if (grid)
+                        {
+                            //외부에서 그리드에 올릴 블럭 타입 설정 하고 생성
+                            grid.data.blockType = block.data.blockType;
+                            GameManager.Instance.CreateGridOverBlock(grid.data, tempGrids[i].transform.position);
+                        }
+                    }
+                }
 
-            //매칭이 잘되엇다면 새 모양 블록 만들어주고 자신 삭제
-            GameManager.Instance.CreateTargetBlock();
-            Destroy(this.gameObject);
+                //숫자 매칭 검사
+                for (int i = 0; i < tempGrids.Count; ++i)
+                {
+                    Grid grid = tempGrids[i].GetComponent<Grid>();
+                    GameManager.Instance.MergeCheck(grid.data.column, grid.data.row);
+                }
+
+                //매칭이 잘되엇다면 새 모양 블록 만들어주고 자신 삭제
+                CreateNextShapeBlock();
+            }
+            else
+            {
+                tempGrids.Clear();
+                //블록 중에 하나라도 안맞는다면 리셋
+                DragDataReset();
+            }
         }
-        else
-        {
-            tempGrids.Clear();
-            //블록 중에 하나라도 안맞는다면 리셋
-            DragDataReset();
-        }
+    }
+
+    public void CreateNextShapeBlock()
+    {
+        GameManager.Instance.NextShapeBlock();
+        Destroy(this.gameObject);
     }
 
     //드래그 후에 데이터 초기화
     private void DragDataReset()
     {
-        transform.position = GameManager.Instance.targetBlockPos.transform.position;
+        transform.position = GameManager.Instance.shapeBlockPos.transform.position;
         touchOriPos = Vector3.zero;
     }
 }

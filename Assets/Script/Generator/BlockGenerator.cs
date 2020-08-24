@@ -51,14 +51,14 @@ public class BlockGenerator : Singleton<BlockGenerator>
 
     //타입에 맞게 모양 블록 생성
 
-    public GameObject CreateRandomBlock(E_BLOCK_SHAPE_TYPE type, int range, Transform parent)
+    public GameObject CreateRandomShapeBlock(E_BLOCK_SHAPE_TYPE type, int range, Transform parent)
     {
-        GameObject oBlock = SettingBlockData(type, range, parent);
+        GameObject oBlock = ShapeBlockData(type, range, parent);
         return oBlock;
     }
 
     //모양 블록 데이터 셋팅
-    private GameObject SettingBlockData(E_BLOCK_SHAPE_TYPE shppeType, int range, Transform parent)
+    private GameObject ShapeBlockData(E_BLOCK_SHAPE_TYPE shppeType, int range, Transform parent)
     {
         CreateBlockValue(shppeType, range);
 

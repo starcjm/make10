@@ -8,10 +8,22 @@ public class GameManager : Singleton<GameManager>
 {
     public float screenAspect = 1.775F;
 
-    //타겟 블록 좌표용 오브젝트
-    public GameObject targetBlockPos;
-    public GameObject targetBlockLayer;
+    //모양 블록 좌표용 오브젝트
+    public GameObject shapeBlockPos;
+    public GameObject nextShapeBlockPos;
+    public GameObject shapeBlockLayer;
     public GameObject blockLayer;
+
+    public MainScreen mainScreen;
+
+    private int currentScore = 0;
+
+    //현재 모양 블럭 
+    private GameObject currentBlock;
+    //다음 모양 블럭 
+    private GameObject NextBlock;
+    //다음 모양 블럭 사이즈
+    public float nextShapeSize = 0.5f; 
 
     //현재 생성될 블록의 최대값
     private int range = 4;
@@ -22,6 +34,12 @@ public class GameManager : Singleton<GameManager>
     //key = 그리드 키,  value = 그리드 오브젝트 
     private Dictionary<int, GameObject> gridObject = new Dictionary<int, GameObject>();
 
+    public void AddScore(int score)
+    {
+        currentScore += score;
+        mainScreen.SetScore(currentScore);
+    }
+
     public void AddBlockData(int key, GameObject block)
     {
         blockObject.Add(key, block);
@@ -30,13 +48,17 @@ public class GameManager : Singleton<GameManager>
     public void RemoveBlockData(int key)
     {
         //오브젝트 삭제후 딕셔너리에서 삭제
-        Destroy(blockObject[key]);
-        blockObject.Remove(key);
+        if(blockObject.ContainsKey(key))
+        {
+            Destroy(blockObject[key]);
+            blockObject.Remove(key);
+        }
 
         //그리드가 가지고 있는 블록 데이터 초기화
         if (gridObject.ContainsKey(key))
         {
             Grid grid = gridObject[key].GetComponent<Grid>();
+            AddScore((int)grid.data.blockType);
             grid.data.blockType = E_BLOCK_TYPE.NONE;
         }
     }
@@ -64,7 +86,7 @@ public class GameManager : Singleton<GameManager>
     private void Start()
     {
         CreteGrid();
-        CreateTargetBlock();
+        InitCreateShapeBlock();
     }
 
     private void ScreenInit()
@@ -80,26 +102,82 @@ public class GameManager : Singleton<GameManager>
         GridGenerator.Instance.Init();
     }
 
-    //타겟블록 생성
-    public void CreateTargetBlock()
+    private void InitCreateShapeBlock()
     {
-        if (targetBlockPos)
+        if (shapeBlockPos)
         {
-            BlockGenerator.Instance.SettingDataClear();
-            int shape = Random.Range((int)E_BLOCK_SHAPE_TYPE.ONE, (int)E_BLOCK_SHAPE_TYPE._MAX_);
-            var targetBlock = BlockGenerator.Instance.CreateRandomBlock((E_BLOCK_SHAPE_TYPE)shape, range,
-                                                                        targetBlockLayer.transform);
-            targetBlock.transform.position = targetBlockPos.transform.position;
+            currentBlock = ShapeBlock();
+            currentBlock.transform.localScale = Vector3.one;
+            currentBlock.transform.position = shapeBlockPos.transform.position;
+            var blockMove = currentBlock.GetComponent<BlockMove>();
+            if (blockMove)
+            {
+                blockMove.SetTouchFlag(true);
+            }
         }
+        if (shapeBlockPos)
+        {
+            NextBlock = ShapeBlock();
+            NextBlock.transform.localScale = Vector3.one * nextShapeSize;
+            NextBlock.transform.position = nextShapeBlockPos.transform.position;
+            var blockMove = NextBlock.GetComponent<BlockMove>();
+            if (blockMove)
+            {
+                blockMove.SetTouchFlag(false);
+            }
+        }
+    }
+
+    //모양 블록 생성
+    public void NextShapeBlock()
+    {
+        if (shapeBlockPos)
+        {
+            currentBlock = NextBlock;
+            currentBlock.transform.localScale = Vector3.one;
+            currentBlock.transform.position = shapeBlockPos.transform.position;
+            var blockMove = currentBlock.GetComponent<BlockMove>();
+            if(blockMove)
+            {
+                blockMove.SetTouchFlag(true);
+            }
+        }
+        if(nextShapeBlockPos)
+        {
+            NextBlock = ShapeBlock();
+            NextBlock.transform.localScale = Vector3.one * nextShapeSize;
+            NextBlock.transform.position = nextShapeBlockPos.transform.position;
+            var blockMove = NextBlock.GetComponent<BlockMove>();
+            if (blockMove)
+            {
+                blockMove.SetTouchFlag(false);
+            }
+        }
+    }
+
+    //현재 모양 블럭 버리고 넥스트 모양 블럭 가져오고 넥스트 모양 블럭 새로 생성  
+    private void CurrentShapeGiveUp()
+    {
+        Destroy(currentBlock);
+        NextShapeBlock();
+    }
+
+    private GameObject ShapeBlock()
+    {
+        BlockGenerator.Instance.SettingDataClear();
+        int shape = Random.Range((int)E_BLOCK_SHAPE_TYPE.ONE, (int)E_BLOCK_SHAPE_TYPE._MAX_);
+        var shapeBlock = BlockGenerator.Instance.CreateRandomShapeBlock((E_BLOCK_SHAPE_TYPE)shape, range,
+                                                                    shapeBlockLayer.transform);
+        return shapeBlock;
     }
 
     //그리드위에 배치할 블록 생성
     public void CreateGridOverBlock(GridData gridData, Vector3 gridPos)
     {
-        if (targetBlockPos)
+        if (shapeBlockPos)
         {
-            var targetBlock = BlockGenerator.Instance.CreateGridOverBlock(gridData, blockLayer.transform);
-            targetBlock.transform.position = gridPos;
+            var shapeBlock = BlockGenerator.Instance.CreateGridOverBlock(gridData, blockLayer.transform);
+            shapeBlock.transform.position = gridPos;
         }
     }
 
@@ -108,7 +186,10 @@ public class GameManager : Singleton<GameManager>
     {
         if(clearNumber > range)
         {
-            range = clearNumber;
+            if(clearNumber < (int)E_BLOCK_TYPE.STAR)
+            {
+                range = clearNumber;
+            }
         }
     }
 
@@ -127,7 +208,7 @@ public class GameManager : Singleton<GameManager>
                 {
                     SetBlockRangeMax((int)block.data.blockType + 1);
                     //블록 머지된곳에 새로운 상위값 블록 생성
-                    if (block.data.blockType < E_BLOCK_TYPE._MAX_) //블록 최대값이면 그냥 삭제
+                    if (block.data.blockType < E_BLOCK_TYPE.TEN) //블록 최대값이면 그냥 삭제
                     {
                         if(gridObject.ContainsKey(key))
                         {
@@ -160,8 +241,7 @@ public class GameManager : Singleton<GameManager>
 
     public void ChangeShapeBlock()
     {
-        BlockGenerator.Instance.DestroyCurrentShapeBlock();
-        CreateTargetBlock();
+        CurrentShapeGiveUp();
     }
 
     public void ResetScene()
