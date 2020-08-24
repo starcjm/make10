@@ -127,7 +127,7 @@ public class GameManager : Singleton<GameManager>
                 {
                     SetBlockRangeMax((int)block.data.blockType + 1);
                     //블록 머지된곳에 새로운 상위값 블록 생성
-                    if (block.data.blockType < E_BLOCK_TYPE.STAR) //블록 최대값이면 그냥 삭제
+                    if (block.data.blockType < E_BLOCK_TYPE._MAX_) //블록 최대값이면 그냥 삭제
                     {
                         if(gridObject.ContainsKey(key))
                         {
