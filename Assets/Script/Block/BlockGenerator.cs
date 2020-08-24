@@ -10,9 +10,10 @@ public class BlockGenerator : Singleton<BlockGenerator>
 {
     //그리드위에 올라갈 단일 블록
     public GameObject gridOverBlock;
-
     //생성될 타겟 블록 프리팹 
     public GameObject[] prefabBlock;
+    //현재 화면에 올라와 있는 모양 블록
+    private GameObject shapeObject;
 
     //숫자 블록 이미지
     public Sprite[] blockSprite;
@@ -48,7 +49,7 @@ public class BlockGenerator : Singleton<BlockGenerator>
         return cloneBlock;
     }
 
-    //타입에 맞게 타겟 블록 생성
+    //타입에 맞게 모양 블록 생성
 
     public GameObject CreateRandomBlock(E_BLOCK_SHAPE_TYPE type, int range, Transform parent)
     {
@@ -86,7 +87,18 @@ public class BlockGenerator : Singleton<BlockGenerator>
                 }
             }
         }
+        shapeObject = cloneBlock;
         return cloneBlock;
+    }
+
+    public GameObject GetCurrentShapeBlock()
+    {
+        return shapeObject;
+    }
+
+    public void DestroyCurrentShapeBlock()
+    {
+        Destroy(shapeObject);
     }
 
     //블록 안에 들어갈 데이터 생성

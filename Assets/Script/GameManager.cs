@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameManager : Singleton<GameManager>
 {
@@ -134,8 +135,8 @@ public class GameManager : Singleton<GameManager>
                             var grid = gridObject[key].GetComponent<Grid>();
                             grid.data.blockType = block.data.blockType + 1;
                             CreateGridOverBlock(grid.data, gridObject[key].transform.position);
+                            MergeCheck(column, row);
                         }
-                        
                     }
                 }
                 blockMerge.DataClear();
@@ -155,5 +156,21 @@ public class GameManager : Singleton<GameManager>
             return true;
         }
         return false;
+    }
+
+    public void ChangeShapeBlock()
+    {
+        BlockGenerator.Instance.DestroyCurrentShapeBlock();
+        CreateTargetBlock();
+    }
+
+    public void ResetScene()
+    {
+        SceneManager.LoadScene(0);
+    }
+
+    public void GameClose()
+    {
+        Application.Quit();
     }
 }

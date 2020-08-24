@@ -25,6 +25,9 @@ public class BlockMove : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
     //누르고 있을때 모양 블록 터치 초기화값
     private bool isTouch = false;
 
+    //모양 블럭이 드래그 할떄 손에 가려져서 살짝 위로
+    private float dragYDelta = 1.0f;
+
     private void TouchInit()
     {
         isTouch = false;
@@ -82,6 +85,7 @@ public class BlockMove : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
         {
             Vector3 pos = Camera.main.ScreenToWorldPoint(eventData.position);
             pos.z = 0;
+            pos.y += dragYDelta;
             transform.position = pos;
         }
     }
@@ -120,6 +124,7 @@ public class BlockMove : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
                     Grid grid = tempGrids[i].GetComponent<Grid>();
                     if (grid)
                     {
+                        //외부에서 그리드에 올릴 블럭 타입 설정 하고 생성
                         grid.data.blockType = block.data.blockType;
                         GameManager.Instance.CreateGridOverBlock(grid.data, tempGrids[i].transform.position);
                     }
