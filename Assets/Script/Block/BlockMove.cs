@@ -8,9 +8,16 @@ using DG.Tweening;
 /// <summary>
 /// 선택한 모양 블럭 움직임 클래스
 /// </summary>
-public class BlockMove : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, 
+public class BlockMove : MonoBehaviour, IDragHandler, IEndDragHandler, 
                                         IPointerDownHandler, IPointerUpHandler
 {
+    //알파 블럭 저장 데이터
+    private class AlphaBlock
+    {
+        public int key = 0;
+        public E_BLOCK_TYPE blockType = E_BLOCK_TYPE.NONE;
+        public GameObject block = null;
+    }
     //현재 드래그하고 있는 블록 모양 타입
     public E_BLOCK_SHAPE_TYPE shapeType = E_BLOCK_SHAPE_TYPE.ONE;
 
@@ -31,6 +38,9 @@ public class BlockMove : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
     //모양 블럭 회전 시간
     private float rotTime = 0.2f;
 
+    //알파적용된 모양블럭 
+    private Dictionary<int, AlphaBlock> alphaShapeBlock = new Dictionary<int, AlphaBlock>();
+
     public void SetTouchFlag(bool flag)
     {
         isTouchFlag = flag;
@@ -43,7 +53,12 @@ public class BlockMove : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
 
     public void OnPointerDown(PointerEventData eventData)
     {
-        if(isTouchFlag)
+        TouchStart(eventData.position);
+    }
+
+    public void TouchStart(Vector3 touchPos)
+    {
+        if (isTouchFlag)
         {
             if (shapeType != E_BLOCK_SHAPE_TYPE.ONE)
             {
@@ -52,7 +67,7 @@ public class BlockMove : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
                 {
                     Invoke("TouchInit", touchInitTime);
                 }
-                Vector3 pos = Camera.main.ScreenToWorldPoint(eventData.position);
+                Vector3 pos = Camera.main.ScreenToWorldPoint(touchPos);
                 pos.z = 0;
                 touchOriPos = pos;
             }
@@ -61,14 +76,18 @@ public class BlockMove : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
 
     public void OnPointerUp(PointerEventData eventData)
     {
+        BlockRotate(eventData.position);
+    }
+
+    private void BlockRotate(Vector3 touchPos)
+    {
         if (isTouchFlag)
         {
             //타겟 블럭 터치 할떄 -90도씩 회전
             if (!isRot && isTouch && shapeType != E_BLOCK_SHAPE_TYPE.ONE)
             {
-                Vector3 pos = Camera.main.ScreenToWorldPoint(eventData.position);
+                Vector3 pos = Camera.main.ScreenToWorldPoint(touchPos);
                 pos.z = 0;
-                //float tempDis = 0.0f;
                 float tempDis = math.distance(touchOriPos, (Vector2)pos);
                 if (tempDis < touchRecognitionDis)
                 {
@@ -80,7 +99,6 @@ public class BlockMove : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
                         for (int i = 0; i < transform.childCount; ++i)
                         {
                             var block = transform.GetChild(i);
-
                             //하위 오브젝트의 방향은 위
                             block.rotation = quaternion.Euler(0.0f, 0.0f, 0.0f);
                         }
@@ -106,90 +124,212 @@ public class BlockMove : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
         return transform.DORotate(rot, time, mode);
     }
 
-    public void OnBeginDrag(PointerEventData eventData)
-    {
-    }
-
     public void OnDrag(PointerEventData eventData)
     {
-        if (isTouchFlag)
+        DragMove(eventData.position);
+    }
+
+    private void DragMove(Vector3 touchPos)
+    {
+        if(isTouchFlag)
         {
             if (!isTouch)
             {
-                Vector3 pos = Camera.main.ScreenToWorldPoint(eventData.position);
+                Vector3 pos = Camera.main.ScreenToWorldPoint(touchPos);
                 pos.z = 0;
                 pos.y += dragYDelta;
                 transform.position = pos;
+                CheckAlphaBlock();
             }
         }
     }
 
     public void OnEndDrag(PointerEventData eventData)
     {
-        if (isTouchFlag)
-        {
-            //현재 드래그 하고 있는 블록들 검사용 공간
-            List<GameObject> tempGrids = new List<GameObject>();
+        CheckDropShapeObject();
+        DestroyAlphaShapeBlock();
+    }
 
-            //타켓 블록과 그리드공간에 매칭 검사
+    private void CheckAlphaBlock()
+    {
+        List<GameObject> tempGrids = new List<GameObject>();
+        //타켓 블록과 그리드공간에 매칭 검사
+        GridCheck(ref tempGrids);
+        //알파 블록이 이미 배치 되있다면 패스
+        if(AlphaBlockCheck(tempGrids))
+        {
+            return;
+        }
+        else
+        {
+            DestroyAlphaShapeBlock();
+        }
+
+        //모양 블록 갯수와 그리드 빈공간의 갯수가 일치 하다면 그리드에 알파 블록
+        if (tempGrids.Count == transform.childCount)
+        {
             for (int i = 0; i < transform.childCount; ++i)
             {
-                Transform block = transform.GetChild(i);
-                RaycastHit2D rayHit = Physics2D.Raycast(block.position, block.forward,
-                float.NaN, LayerMask.GetMask("Grid"));
-                if (rayHit)
+                var block = transform.GetChild(i).GetComponent<Block>();
+                if (block)
                 {
-                    Grid grid = rayHit.transform.GetComponent<Grid>();
-                    //빈공간이라면 그리드 데이터 수집
-                    if (grid.data.blockType == E_BLOCK_TYPE.NONE)
+                    Grid grid = tempGrids[i].GetComponent<Grid>();
+                    if (grid)
                     {
-                        tempGrids.Add(rayHit.transform.gameObject);
+                        //외부에서 그리드에 올릴 블럭 타입 설정 하고 생성
+                        var key = BlockDefine.GetGridKey(grid.data.column, grid.data.row);
+                        var alphaBlock = GameManager.Instance.CreateAlphaShapeBlock(block.gameObject,
+                                                                                    tempGrids[i].transform.position);
+                        AlphaBlock alphaBlockData = new AlphaBlock
+                        {
+                            key = key,
+                            blockType = block.data.blockType,
+                            block = alphaBlock
+                        };
+                        alphaShapeBlock.Add(key, alphaBlockData);
                     }
                 }
             }
+        }
+    }
 
-            //타겟 블록 갯수와 그리드 빈공간의 갯수가 일치 하다면 그리드에 블록 배치
-            if (tempGrids.Count == transform.childCount)
+    //현재 그리드에 알파 블록이 현재 모양 블록하고 같은지 체크
+    private bool AlphaBlockCheck(List<GameObject> tempGrids)
+    {
+        int equalCount = 0;
+        if (tempGrids.Count > 0)
+        {
+            if (alphaShapeBlock.Count <= 0)
             {
-                //todo 유효성 검사를 해야 할지도
-                for (int i = 0; i < transform.childCount; ++i)
+                return false;
+            }
+            for (int i = 0; i < transform.childCount; ++i)
+            {
+                var block = transform.GetChild(i).GetComponent<Block>();
+                if (block)
                 {
-                    var block = transform.GetChild(i).GetComponent<Block>();
-                    if (block)
+                    if(i < tempGrids.Count)
                     {
                         Grid grid = tempGrids[i].GetComponent<Grid>();
                         if (grid)
                         {
-                            //외부에서 그리드에 올릴 블럭 타입 설정 하고 생성
-                            grid.data.blockType = block.data.blockType;
-                            GameManager.Instance.CreateGridOverBlock(grid.data, tempGrids[i].transform.position);
+                            int key = BlockDefine.GetGridKey(grid.data.column, grid.data.row);
+                            if (alphaShapeBlock.ContainsKey(key))
+                            {
+                                if (alphaShapeBlock[key].blockType == block.data.blockType)
+                                {
+                                    equalCount++;
+                                }
+                            }
                         }
                     }
                 }
+            }
+        }
+        
+        if(equalCount == alphaShapeBlock.Count)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
 
-                //숫자 매칭 검사
-                for (int i = 0; i < tempGrids.Count; ++i)
+    //그리드 빈공간 체크
+    private void GridCheck(ref List<GameObject> tempGrids)
+    {
+        for (int i = 0; i < transform.childCount; ++i)
+        {
+            Transform block = transform.GetChild(i);
+            RaycastHit2D rayHit = Physics2D.Raycast(block.position, block.forward,
+            float.NaN, LayerMask.GetMask("Grid"));
+            if (rayHit)
+            {
+                Grid grid = rayHit.transform.GetComponent<Grid>();
+                //빈공간이라면 그리드 데이터 수집
+                if (grid.data.blockType == E_BLOCK_TYPE.NONE)
                 {
-                    Grid grid = tempGrids[i].GetComponent<Grid>();
-                    GameManager.Instance.MergeCheck(grid.data.column, grid.data.row);
+                    tempGrids.Add(rayHit.transform.gameObject);
                 }
+            }
+        }
+    }
 
+    //빈 그리드에 모양 블럭 배치
+    private void DropObject(List<GameObject> tempGrids)
+    {
+        for (int i = 0; i < transform.childCount; ++i)
+        {
+            var block = transform.GetChild(i).GetComponent<Block>();
+            if (block)
+            {
+                Grid grid = tempGrids[i].GetComponent<Grid>();
+                if (grid)
+                {
+                    //외부에서 그리드에 올릴 블럭 타입 설정 하고 생성
+                    grid.data.blockType = block.data.blockType;
+                    GameManager.Instance.CreateGridOverBlock(grid.data, tempGrids[i].transform.position);
+                }
+            }
+        }
+    }
+
+    //블록 매칭
+    private void BlockMatching(List<GameObject> tempGrids)
+    {
+        for (int i = 0; i < tempGrids.Count; ++i)
+        {
+            Grid grid = tempGrids[i].GetComponent<Grid>();
+            GameManager.Instance.MergeCheck(grid.data.column, grid.data.row);
+        }
+    }
+
+    private void CheckDropShapeObject()
+    {
+        if (isTouchFlag)
+        {
+            //현재 드래그 하고 있는 블록들 검사용 공간
+            List<GameObject> tempGrids = new List<GameObject>();
+            //모양 블록과 그리드공간에 매칭 검사
+            GridCheck(ref tempGrids);
+            //모양 블록 갯수와 그리드 빈공간의 갯수가 일치 하다면 그리드에 블록 배치
+            if (tempGrids.Count == transform.childCount)
+            {
+                //모양 블록 배치
+                DropObject(tempGrids);
+                //모양 블록 매칭
+                BlockMatching(tempGrids);
                 //매칭이 잘되엇다면 새 모양 블록 만들어주고 자신 삭제
                 CreateNextShapeBlock();
+                Destroy(this.gameObject);
             }
             else
             {
-                tempGrids.Clear();
                 //블록 중에 하나라도 안맞는다면 리셋
                 DragDataReset();
             }
         }
     }
+    
+    //현재 모양 블록 위치가 바뀌면 알파 블록삭제
+    private void DestroyAlphaShapeBlock()
+    {
+        foreach(var alphaBlock in alphaShapeBlock.Values)
+        {
+            if(alphaBlock.block)
+            {
+                Destroy(alphaBlock.block);
+            }
+        }
+        alphaShapeBlock.Clear();
+    }
 
     public void CreateNextShapeBlock()
     {
         GameManager.Instance.NextShapeBlock();
-        Destroy(this.gameObject);
+        
     }
 
     //드래그 후에 데이터 초기화

@@ -49,12 +49,29 @@ public class BlockGenerator : Singleton<BlockGenerator>
         return cloneBlock;
     }
 
-    //타입에 맞게 모양 블록 생성
+    //반투명 블럭 생성
+    public GameObject CreateAlphaShapeBlock(GameObject block, Transform parent, Vector3 pos)
+    {
+        GameObject cloneBlock = (GameObject)Instantiate(block);
+        //알파 블록은 충돌 해제
+        //cloneBlock.layer = 0;
+        cloneBlock.GetComponent<BoxCollider2D>().enabled = false;
+        cloneBlock.transform.SetParent(parent);
+        cloneBlock.transform.position = pos;
+        cloneBlock.transform.localScale = Vector3.one;
+        var image = cloneBlock.transform.GetComponent<Image>();
+        if(image)
+        {
+            image.color = new Color(1.0f, 1.0f, 1.0f, 0.4f);
+        }
+        return cloneBlock;
+    }
 
+    //타입에 맞게 모양 블록 생성
     public GameObject CreateRandomShapeBlock(E_BLOCK_SHAPE_TYPE type, int range, Transform parent)
     {
-        GameObject oBlock = ShapeBlockData(type, range, parent);
-        return oBlock;
+        GameObject block = ShapeBlockData(type, range, parent);
+        return block;
     }
 
     //모양 블록 데이터 셋팅

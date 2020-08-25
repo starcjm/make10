@@ -13,6 +13,7 @@ public class GameManager : Singleton<GameManager>
     public GameObject nextShapeBlockPos;
     public GameObject shapeBlockLayer;
     public GameObject blockLayer;
+    public GameObject alphablockLayer;
 
     public MainScreen mainScreen;
 
@@ -24,13 +25,11 @@ public class GameManager : Singleton<GameManager>
     private GameObject NextBlock;
     //다음 모양 블럭 사이즈
     public float nextShapeSize = 0.5f; 
-
     //현재 생성될 블록의 최대값
     private int blockRange = 4;
 
     //key = 그리드 키,  value = 블록 오브젝트  현재 배치되 있는 블록
     private Dictionary<int, GameObject> blockObject = new Dictionary<int, GameObject>();
-
     //key = 그리드 키,  value = 그리드 오브젝트 
     private Dictionary<int, GameObject> gridObject = new Dictionary<int, GameObject>();
 
@@ -190,6 +189,11 @@ public class GameManager : Singleton<GameManager>
         var shapeBlock = BlockGenerator.Instance.CreateRandomShapeBlock(GetShapeBlockType(), blockRange,
                                                                     shapeBlockLayer.transform);
         return shapeBlock;
+    }
+
+    public GameObject CreateAlphaShapeBlock(GameObject block, Vector3 pos)
+    {
+        return BlockGenerator.Instance.CreateAlphaShapeBlock(block, alphablockLayer.transform, pos);
     }
 
     //그리드위에 배치할 블록 생성
