@@ -268,7 +268,7 @@ public class BlockMove : MonoBehaviour, IDragHandler, IEndDragHandler,
                 Grid grid = tempGrids[i].GetComponent<Grid>();
                 if (grid)
                 {
-                    //외부에서 그리드에 올릴 블럭 타입 설정 하고 생성
+                    //그리드에 올릴 블럭 타입 설정 하고 생성
                     grid.data.blockType = block.data.blockType;
                     GameManager.Instance.CreateGridOverBlock(grid.data, tempGrids[i].transform.position);
                 }
@@ -279,11 +279,7 @@ public class BlockMove : MonoBehaviour, IDragHandler, IEndDragHandler,
     //블록 매칭
     private void BlockMatching(List<GameObject> tempGrids)
     {
-        for (int i = 0; i < tempGrids.Count; ++i)
-        {
-            Grid grid = tempGrids[i].GetComponent<Grid>();
-            GameManager.Instance.MergeCheck(grid.data.column, grid.data.row);
-        }
+        GameManager.Instance.MergeDelayCheck(tempGrids);
     }
 
     private void CheckDropShapeObject()
@@ -301,7 +297,8 @@ public class BlockMove : MonoBehaviour, IDragHandler, IEndDragHandler,
                 DropObject(tempGrids);
                 //모양 블록 매칭
                 BlockMatching(tempGrids);
-                //매칭이 잘되엇다면 새 모양 블록 만들어주고 자신 삭제
+
+                //드랍이 되면 새 모양 블록 만들어주고 자신 삭제
                 CreateNextShapeBlock();
                 Destroy(this.gameObject);
             }

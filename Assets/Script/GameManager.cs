@@ -218,6 +218,32 @@ public class GameManager : Singleton<GameManager>
         }
     }
 
+    //여러 블럭이 동시에 합쳐질 경우 연출을 위한 딜레이
+    public void MergeDelayCheck(List<GameObject> tempGrids)
+    {
+        int mergeCount = 0;
+        for (int i = 0; i < tempGrids.Count; ++i)
+        {
+            Grid grid = tempGrids[i].GetComponent<Grid>();
+            int key = BlockDefine.GetGridKey(grid.data.column, grid.data.row);
+            if (blockObject.ContainsKey(key))
+            {
+                Block block = blockObject[key].GetComponent<Block>();
+                if (block)
+                {
+                    BlockMerge blockMerge = new BlockMerge();
+                    blockMerge.CheckBlock(block.data);
+                    if (MergeCheckBlock(blockMerge.GetMergeData()))
+                    {
+                        ++mergeCount;
+                        StartCoroutine(MergeBlockDelay(grid.data.column, grid.data.row,
+                            BlockDefine.MERGE_DELAY_TIME * (mergeCount)));
+                    }
+                }
+            }
+        }
+    }
+
     //블록 놓인곳 검사
     public void MergeCheck(int column, int row)
     {
@@ -241,7 +267,7 @@ public class GameManager : Singleton<GameManager>
                             var grid = gridObject[key].GetComponent<Grid>();
                             grid.data.blockType = block.data.blockType + 1;
                             CreateGridOverBlock(grid.data, gridObject[key].transform.position);
-                            MergeCheck(column, row);
+                            StartCoroutine(MergeBlockDelay(column, row, BlockDefine.MERGE_DELAY_TIME));
                         }
                     }
                     else
@@ -253,6 +279,22 @@ public class GameManager : Singleton<GameManager>
                 blockMerge.DataClear();
             }
         }
+    }
+
+    IEnumerator MergeBlockDelay(int column, int row, float time)
+    {
+        yield return new WaitForSeconds(time);
+        MergeCheck(column, row);
+    }
+
+    //머지 데이터 체크용
+    private bool MergeCheckBlock(List<int> mergeBlock)
+    {
+        if (mergeBlock.Count > 2)
+        {
+            return true;
+        }
+        return false;
     }
 
     //머지 데이터가 자신 포함 3개 이상일때 블록 삭제 후 생성

@@ -41,4 +41,6 @@ public static class BlockDefine
     public const int ONE_BLOCK_PERCENT = 40;
     public const int TWO_BLOCK_PERCENT = 40;
     public const int THREE_BLOCK_PERCENT = 20;
+
+    public const float MERGE_DELAY_TIME = 0.2f;
 }
