@@ -111,20 +111,14 @@ public class BlockGenerator : Singleton<BlockGenerator>
                 value = Random.Range((int)E_BLOCK_TYPE.ONE, range + 1);
                 blockTempValue.Add(value);
                 break;
-            case E_BLOCK_SHAPE_TYPE.TWO_A:
-            case E_BLOCK_SHAPE_TYPE.TWO_B:
-            case E_BLOCK_SHAPE_TYPE.TWO_C:
-            case E_BLOCK_SHAPE_TYPE.TWO_D:
+            case E_BLOCK_SHAPE_TYPE.TWO:
                 for(int i = 0; i < 2; ++i)
                 {
                     value = Random.Range((int)E_BLOCK_TYPE.ONE, range + 1);
                     blockTempValue.Add(value);
                 }
                 break;
-            case E_BLOCK_SHAPE_TYPE.THREE_A:
-            case E_BLOCK_SHAPE_TYPE.THREE_B:
-            case E_BLOCK_SHAPE_TYPE.THREE_C:
-            case E_BLOCK_SHAPE_TYPE.THREE_D:
+            case E_BLOCK_SHAPE_TYPE.THREE:
                 for (int i = 0; i < 3; ++i)
                 {
                     value = Random.Range((int)E_BLOCK_TYPE.ONE, range + 1);

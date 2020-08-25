@@ -3,33 +3,33 @@ using System.Collections.Generic;
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using DG.Tweening;
 
 /// <summary>
 /// 선택한 모양 블럭 움직임 클래스
 /// </summary>
 public class BlockMove : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, 
                                         IPointerDownHandler, IPointerUpHandler
-{  
-    //드래그 블럭 터치 시작 좌표
-    private Vector2 touchOriPos;
-
+{
     //현재 드래그하고 있는 블록 모양 타입
     public E_BLOCK_SHAPE_TYPE shapeType = E_BLOCK_SHAPE_TYPE.ONE;
 
+    //드래그 블럭 터치 시작 좌표
+    private Vector2 touchOriPos;
     //모양 블록 회전용 터치에 대한 up down 거리값
-    private float touchRecognitionDis = 0.15f;
-
+    private float touchRecognitionDis = 0.05f;
     //모양 블록 터치 초기화 시간
     private float touchInitTime = 0.15f;
-
     //누르고 있을때 모양 블록 터치 초기화값
     private bool isTouch = false;
-
     //모양 블럭이 드래그 할떄 손에 가려져서 살짝 위로
     private float dragYDelta = 1.0f;
-
     //선행 블록일때는 터지 안되야댐
     private bool isTouchFlag = false;
+    //회전중 다시 회전 금지
+    private bool isRot = false;
+    //모양 블럭 회전 시간
+    private float rotTime = 0.2f;
 
     public void SetTouchFlag(bool flag)
     {
@@ -64,7 +64,7 @@ public class BlockMove : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
         if (isTouchFlag)
         {
             //타겟 블럭 터치 할떄 -90도씩 회전
-            if (isTouch && shapeType != E_BLOCK_SHAPE_TYPE.ONE)
+            if (!isRot && isTouch && shapeType != E_BLOCK_SHAPE_TYPE.ONE)
             {
                 Vector3 pos = Camera.main.ScreenToWorldPoint(eventData.position);
                 pos.z = 0;
@@ -72,21 +72,38 @@ public class BlockMove : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
                 float tempDis = math.distance(touchOriPos, (Vector2)pos);
                 if (tempDis < touchRecognitionDis)
                 {
-                    Vector3 rot = new Vector3(0.0f, 0.0f, -90.0f);
-                    transform.Rotate(rot, Space.Self);
-                    touchOriPos = Vector3.zero;
-
-                    for (int i = 0; i < transform.childCount; ++i)
+                    //터치 했을때 모양 블록 회전
+                    isRot = true;
+                    var tween = TweenRot(transform, rotTime, new Vector3(0.0f, 0.0f, -90.0f));
+                    tween.OnUpdate(() =>
                     {
-                        var blocks = transform.GetChild(i);
+                        for (int i = 0; i < transform.childCount; ++i)
+                        {
+                            var block = transform.GetChild(i);
 
-                        //하위 개체는 회전 반대값 그래야 숫자가 정상적으로 보임
-                        Vector3 rRot = new Vector3(0.0f, 0.0f, 90.0f);
-                        blocks.Rotate(rRot, Space.Self);
-                    }
+                            //하위 오브젝트의 방향은 위
+                            block.rotation = quaternion.Euler(0.0f, 0.0f, 0.0f);
+                        }
+                    });
+                    tween.OnComplete(() =>
+                    {
+                        isRot = false;
+                    });
                 }
             }
         }
+    }
+
+    private DG.Tweening.Core.TweenerCore<Quaternion, Vector3, DG.Tweening.Plugins.Options.QuaternionOptions> TweenRot(Transform transform, float time, Vector3 rotation)
+    {
+        return TweenRot(transform, time, rotation, RotateMode.Fast);
+    }
+
+    private DG.Tweening.Core.TweenerCore<Quaternion, Vector3, DG.Tweening.Plugins.Options.QuaternionOptions> TweenRot(Transform transform, float time, Vector3 rotation, RotateMode mode)
+    {
+        Vector3 rot = rotation;
+        rot += transform.eulerAngles;
+        return transform.DORotate(rot, time, mode);
     }
 
     public void OnBeginDrag(PointerEventData eventData)

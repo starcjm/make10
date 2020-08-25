@@ -14,7 +14,6 @@ public enum E_BLOCK_TYPE
     SIX,
     EIGHT,
     NINE,
-    TEN,
     STAR,
     _MAX_,
 }
@@ -23,14 +22,8 @@ public enum E_BLOCK_TYPE
 public enum E_BLOCK_SHAPE_TYPE
 {
     ONE,
-    TWO_A,
-    TWO_B,
-    TWO_C,
-    TWO_D,
-    THREE_A,
-    THREE_B,
-    THREE_C,
-    THREE_D,
+    TWO,
+    THREE,
     _MAX_,
 }
 
@@ -41,4 +34,11 @@ public static class BlockDefine
     {
         return column * 1000 + row;
     }
+
+    public const int START_BLOCK_RANGE = 4;
+
+    //블럭 확률 (합쳐서 100)
+    public const int ONE_BLOCK_PERCENT = 40;
+    public const int TWO_BLOCK_PERCENT = 40;
+    public const int THREE_BLOCK_PERCENT = 20;
 }

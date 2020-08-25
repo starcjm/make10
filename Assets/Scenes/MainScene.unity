@@ -308,13 +308,7 @@ MonoBehaviour:
   prefabBlock:
   - {fileID: 4087258223100843683, guid: 304638491a5d5a8499df2a18fe49ff99, type: 3}
   - {fileID: 8011704158794097101, guid: 835b9ae9304b2e844a37fed6fbe4d3fb, type: 3}
-  - {fileID: 3297199809346716350, guid: 0a7516d4d87a4704384490680712631a, type: 3}
-  - {fileID: 4931145429783798432, guid: 0f558303120ad794db16e6d094ac8b61, type: 3}
-  - {fileID: 8601023580485309494, guid: 85bd8427c9ebbe5428d0e6d066fe685f, type: 3}
   - {fileID: 1184553392165083041, guid: e8ae913ff7dc3984eab27f981a430888, type: 3}
-  - {fileID: 8889374523314624470, guid: b497cd4f98a95ec44af78f28424ff722, type: 3}
-  - {fileID: 875018979705613154, guid: 7e222b747abae4a42b22223869831b65, type: 3}
-  - {fileID: 6852107611696316064, guid: bf3faa5512784f94d8d75460cc38162f, type: 3}
   blockSprite:
   - {fileID: 21300000, guid: 65ff0f5fb2b954646a9dd7e6037621de, type: 3}
   - {fileID: 21300000, guid: 3108ca64fadb60142a9191c178c11797, type: 3}
@@ -325,7 +319,6 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 88a51404613ab6e41bdb53bf569a44b2, type: 3}
   - {fileID: 21300000, guid: d5b892cd86a1e0842b416e3a0200a248, type: 3}
   - {fileID: 21300000, guid: 9c6232723f8eccd489516d070b9d33d8, type: 3}
-  - {fileID: 21300000, guid: 13e8401c9293eff41bc9fb63f589b7cf, type: 3}
   - {fileID: 21300000, guid: e72f6f3bb6bbc184b80a656d041ce720, type: 3}
 --- !u!1 &448068982
 GameObject:

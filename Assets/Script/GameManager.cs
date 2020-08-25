@@ -26,7 +26,7 @@ public class GameManager : Singleton<GameManager>
     public float nextShapeSize = 0.5f; 
 
     //현재 생성될 블록의 최대값
-    private int range = 4;
+    private int blockRange = 4;
 
     //key = 그리드 키,  value = 블록 오브젝트  현재 배치되 있는 블록
     private Dictionary<int, GameObject> blockObject = new Dictionary<int, GameObject>();
@@ -80,12 +80,13 @@ public class GameManager : Singleton<GameManager>
 
     private void Awake()
     {
-        ScreenInit();
     }
 
     private void Start()
     {
+        ScreenInit();
         CreteGrid();
+        SetBlockblockRangeMax(BlockDefine.START_BLOCK_RANGE);
         InitCreateShapeBlock();
     }
 
@@ -162,11 +163,31 @@ public class GameManager : Singleton<GameManager>
         NextShapeBlock();
     }
 
+    //확률에 따라 블록 생성
+    private E_BLOCK_SHAPE_TYPE GetShapeBlockType()
+    {
+        E_BLOCK_SHAPE_TYPE type = E_BLOCK_SHAPE_TYPE.ONE;
+        int range = Random.Range(0, 100);
+        if(range < BlockDefine.ONE_BLOCK_PERCENT)
+        {
+            type = E_BLOCK_SHAPE_TYPE.ONE;
+        }
+        else if(range < BlockDefine.ONE_BLOCK_PERCENT + BlockDefine.TWO_BLOCK_PERCENT)
+        {
+            type = E_BLOCK_SHAPE_TYPE.TWO;
+        }
+        else if (range < BlockDefine.ONE_BLOCK_PERCENT + BlockDefine.TWO_BLOCK_PERCENT
+                       + BlockDefine.THREE_BLOCK_PERCENT)
+        {
+            type = E_BLOCK_SHAPE_TYPE.THREE;
+        }
+        return type;
+    }
+
     private GameObject ShapeBlock()
     {
         BlockGenerator.Instance.SettingDataClear();
-        int shape = Random.Range((int)E_BLOCK_SHAPE_TYPE.ONE, (int)E_BLOCK_SHAPE_TYPE._MAX_);
-        var shapeBlock = BlockGenerator.Instance.CreateRandomShapeBlock((E_BLOCK_SHAPE_TYPE)shape, range,
+        var shapeBlock = BlockGenerator.Instance.CreateRandomShapeBlock(GetShapeBlockType(), blockRange,
                                                                     shapeBlockLayer.transform);
         return shapeBlock;
     }
@@ -182,13 +203,13 @@ public class GameManager : Singleton<GameManager>
     }
 
     //현재 화면에 생성될 블록의 최대값 설정
-    public void SetBlockRangeMax(int clearNumber)
+    public void SetBlockblockRangeMax(int clearNumber)
     {
-        if(clearNumber > range)
+        if (clearNumber > blockRange)
         {
-            if(clearNumber < (int)E_BLOCK_TYPE.STAR)
+            if(clearNumber < (int)E_BLOCK_TYPE._MAX_ + 1)
             {
-                range = clearNumber;
+                blockRange = clearNumber;
             }
         }
     }
@@ -206,9 +227,9 @@ public class GameManager : Singleton<GameManager>
                 blockMerge.CheckBlock(block.data);
                 if(MergeBlock(blockMerge.GetMergeData()))
                 {
-                    SetBlockRangeMax((int)block.data.blockType + 1);
+                    SetBlockblockRangeMax((int)block.data.blockType + 1);
                     //블록 머지된곳에 새로운 상위값 블록 생성
-                    if (block.data.blockType < E_BLOCK_TYPE.TEN) //블록 최대값이면 그냥 삭제
+                    if (block.data.blockType < E_BLOCK_TYPE._MAX_) //블록 최대값이면 그냥 삭제
                     {
                         if(gridObject.ContainsKey(key))
                         {
@@ -218,6 +239,11 @@ public class GameManager : Singleton<GameManager>
                             CreateGridOverBlock(grid.data, gridObject[key].transform.position);
                             MergeCheck(column, row);
                         }
+                    }
+                    else
+                    {
+                        //별모양 터트렸을때 효과
+                        Debug.Log("별모양 터트렸음");
                     }
                 }
                 blockMerge.DataClear();
