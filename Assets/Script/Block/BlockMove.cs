@@ -51,6 +51,15 @@ public class BlockMove : MonoBehaviour, IDragHandler, IEndDragHandler,
         isTouch = false;
     }
 
+    private bool CheckGameState()
+    {
+        if(GameManager.Instance.GetState() == E_GAME_STATE.GAME)
+        {
+            return true;
+        }
+        return false;
+    }
+
     public void OnPointerDown(PointerEventData eventData)
     {
         TouchStart(eventData.position);
@@ -58,6 +67,10 @@ public class BlockMove : MonoBehaviour, IDragHandler, IEndDragHandler,
 
     public void TouchStart(Vector3 touchPos)
     {
+        if(!CheckGameState())
+        {
+            return;
+        }
         if (isTouchFlag)
         {
             if (shapeType != E_BLOCK_SHAPE_TYPE.ONE)
@@ -76,11 +89,19 @@ public class BlockMove : MonoBehaviour, IDragHandler, IEndDragHandler,
 
     public void OnPointerUp(PointerEventData eventData)
     {
+        if (!CheckGameState())
+        {
+            return;
+        }
         BlockRotate(eventData.position);
     }
 
     private void BlockRotate(Vector3 touchPos)
     {
+        if (!CheckGameState())
+        {
+            return;
+        }
         if (isTouchFlag)
         {
             //타겟 블럭 터치 할떄 -90도씩 회전
@@ -126,12 +147,20 @@ public class BlockMove : MonoBehaviour, IDragHandler, IEndDragHandler,
 
     public void OnDrag(PointerEventData eventData)
     {
+        if (!CheckGameState())
+        {
+            return;
+        }
         DragMove(eventData.position);
     }
 
     private void DragMove(Vector3 touchPos)
     {
-        if(isTouchFlag)
+        if (!CheckGameState())
+        {
+            return;
+        }
+        if (isTouchFlag)
         {
             if (!isTouch)
             {
@@ -146,6 +175,10 @@ public class BlockMove : MonoBehaviour, IDragHandler, IEndDragHandler,
 
     public void OnEndDrag(PointerEventData eventData)
     {
+        if (!CheckGameState())
+        {
+            return;
+        }
         CheckDropShapeObject();
         DestroyAlphaShapeBlock();
     }
@@ -279,6 +312,20 @@ public class BlockMove : MonoBehaviour, IDragHandler, IEndDragHandler,
     //블록 매칭
     private void BlockMatching(List<GameObject> tempGrids)
     {
+        tempGrids.Sort(delegate (GameObject A, GameObject B)
+        {
+            GridData gridA = A.GetComponent<Grid>().data;
+            GridData gridB = B.GetComponent<Grid>().data;
+            if(gridA.blockType > gridB.blockType)
+            {
+                return 1;
+            }
+            else if(gridA.blockType > gridB.blockType)
+            {
+                return -1;
+            }
+            return 0;
+        });
         GameManager.Instance.MergeDelayCheck(tempGrids);
     }
 

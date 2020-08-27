@@ -12,4 +12,6 @@ public class Const
 
     public const int GRID_COLUMN_COUNT = 7;
     public const int GRID_ROW_COUNT = 7;
+
+    public const int MAX_EXP = 200;
 }

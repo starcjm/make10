@@ -33,6 +33,7 @@ public class BlockGenerator : Singleton<BlockGenerator>
             block.data.blockType = gridData.blockType;
             block.data.column = gridData.column;
             block.data.row = gridData.row;
+            block.ShowImgX(false);
         }
         Image image = cloneBlock.GetComponent<Image>();
         if (image)

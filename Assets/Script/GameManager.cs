@@ -1,8 +1,14 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using UnityEngine;
-using UnityEngine.SceneManagement;
+
+public enum E_GAME_STATE
+{
+    GAME,
+    ITEM,
+    PAUSE,
+}
 
 public class GameManager : Singleton<GameManager>
 {
@@ -14,10 +20,12 @@ public class GameManager : Singleton<GameManager>
     public GameObject shapeBlockLayer;
     public GameObject blockLayer;
     public GameObject alphablockLayer;
+    public GameObject addScoreLayer;
 
     public MainScreen mainScreen;
 
     private int currentScore = 0;
+    private int currentLevel = 1;
 
     //현재 모양 블럭 
     private GameObject currentBlock;
@@ -33,15 +41,62 @@ public class GameManager : Singleton<GameManager>
     //key = 그리드 키,  value = 그리드 오브젝트 
     private Dictionary<int, GameObject> gridObject = new Dictionary<int, GameObject>();
 
+
+    private bool isHammer = false;
+
+    //게임 상태(유아이 설정)
+    private E_GAME_STATE gameState = E_GAME_STATE.GAME;
+    
+    public void SetGameState(E_GAME_STATE state)
+    {
+        gameState = state;
+    }
+
+    public void SetGameItemState()
+    {
+        if(gameState == E_GAME_STATE.GAME && blockObject.Count > 0)
+        {
+            SetGameState(E_GAME_STATE.ITEM);
+        }
+        else if( gameState == E_GAME_STATE.ITEM)
+        {
+            SetGameState(E_GAME_STATE.GAME);
+        }
+    }
+
+    public E_GAME_STATE GetState()
+    {
+        return gameState;
+    }
+
     public void AddScore(int score)
     {
         currentScore += score;
         mainScreen.SetScore(currentScore);
+        mainScreen.SetExp(currentScore);
+        ScoreGenerator.Instance.CreateAddScore(addScoreLayer.transform, Vector3.zero, score);
     }
 
     public void AddBlockData(int key, GameObject block)
     {
         blockObject.Add(key, block);
+    }
+
+    //블럭 위에 x이미지 
+    public void ShowBlockX()
+    {
+        if (blockObject.Count > 0)
+        {
+            isHammer = !isHammer;
+            foreach (GameObject blockObject in blockObject.Values)
+            {
+                var block = blockObject.GetComponent<Block>();
+                if (block)
+                {
+                    block.ShowImgX(isHammer);
+                }
+            }
+        }
     }
 
     public void RemoveBlockData(int key)
@@ -57,7 +112,7 @@ public class GameManager : Singleton<GameManager>
         if (gridObject.ContainsKey(key))
         {
             Grid grid = gridObject[key].GetComponent<Grid>();
-            AddScore((int)grid.data.blockType);
+            
             grid.data.blockType = E_BLOCK_TYPE.NONE;
         }
     }
@@ -77,13 +132,11 @@ public class GameManager : Singleton<GameManager>
         return gridObject;
     }
 
-    private void Awake()
-    {
-    }
-
     private void Start()
     {
         ScreenInit();
+        mainScreen.SetLevel(currentLevel);
+        mainScreen.SetExp(currentScore);
         CreteGrid();
         SetBlockblockRangeMax(BlockDefine.START_BLOCK_RANGE);
         InitCreateShapeBlock();
@@ -137,12 +190,12 @@ public class GameManager : Singleton<GameManager>
             currentBlock.transform.localScale = Vector3.one;
             currentBlock.transform.position = shapeBlockPos.transform.position;
             var blockMove = currentBlock.GetComponent<BlockMove>();
-            if(blockMove)
+            if (blockMove)
             {
                 blockMove.SetTouchFlag(true);
             }
         }
-        if(nextShapeBlockPos)
+        if (nextShapeBlockPos)
         {
             NextBlock = ShapeBlock();
             NextBlock.transform.localScale = Vector3.one * nextShapeSize;
@@ -158,8 +211,13 @@ public class GameManager : Singleton<GameManager>
     //현재 모양 블럭 버리고 넥스트 모양 블럭 가져오고 넥스트 모양 블럭 새로 생성  
     private void CurrentShapeGiveUp()
     {
-        Destroy(currentBlock);
-        NextShapeBlock();
+        if(gameState == E_GAME_STATE.GAME)
+        {
+            Destroy(currentBlock);
+            NextShapeBlock();
+            //현재 블록으로 검사
+            GameOverCheck(currentBlock);
+        }
     }
 
     //확률에 따라 블록 생성
@@ -231,9 +289,9 @@ public class GameManager : Singleton<GameManager>
                 Block block = blockObject[key].GetComponent<Block>();
                 if (block)
                 {
-                    BlockMerge blockMerge = new BlockMerge();
-                    blockMerge.CheckBlock(block.data);
-                    if (MergeCheckBlock(blockMerge.GetMergeData()))
+                    BlockCalculate blockCalculate = new BlockCalculate();
+                    blockCalculate.CheckBlock(block.data);
+                    if (MergeCheck(blockCalculate.GetMergeData()))
                     {
                         ++mergeCount;
                         StartCoroutine(MergeBlockDelay(grid.data.column, grid.data.row,
@@ -241,6 +299,11 @@ public class GameManager : Singleton<GameManager>
                     }
                 }
             }
+        }
+        if(mergeCount == 0)
+        {
+            //다음 블럭으로 검사
+            GameOverCheck(NextBlock);
         }
     }
 
@@ -253,13 +316,16 @@ public class GameManager : Singleton<GameManager>
             Block block = blockObject[key].GetComponent<Block>();
             if(block)
             {
-                BlockMerge blockMerge = new BlockMerge();
-                blockMerge.CheckBlock(block.data);
-                if(MergeBlock(blockMerge.GetMergeData()))
+                BlockCalculate blockCalculate = new BlockCalculate();
+                blockCalculate.SetTargetBlock(column, row);
+                blockCalculate.CheckBlock(block.data);
+                var mergeData = blockCalculate.GetMergeData();
+
+                if (MergeBlockRemove(mergeData, block.data.blockType))
                 {
                     SetBlockblockRangeMax((int)block.data.blockType + 1);
                     //블록 머지된곳에 새로운 상위값 블록 생성
-                    if (block.data.blockType < E_BLOCK_TYPE._MAX_) //블록 최대값이면 그냥 삭제
+                    if (block.data.blockType < E_BLOCK_TYPE.STAR) //블록 최대값이면 그냥 삭제
                     {
                         if(gridObject.ContainsKey(key))
                         {
@@ -273,12 +339,25 @@ public class GameManager : Singleton<GameManager>
                     else
                     {
                         //별모양 터트렸을때 효과
-                        Debug.Log("별모양 터트렸음");
+                        blockCalculate.StarBlockEffect();
+                        StartCoroutine(MergeBlockRemoveDelay(blockCalculate.GetStarBlockEffect(),
+                                                             block.data.blockType));
                     }
                 }
-                blockMerge.DataClear();
+                else
+                {
+                    //현재 블럭으로 검사
+                    GameOverCheck(currentBlock);   
+                }
+                blockCalculate.DataClear();
             }
         }
+    }
+
+    IEnumerator MergeBlockRemoveDelay(List<int> mergeBlock, E_BLOCK_TYPE type)
+    {
+        yield return new WaitForSeconds(BlockDefine.MERGE_DELAY_TIME);
+        MergeBlockRemove(mergeBlock, type);
     }
 
     IEnumerator MergeBlockDelay(int column, int row, float time)
@@ -288,7 +367,7 @@ public class GameManager : Singleton<GameManager>
     }
 
     //머지 데이터 체크용
-    private bool MergeCheckBlock(List<int> mergeBlock)
+    private bool MergeCheck(List<int> mergeBlock)
     {
         if (mergeBlock.Count > 2)
         {
@@ -298,10 +377,11 @@ public class GameManager : Singleton<GameManager>
     }
 
     //머지 데이터가 자신 포함 3개 이상일때 블록 삭제 후 생성
-    private bool MergeBlock(List<int> mergeBlock)
+    private bool MergeBlockRemove(List<int> mergeBlock, E_BLOCK_TYPE type)
     {
         if(mergeBlock.Count > 2)
         {
+            AddScore((int)type * mergeBlock.Count);
             for (int i = 0; i < mergeBlock.Count; ++i)
             {
                 RemoveBlockData(mergeBlock[i]);
@@ -311,14 +391,40 @@ public class GameManager : Singleton<GameManager>
         return false;
     }
 
+    //이어하기 했을때 가운데 3 * 3 블럭 삭제
+    public void ContinueDestryBlock()
+    {
+        BlockCalculate blockCalculate = new BlockCalculate();
+        List<int> removeBlockData = blockCalculate.ContinueDestroyBlock();
+        for(int i = 0; i < removeBlockData.Count; ++i)
+        {
+            RemoveBlockData(removeBlockData[i]);
+        }
+    }
+
     public void ChangeShapeBlock()
     {
         CurrentShapeGiveUp();
     }
 
-    public void ResetScene()
+    public void ShowContinuePopup()
     {
-        SceneManager.LoadScene(0);
+        mainScreen.ShowContinuePopup();
+    }
+
+    private void GameOverCheck(GameObject shapeBlock)
+    {
+        var blockMove = shapeBlock.GetComponent<BlockMove>();
+        BlockCalculate blockCalculate = new BlockCalculate();
+        if(blockCalculate.GameOverCheck(blockMove.shapeType))
+        {
+            ShowGameOver();
+        }
+    }
+
+    private void ShowGameOver()
+    {
+        mainScreen.ShowGameOver();
     }
 
     public void GameClose()

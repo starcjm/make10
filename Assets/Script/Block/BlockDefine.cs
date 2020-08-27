@@ -12,6 +12,7 @@ public enum E_BLOCK_TYPE
     FOUR,
     FIVE,
     SIX,
+    SEVEN,
     EIGHT,
     NINE,
     STAR,
@@ -33,6 +34,10 @@ public static class BlockDefine
     public static int GetGridKey(int column, int row)
     {
         return column * 1000 + row;
+    }
+    public static int GetGridKey(Vector2 pos)
+    {
+        return (int)pos.x * 1000 + (int)pos.y;
     }
 
     public const int START_BLOCK_RANGE = 4;
