@@ -24,9 +24,8 @@ public class PopupPause : MonoBehaviour
 
     public void OnTouchRetry()
     {
+        GameManager.Instance.Retry();
         gameObject.SetActive(false);
-        UserInfo.Instance.isRetry = true;
-        SceneManager.LoadScene(1);
     }
 
     public void OnTouchContinue()

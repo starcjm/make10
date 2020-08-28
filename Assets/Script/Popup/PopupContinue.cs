@@ -18,6 +18,7 @@ public class PopupContinue : MonoBehaviour
 
     public void OnTouchReset()
     {
-        SceneManager.LoadScene(1);
+        GameManager.Instance.Retry();
+        gameObject.SetActive(false);
     }
 }

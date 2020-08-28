@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public enum E_GAME_STATE
 {
@@ -438,6 +439,12 @@ public class GameManager : Singleton<GameManager>
     private void ShowGameOver()
     {
         mainScreen.ShowGameOver();
+    }
+
+    public void Retry()
+    {
+        UserInfo.Instance.isRetry = true;
+        SceneManager.LoadScene(1);
     }
 
     public void GameClose()
