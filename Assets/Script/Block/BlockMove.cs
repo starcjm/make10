@@ -372,8 +372,7 @@ public class BlockMove : MonoBehaviour, IDragHandler, IEndDragHandler,
 
     public void CreateNextShapeBlock()
     {
-        GameManager.Instance.NextShapeBlock();
-        
+        GameManager.Instance.NextShapeBlock(); 
     }
 
     //드래그 후에 데이터 초기화

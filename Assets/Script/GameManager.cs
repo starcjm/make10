@@ -46,7 +46,24 @@ public class GameManager : Singleton<GameManager>
 
     //게임 상태(유아이 설정)
     private E_GAME_STATE gameState = E_GAME_STATE.GAME;
-    
+
+    private void Start()
+    {
+        ScreenInit();
+        UserInfo.Instance.LoadUserData();
+        SetGameState(E_GAME_STATE.PAUSE);
+    }
+
+    public void GameStart()
+    {
+        mainScreen.SetLevel(currentLevel);
+        mainScreen.SetExp(currentScore);
+        CreteGrid();
+        SetBlockblockRangeMax(BlockDefine.START_BLOCK_RANGE);
+        InitCreateShapeBlock();
+        SetGameState(E_GAME_STATE.GAME);
+    }
+
     public void SetGameState(E_GAME_STATE state)
     {
         gameState = state;
@@ -69,12 +86,18 @@ public class GameManager : Singleton<GameManager>
         return gameState;
     }
 
-    public void AddScore(int score)
+    public void AddScore(int score, int key)
     {
+        Vector3 pos = Vector3.zero;
         currentScore += score;
+        UserInfo.Instance.HighScore = currentScore;
         mainScreen.SetScore(currentScore);
         mainScreen.SetExp(currentScore);
-        ScoreGenerator.Instance.CreateAddScore(addScoreLayer.transform, Vector3.zero, score);
+        if (gridObject.ContainsKey(key))
+        {
+            pos = gridObject[key].transform.position;
+        };
+        ScoreGenerator.Instance.CreateAddScore(addScoreLayer.transform, pos, score);
     }
 
     public void AddBlockData(int key, GameObject block)
@@ -130,16 +153,6 @@ public class GameManager : Singleton<GameManager>
     public Dictionary<int, GameObject> GetGridObject()
     {
         return gridObject;
-    }
-
-    private void Start()
-    {
-        ScreenInit();
-        mainScreen.SetLevel(currentLevel);
-        mainScreen.SetExp(currentScore);
-        CreteGrid();
-        SetBlockblockRangeMax(BlockDefine.START_BLOCK_RANGE);
-        InitCreateShapeBlock();
     }
 
     private void ScreenInit()
@@ -269,7 +282,7 @@ public class GameManager : Singleton<GameManager>
     {
         if (clearNumber > blockRange)
         {
-            if(clearNumber < (int)E_BLOCK_TYPE._MAX_ + 1)
+            if(clearNumber < (int)E_BLOCK_TYPE._MAX_)
             {
                 blockRange = clearNumber;
             }
@@ -381,7 +394,7 @@ public class GameManager : Singleton<GameManager>
     {
         if(mergeBlock.Count > 2)
         {
-            AddScore((int)type * mergeBlock.Count);
+            AddScore((int)type * mergeBlock.Count, mergeBlock[0]);
             for (int i = 0; i < mergeBlock.Count; ++i)
             {
                 RemoveBlockData(mergeBlock[i]);

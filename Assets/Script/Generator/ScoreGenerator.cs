@@ -22,7 +22,7 @@ public class ScoreGenerator : Singleton<ScoreGenerator>
         cloneScore.name = string.Format("SCORE");
         cloneScore.transform.SetParent(parent.transform);
         cloneScore.transform.localScale = Vector3.one;
-        cloneScore.transform.position = new Vector3(0.0f, pos.y);
+        cloneScore.transform.position = pos;
         cloneScore.transform.DOMoveY(pos.y + 0.3f, aniTime).OnComplete(() =>
         {
             Destroy(cloneScore);
