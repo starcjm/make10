@@ -6,11 +6,29 @@ using UnityEngine.SceneManagement;
 /// <summary>
 /// 레벨업 팝업
 /// </summary>
-public class PopupLevelUp : MonoBehaviour
+public class PopupLevelUp : PopupBase
 {
-    public void OnTouchLevelUp()
+    public MainScreen mainScreen;
+
+    public override void OnTouchAndroidBackButton()
+    {
+        OnTouchClaim();
+    }
+
+    public void OnTouchAdsCoin()
     {
         gameObject.SetActive(false);
+        GameManager.Instance.SetGameState(E_GAME_STATE.GAME);
+        GameManager.Instance.AddCoin(Const.LEVEL_COIN * 2);
+        mainScreen.SetCoin(UserInfo.Instance.Coin);
     }
-    
+
+    public void OnTouchClaim()
+    {
+        gameObject.SetActive(false);
+        GameManager.Instance.SetGameState(E_GAME_STATE.GAME);
+        GameManager.Instance.AddCoin(Const.LEVEL_COIN);
+        mainScreen.SetCoin(UserInfo.Instance.Coin);
+    }
+
 }

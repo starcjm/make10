@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class PopupMain : MonoBehaviour
+public class PopupMain : PopupBase
 {
     public MainScreen mainScreen;
 
@@ -11,6 +11,11 @@ public class PopupMain : MonoBehaviour
 
     public Text Level;
     public Text HighScore;
+
+    public override void OnTouchAndroidBackButton()
+    {
+        mainScreen.ShowGameEnd();
+    }
 
     private void SetText()
     {
@@ -40,22 +45,24 @@ public class PopupMain : MonoBehaviour
 
     public void OnTouchAds()
     {
-
+        SoundManager.Instance.PlaySFX(E_SFX.BUTTON);
     }
 
     public void OnTouchPlay()
     {
+        SoundManager.Instance.PlaySFX(E_SFX.BUTTON);
         gameObject.SetActive(false);
         mainScreen.GameStart();
     }
 
     public void OnTouchRank()
     {
-
+        SoundManager.Instance.PlaySFX(E_SFX.BUTTON);
     }
 
     public void OnTouchSetting()
     {
+        SoundManager.Instance.PlaySFX(E_SFX.BUTTON);
         mainScreen.ShowSettingPopup();
     }
 }

@@ -2,8 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PopupGameOver : MonoBehaviour
+public class PopupGameOver : PopupBase
 {
+    public override void OnTouchAndroidBackButton()
+    {
+        OnTouchGameOver();
+    }
+
     public void OnTouchGameOver()
     {
         gameObject.SetActive(false);

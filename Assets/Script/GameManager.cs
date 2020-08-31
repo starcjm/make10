@@ -7,7 +7,7 @@ using UnityEngine.SceneManagement;
 public enum E_GAME_STATE
 {
     GAME,
-    ITEM,
+    ITEM, //해머 아이템
     PAUSE,
 }
 
@@ -52,6 +52,7 @@ public class GameManager : Singleton<GameManager>
     {
         ScreenInit();
         UserInfo.Instance.LoadUserData();
+        SoundManager.Instance.Init();
         SetGameState(E_GAME_STATE.PAUSE);
     }
 
@@ -99,6 +100,12 @@ public class GameManager : Singleton<GameManager>
             pos = gridObject[key].transform.position;
         };
         ScoreGenerator.Instance.CreateAddScore(addScoreLayer.transform, pos, score);
+    }
+
+    public void AddCoin(int coin)
+    {
+        UserInfo.Instance.Coin += coin;
+        mainScreen.SetCoin(UserInfo.Instance.Coin);
     }
 
     public void AddBlockData(int key, GameObject block)
@@ -393,13 +400,16 @@ public class GameManager : Singleton<GameManager>
     //머지 데이터가 자신 포함 3개 이상일때 블록 삭제 후 생성
     private bool MergeBlockRemove(List<int> mergeBlock, E_BLOCK_TYPE type)
     {
+        int totalScore = 0;
         if(mergeBlock.Count > 2)
         {
-            AddScore((int)type * mergeBlock.Count, mergeBlock[0]);
             for (int i = 0; i < mergeBlock.Count; ++i)
             {
+                var blockTyp = gridObject[mergeBlock[i]].GetComponent<Grid>().data.blockType;
+                totalScore += (int)blockTyp;
                 RemoveBlockData(mergeBlock[i]);
             }
+            AddScore((int)totalScore, mergeBlock[0]);
             return true;
         }
         return false;
@@ -423,7 +433,7 @@ public class GameManager : Singleton<GameManager>
 
     public void ShowContinuePopup()
     {
-        mainScreen.ShowContinuePopup();
+        mainScreen.ShowContinuePopup(currentScore);
     }
 
     private void GameOverCheck(GameObject shapeBlock)

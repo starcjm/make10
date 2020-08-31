@@ -43,9 +43,9 @@ public static class BlockDefine
     public const int START_BLOCK_RANGE = 4;
 
     //블럭 확률 (합쳐서 100)
-    public const int ONE_BLOCK_PERCENT = 40;
-    public const int TWO_BLOCK_PERCENT = 40;
-    public const int THREE_BLOCK_PERCENT = 20;
+    public const int ONE_BLOCK_PERCENT = 50;
+    public const int TWO_BLOCK_PERCENT = 45;
+    public const int THREE_BLOCK_PERCENT = 5;
 
     public const float MERGE_DELAY_TIME = 0.2f;
 }

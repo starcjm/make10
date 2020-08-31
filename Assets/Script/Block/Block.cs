@@ -20,6 +20,8 @@ public class Block : MonoBehaviour
     public void OnTouchX()
     {
         GameManager.Instance.ShowBlockX();
+        GameManager.Instance.AddCoin(-Const.HAMMER_PRICE);
+        GameManager.Instance.mainScreen.SetCoin(UserInfo.Instance.Coin);
         CreateHammer();
         StartCoroutine(HammerTouchDelay());
     }

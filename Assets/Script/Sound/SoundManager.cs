@@ -3,6 +3,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum E_BGM
+{
+    BGM_ONE,
+}
+
+public enum E_SFX
+{
+    BUTTON,
+}
+
 public class SoundManager : Singleton<SoundManager>
 {
     private const int SFX_SOURCE_COUNT = 3;
@@ -10,147 +20,129 @@ public class SoundManager : Singleton<SoundManager>
     private const string BGM_PATH = "sound/bgm/";
     private const string SE_PATH = "sound/se/";
 
-    private Dictionary<string, AudioClip> _bgms = new Dictionary<string, AudioClip>();
-    private Dictionary<string, AudioClip> _sfxs = new Dictionary<string, AudioClip>();
+    public List<AudioClip> bgms = new List<AudioClip>();
+    public List<AudioClip> sfxs = new List<AudioClip>();
         
-    private AudioSource _bgmSource;
-    private AudioSource[] _sfxSource = new AudioSource[SFX_SOURCE_COUNT];
+    private AudioSource bgmSource;
+    private AudioSource[] sfxSource = new AudioSource[SFX_SOURCE_COUNT];
 
-    private GameObject _soundSourceManager = null;
 
     public void Init()
     {       
-        float volume = PlayerPrefs.GetFloat("_volumeBGM", 1);
+        float volume = PlayerPrefs.GetFloat("volumeBGM", 1);
 
         var _bgmAudioSource = new GameObject("bgmSource");
-        _bgmAudioSource.transform.parent = _soundSourceManager.transform;
+        _bgmAudioSource.transform.SetParent(Instance.transform);
 
-        _bgmSource = _bgmAudioSource.AddComponent<AudioSource>();
-        _bgmSource.volume = volume;
-        _bgmSource.playOnAwake = false;
-        _bgmSource.loop = true;
+        bgmSource = _bgmAudioSource.AddComponent<AudioSource>();
+        bgmSource.volume = volume;
+        bgmSource.playOnAwake = false;
+        bgmSource.loop = true;
 
-        volume = PlayerPrefs.GetFloat("_volumeSFX", 1);
+        volume = PlayerPrefs.GetFloat("volumeSFX", 1);
 
-        for (int i = 0; i < _sfxSource.Length; i++)
+        for (int i = 0; i < sfxSource.Length; i++)
         {
             var _sfxAudioSource = new GameObject(string.Format("sfxAudioSource{0}", i + 1));
-            _sfxAudioSource.transform.parent = _soundSourceManager.transform;
-            _sfxSource[i] = _sfxAudioSource.AddComponent<AudioSource>();
-            _sfxSource[i].playOnAwake = false;
-            _sfxSource[i].volume = volume;
-            _sfxSource[i].loop = false;
+            _sfxAudioSource.transform.SetParent(Instance.transform);
+            sfxSource[i] = _sfxAudioSource.AddComponent<AudioSource>();
+            sfxSource[i].playOnAwake = false;
+            sfxSource[i].volume = volume;
+            sfxSource[i].loop = false;
         }
-        
-        //LoadBGM();
-        //LoadSFX();
-    }
-
-    //private void LoadBGM()
-    //{
-    //    var bgmTable = DataManager.instance.soundBGMTable.datas;
-    //    foreach (var bgmData in bgmTable.Values)
-    //    {
-    //        StringBuilder stringBuilder = new StringBuilder();
-    //        stringBuilder.Length = 0;
-    //        stringBuilder.Append(BGM_PATH);
-    //        stringBuilder.Append(bgmData.filename);
-    //        var bgmName = stringBuilder.ToString();
-    //        var bgm = ResourcesManager.instance.InstantiateObject<AudioClip>(bgmName);
-    //        _bgms.Add(bgmData.filename, bgm);
-    //    }
-
-    //    var seTable = DataManager.instance.soundSETable.datas;
-    //    foreach (var seData in seTable.Values)
-    //    {
-    //        StringBuilder stringBuilder = new StringBuilder();
-    //        stringBuilder.Length = 0;
-    //        stringBuilder.Append(SE_PATH);
-    //        stringBuilder.Append(seData.filename);
-    //        var seName = stringBuilder.ToString();
-    //        var se = ResourcesManager.instance.InstantiateObject<AudioClip>(seName);
-    //        _sfxs.Add(seData.filename, se);
-    //    }
-    //}
-
-
-    public void PlaySFX(string name)
-    {
-        PlaySFX(name, false, 1);
-    }
-
-    public void PlaySFX(string name, bool loop, float pitch)
-    {
-        if (_sfxs.ContainsKey(name))
+        if(UserInfo.Instance.IsSound())
         {
-            AudioSource a = GetEmptySource();
-            a.loop = loop;
-            a.pitch = pitch;
-            a.clip = _sfxs[name];
-            a.Play();
+            //PlayBGM(E_BGM.BGM_ONE);
         }
+        else
+        {
+            StopBGM();
+        }
+    }
+
+    public void PlaySFX(E_SFX type)
+    {
+        PlaySFX(type, false, 1);
+    }
+
+    public void PlaySFX(E_SFX type, bool loop, float pitch)
+    {
+        //아직 데이터 없음
+        return;
+        if (!UserInfo.Instance.IsSound())
+        {
+            return;
+        }
+        AudioSource a = GetEmptySource();
+        a.loop = loop;
+        a.pitch = pitch;
+        a.clip = sfxs[(int)type];
+        a.Play();
     }
 
     private AudioSource GetEmptySource()
     {
         int lageindex = 0;
         float lageProgress = 0;
-        for (int i = 0; i < _sfxSource.Length; i++)
+        for (int i = 0; i < sfxSource.Length; i++)
         {
-            if (!_sfxSource[i].isPlaying)
+            if (!sfxSource[i].isPlaying)
             {
-                return _sfxSource[i];
+                return sfxSource[i];
             }
 
-            float progress = _sfxSource[i].time / _sfxSource[i].clip.length;
+            float progress = sfxSource[i].time / sfxSource[i].clip.length;
             if (progress > lageProgress)
             {
                 lageindex = i;
                 lageProgress = progress;
             }
         }
-        return _sfxSource[lageindex];
+        return sfxSource[lageindex];
     }
 
-    public void PlayBGM(string name)
+    public void PlayBGM(E_BGM type)
     {
-        if (_bgmSource == _bgms[name])
-        {
+        if(!UserInfo.Instance.IsSound())
+        { 
             return;
         }
         AudioClip _changeClip;
-        _changeClip = _bgms[name];
+        _changeClip = bgms[(int)type];
         if (_changeClip == null)
         {
             return;
         }
 
-        _bgmSource.clip = _changeClip;
-        _bgmSource.Play();
+        bgmSource.clip = _changeClip;
+        bgmSource.Play();
     }
 
     public void StopBGM()
     {
-        _bgmSource.Stop();
+        if(bgmSource)
+        {
+            bgmSource.Stop();
+        }
     }
 
     public void SetPitch(float pitch)
     {
-        _bgmSource.pitch = pitch;
+        bgmSource.pitch = pitch;
     }
 
     public void ChangeBGMVolume(float volume)
     {
-        PlayerPrefs.SetFloat("_volumeBGM", volume);
-        _bgmSource.volume = volume;
+        PlayerPrefs.SetFloat("volumeBGM", volume);
+        bgmSource.volume = volume;
     }
 
     public void ChangeSFXVolume(float volume)
     {
-        PlayerPrefs.SetFloat("_volumeSFX", volume);
-        for (int i = 0; i < _sfxSource.Length; i++)
+        PlayerPrefs.SetFloat("volumeSFX", volume);
+        for (int i = 0; i < sfxSource.Length; i++)
         {
-            _sfxSource[i].volume = volume;
+            sfxSource[i].volume = volume;
         }
     }
 }
