@@ -11,14 +11,17 @@ public enum E_BGM
 public enum E_SFX
 {
     BUTTON,
+    //SHAPE_BLOCK_RESET,
+    SHAPE_BLOCK_UP,
+    SHAPE_BLOCK_ROT,
+    BLOCK_MERGE,
+    BLOCK_DROP,
+    OPEN_POPUP,
 }
 
 public class SoundManager : Singleton<SoundManager>
 {
     private const int SFX_SOURCE_COUNT = 3;
-
-    private const string BGM_PATH = "sound/bgm/";
-    private const string SE_PATH = "sound/se/";
 
     public List<AudioClip> bgms = new List<AudioClip>();
     public List<AudioClip> sfxs = new List<AudioClip>();
@@ -67,8 +70,6 @@ public class SoundManager : Singleton<SoundManager>
 
     public void PlaySFX(E_SFX type, bool loop, float pitch)
     {
-        //아직 데이터 없음
-        return;
         if (!UserInfo.Instance.IsSound())
         {
             return;

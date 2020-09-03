@@ -10,4 +10,6 @@ using System;
 [Serializable]
 public class BlockData : BlockParentData
 {
+    //합쳐질때 마지막 블록인지 플래그
+    public bool mergeLast = false;
 }

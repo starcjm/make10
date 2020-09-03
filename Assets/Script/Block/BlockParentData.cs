@@ -14,5 +14,6 @@ public abstract class BlockParentData
 
     public int row { get; set; }
 
+    public int key { get; set; }
     public E_BLOCK_TYPE blockType { get; set; }
 }

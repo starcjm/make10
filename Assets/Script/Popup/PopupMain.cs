@@ -9,12 +9,20 @@ public class PopupMain : PopupBase
 
     public GameObject textGroup;
 
-    public Text Level;
     public Text HighScore;
+    public Text Coin;
 
     public override void OnTouchAndroidBackButton()
     {
         mainScreen.ShowGameEnd();
+    }
+
+    public void SetCoin()
+    {
+        if(Coin)
+        {
+            Coin.text = UserInfo.Instance.Coin.ToString();
+        }
     }
 
     private void SetText()
@@ -22,10 +30,6 @@ public class PopupMain : PopupBase
         if(UserInfo.Instance.HighScore > 0)
         {
             textGroup.SetActive(true);
-            if(Level)
-            {
-                Level.text = string.Format("Lv {0}", UserInfo.Instance.Level);
-            }
             if(HighScore)
             {
                 HighScore.text = UserInfo.Instance.HighScore.ToString();
@@ -41,6 +45,7 @@ public class PopupMain : PopupBase
     {
         textGroup.SetActive(false);
         SetText();
+        SetCoin();
     }
 
     public void OnTouchAds()

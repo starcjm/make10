@@ -1,105 +1,250 @@
-﻿using System.Collections;
+﻿using DG.Tweening;
+using JetBrains.Annotations;
+using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 using Unity.Mathematics;
 using UnityEngine;
+using UnityEngine.UI;
 
 /// <summary>
 /// 블럭 머지 연산 클래스
 /// </summary>
 public class BlockCalculate
 {
-    //타겟 좌표용 x = column  y = row
-    private Vector2 targetPos = new Vector2();
+    //시작 머지 타겟 
+    private Block startBlock; 
+
     //머지 데이터 int = key
-    private List<int> mergeBlock = new List<int>();
+    private List<Block> mergeBlock = new List<Block>();
+
+    //머지 움직임 시작한 데이터
+    private List<Block> moveBlock = new List<Block>();
+
+    //머지 움직임 완료한 데이터
+    private List<Block> moveCompleteBlock = new List<Block>();
 
     //스타 블럭 주변 블럭
-    private List<int> starBlockEffect = new List<int>();
+    private List<Block> starBlockEffect = new List<Block>();
 
-    public Vector2 GetTargetPos()
+    private bool isLast = false;
+
+    //블록 움직임 시간
+    private readonly float moveTime = 0.08f;
+
+    public void SetStartBlock(Block block)
     {
-        return targetPos;
+        startBlock = block;
+        startBlock.data.mergeLast = true;
     }
 
-    public void SetTargetBlock(int column, int row)
-    {
-        targetPos.x = column;
-        targetPos.y = row;
-    }
-
-    public List<int> GetMergeData()
+    public List<Block> GetMergeData()
     {
         return mergeBlock;
     }
 
-    public List<int> GetStarBlockEffect()
+    public List<Block> GetStarBlockEffect()
     {
         return starBlockEffect;
     }
 
-    //데이터 머지 후에 초기화
-    public void DataClear()
-    {
-        mergeBlock.Clear();
-    }
-
     //사방향으로 같은 블록이 있나 검사
-    public void CheckBlock(BlockData blockData)
+    public void CheckBlock(BlockData blockData, bool onlyCheck)
     {
+        int nearCount = 0;
         //위
         if (blockData.row > 1)
         {
-            AddMergeData(CreateCheckData(0, -1, blockData));
+            if(AddMergeData(CreateCheckData(0, -1, blockData), onlyCheck))
+            {
+                ++nearCount;
+            }
         }
 
         //아래
         if (blockData.row < Const.GRID_COLUMN_COUNT)
         {
-            AddMergeData(CreateCheckData(0, 1, blockData));
+            if (AddMergeData(CreateCheckData(0, 1, blockData), onlyCheck))
+            {
+                ++nearCount;
+            }
         }
 
         //왼쪽
         if (blockData.column > 1)
         {
-            AddMergeData(CreateCheckData(-1, 0, blockData));
+            if (AddMergeData(CreateCheckData(-1, 0, blockData), onlyCheck))
+            {
+                ++nearCount;
+            }
         }
 
         //오른쪽
         if (blockData.column < Const.GRID_ROW_COUNT)
         {
-            AddMergeData(CreateCheckData(1, 0, blockData));
-        }
-    }
-
-    //머지 오브젝트 체크
-    private void AddMergeData(BlockData blockData)
-    {
-        var blockObject = GameManager.Instance.GetBlockObject();
-        int key = BlockDefine.GetGridKey(blockData.column, blockData.row);
-        if(!mergeBlock.Contains(key))
-        {
-            if (blockObject.ContainsKey(key))
+            if (AddMergeData(CreateCheckData(1, 0, blockData), onlyCheck))
             {
-                Block block = blockObject[key].GetComponent<Block>();
-                if (block.data.blockType == blockData.blockType)
+                ++nearCount;
+            }
+        }
+
+        //검사용인지 실제 데이터인지 체크 플래그
+        if(!onlyCheck)
+        {
+            //시작 블록이 아니고 근처에 블록이 있는지 체크
+
+            if (blockData.column != startBlock.data.column
+             || blockData.row != startBlock.data.row)
+            {
+                if (nearCount == 0)
                 {
-                    mergeBlock.Add(key);
-                    CheckBlock(blockData);
+                    blockData.mergeLast = true;
                 }
             }
         }
+    }
+
+    //머지될떄 움직이고 비활성화
+    public int MergeBlockLastCheck()
+    {
+        //스타트 블럭 포함해서 계산
+        if(mergeBlock.Count + 1 >= BlockDefine.MERGE_COUNT)
+        {
+            for (int i = 0; i < mergeBlock.Count; ++i)
+            {
+                var block = mergeBlock[i];
+                if (block.data.mergeLast)
+                {
+                    //마지막 블록이라면 같은 블록 같이 잇는 옆 칸으로 이동
+                    MergeBlockNearMove(block);
+                }
+            }
+        }
+        return mergeBlock.Count;
+    }
+
+    public void MergeBlockNearMove(Block block)
+    {
+        if (!moveBlock.Contains(block))
+        {
+            for (int i = mergeBlock.Count - 1; i >= 0; --i)
+            {
+                var nextBlock = mergeBlock[i];
+                if (block != nextBlock)
+                {
+                    if(!nextBlock.data.mergeLast)
+                    {
+                        if (NearCheck(block, nextBlock))
+                        {
+                            moveBlock.Add(block);
+                            var tween = block.gameObject.transform.DOMove(nextBlock.transform.position, moveTime);
+                            tween.OnComplete(() =>
+                            {
+                                moveCompleteBlock.Add(block);
+                                nextBlock.data.mergeLast = true;
+                                block.gameObject.SetActive(false);
+                                if(mergeBlock.Count > moveCompleteBlock.Count)
+                                {
+                                    MergeBlockNearMove(nextBlock);
+                                }
+                            });
+                            return;
+                        }
+                    }
+                }
+            }
+            //갈대가 없으므로 마지막 블록을 향해 가야댐
+            MoveLastBlock(block);
+        }
+    }
+
+    private void MoveLastBlock(Block block)
+    {
+        moveBlock.Add(block);
+        var lastTween = block.gameObject.transform.DOMove(startBlock.transform.position, moveTime);
+        lastTween.OnComplete(() =>
+        {
+            moveCompleteBlock.Add(block);
+            if (moveCompleteBlock.Count >= mergeBlock.Count)
+            {
+                if(!isLast)
+                {
+                    isLast = true;
+                    mergeBlock.Add(startBlock);
+                    GameManager.Instance.MergeCompleteRemoveblock(mergeBlock, startBlock, this);
+                }
+            }
+        });
+    }
+    
+    private bool NearCheck(Block preBlock, Block nearBlock)
+    {
+        //머지될 블록중에 근처 인지 체크
+        //위
+        if(nearBlock.data.column == preBlock.data.column
+        && nearBlock.data.row == preBlock.data.row -1)
+        {
+            return true;
+        }
+        //아래
+        else if (nearBlock.data.column == preBlock.data.column
+              && nearBlock.data.row == preBlock.data.row + 1)
+        {
+            return true;
+        }
+        //왼쪽
+        else if (nearBlock.data.column == preBlock.data.column - 1
+              && nearBlock.data.row == preBlock.data.row)
+        {
+            return true;
+        }
+        //오른쪽
+        else if (nearBlock.data.column == preBlock.data.column + 1
+              && nearBlock.data.row == preBlock.data.row )
+        {
+            return true;
+
+        }
+        return false;
+    }
+
+
+    //머지 오브젝트 체크
+    private bool AddMergeData(BlockData blockData, bool onlyCheck)
+    {
+        var blockObject = GameManager.Instance.GetBlockObject();
+        if (blockObject.ContainsKey(blockData.key))
+        {
+            Block block = blockObject[blockData.key].GetComponent<Block>();
+            if(startBlock != block)
+            {
+                if (!mergeBlock.Contains(block))
+                {
+                    if (blockObject.ContainsKey(blockData.key))
+                    {
+                        if (block.data.blockType == blockData.blockType)
+                        {
+                            mergeBlock.Add(block);
+                            CheckBlock(block.data, onlyCheck);
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     public void StarBlockEffect()
     {
         for(int i = 0; i < mergeBlock.Count; ++i)
         {
-            StarBlockCheck(mergeBlock[i]);
+            StarBlockCheck(mergeBlock[i].data.key);
         }
     }
 
-    //별 블럭 부셔질때는 8방향 검사
+    //별 블럭 부셔질때 블럭 검사
     private void StarBlockCheck(int key)
     {
         var gridObject = GameManager.Instance.GetGridObject();
@@ -158,21 +303,21 @@ public class BlockCalculate
         }
     }
 
-    //스타 블록으로 인해 사라질 주위블록 체크
+    //스타 블록 한 개당 사라질 주위블록 체크
     private void StarBlockEffectCheck(GridData gridData)
     {
         var blockObject = GameManager.Instance.GetBlockObject();
-        int key = BlockDefine.GetGridKey(gridData.column, gridData.row);
-        if (blockObject.ContainsKey(key))
+        if (blockObject.ContainsKey(gridData.key))
         {
-            Block block = blockObject[key].GetComponent<Block>();
+            Block block = blockObject[gridData.key].GetComponent<Block>();
             if (block.data.blockType != E_BLOCK_TYPE.NONE)
             {
-                starBlockEffect.Add(key);
+                starBlockEffect.Add(block);
             }
         }
     }
 
+    //4방향 머지 될 블럭 검사
     private BlockData CreateCheckData(int addColumn, int addRow, BlockData blockData)
     {
         BlockData tempBlockData = new BlockData
@@ -180,10 +325,12 @@ public class BlockCalculate
             column = blockData.column + addColumn,
             row = blockData.row + addRow,
             blockType = blockData.blockType,
+            key = BlockDefine.GetGridKey(blockData.column + addColumn, blockData.row + addRow),
         };
         return tempBlockData;
     }
 
+    //별블록 용 머지 블록 데이터
     private GridData CreateCheckData(int addColumn, int addRow, GridData gridData)
     {
         GridData tempBlockData = new GridData
@@ -191,16 +338,12 @@ public class BlockCalculate
             column = gridData.column + addColumn,
             row = gridData.row + addRow,
             blockType = gridData.blockType,
+            key = BlockDefine.GetGridKey(gridData.column + addColumn, gridData.row + addRow),
         };
         return tempBlockData;
     }
 
-    public int ContinueDestroyBlockKey(Vector2 pos, int column, int row)
-    {
-        int key = BlockDefine.GetGridKey((int)pos.x + column, (int)pos.y + row);
-        return key;
-    }
-
+    //이어하기 할때 중앙 9개 블록 삭제
     public List<int> ContinueDestroyBlock()
     {
         List<int> removeBlockData = new List<int>();
@@ -226,6 +369,13 @@ public class BlockCalculate
         return removeBlockData;
     }
 
+    //이어하기 할떄 체크할 데이터
+    public int ContinueDestroyBlockKey(Vector2 pos, int column, int row)
+    {
+        int key = BlockDefine.GetGridKey((int)pos.x + column, (int)pos.y + row);
+        return key;
+    }
+
     //현재 모양 블록과 빈공간 검사해서 게임 종료 체크
     public bool GameOverCheck(E_BLOCK_SHAPE_TYPE shapeType)
     {
@@ -244,6 +394,8 @@ public class BlockCalculate
         return true;
     }
 
+
+    //게임 오버 체크
     private bool GameOverCalc(E_BLOCK_SHAPE_TYPE type, GridData gridData)
     {
         if (type == E_BLOCK_SHAPE_TYPE.ONE)

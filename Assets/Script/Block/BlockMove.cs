@@ -24,7 +24,7 @@ public class BlockMove : MonoBehaviour, IDragHandler, IEndDragHandler,
     //드래그 블럭 터치 시작 좌표
     private Vector2 touchOriPos;
     //모양 블록 회전용 터치에 대한 up down 거리값
-    private float touchRecognitionDis = 0.05f;
+    private float touchRecognitionDis = 0.1f;
     //모양 블록 터치 초기화 시간
     private float touchInitTime = 0.15f;
     //누르고 있을때 모양 블록 터치 초기화값
@@ -37,6 +37,8 @@ public class BlockMove : MonoBehaviour, IDragHandler, IEndDragHandler,
     private bool isRot = false;
     //모양 블럭 회전 시간
     private float rotTime = 0.2f;
+
+    private bool dragSoundFlag = false;
 
     //알파적용된 모양블럭 
     private Dictionary<int, AlphaBlock> alphaShapeBlock = new Dictionary<int, AlphaBlock>();
@@ -107,6 +109,7 @@ public class BlockMove : MonoBehaviour, IDragHandler, IEndDragHandler,
             //타겟 블럭 터치 할떄 -90도씩 회전
             if (!isRot && isTouch && shapeType != E_BLOCK_SHAPE_TYPE.ONE)
             {
+                SoundManager.Instance.PlaySFX(E_SFX.SHAPE_BLOCK_ROT);
                 Vector3 pos = Camera.main.ScreenToWorldPoint(touchPos);
                 pos.z = 0;
                 float tempDis = math.distance(touchOriPos, (Vector2)pos);
@@ -164,10 +167,17 @@ public class BlockMove : MonoBehaviour, IDragHandler, IEndDragHandler,
         {
             if (!isTouch)
             {
+                if(!dragSoundFlag)
+                {
+                    dragSoundFlag = true;
+                    SoundManager.Instance.PlaySFX(E_SFX.SHAPE_BLOCK_UP);
+                }
+                
                 Vector3 pos = Camera.main.ScreenToWorldPoint(touchPos);
                 pos.z = 0;
                 pos.y += dragYDelta;
                 transform.position = pos;
+                transform.localScale = Vector3.one;
                 CheckAlphaBlock();
             }
         }
@@ -175,6 +185,7 @@ public class BlockMove : MonoBehaviour, IDragHandler, IEndDragHandler,
 
     public void OnEndDrag(PointerEventData eventData)
     {
+        dragSoundFlag = false;
         if (!CheckGameState())
         {
             return;
@@ -210,16 +221,15 @@ public class BlockMove : MonoBehaviour, IDragHandler, IEndDragHandler,
                     if (grid)
                     {
                         //외부에서 그리드에 올릴 블럭 타입 설정 하고 생성
-                        var key = BlockDefine.GetGridKey(grid.data.column, grid.data.row);
                         var alphaBlock = GameManager.Instance.CreateAlphaShapeBlock(block.gameObject,
                                                                                     tempGrids[i].transform.position);
                         AlphaBlock alphaBlockData = new AlphaBlock
                         {
-                            key = key,
+                            key = grid.data.key,
                             blockType = block.data.blockType,
                             block = alphaBlock
                         };
-                        alphaShapeBlock.Add(key, alphaBlockData);
+                        alphaShapeBlock.Add(grid.data.key, alphaBlockData);
                     }
                 }
             }
@@ -246,10 +256,9 @@ public class BlockMove : MonoBehaviour, IDragHandler, IEndDragHandler,
                         Grid grid = tempGrids[i].GetComponent<Grid>();
                         if (grid)
                         {
-                            int key = BlockDefine.GetGridKey(grid.data.column, grid.data.row);
-                            if (alphaShapeBlock.ContainsKey(key))
+                            if (alphaShapeBlock.ContainsKey(grid.data.key))
                             {
-                                if (alphaShapeBlock[key].blockType == block.data.blockType)
+                                if (alphaShapeBlock[grid.data.key].blockType == block.data.blockType)
                                 {
                                     equalCount++;
                                 }
@@ -293,6 +302,7 @@ public class BlockMove : MonoBehaviour, IDragHandler, IEndDragHandler,
     //빈 그리드에 모양 블럭 배치
     private void DropObject(List<GameObject> tempGrids)
     {
+        SoundManager.Instance.PlaySFX(E_SFX.BLOCK_DROP);
         for (int i = 0; i < transform.childCount; ++i)
         {
             var block = transform.GetChild(i).GetComponent<Block>();
@@ -378,7 +388,12 @@ public class BlockMove : MonoBehaviour, IDragHandler, IEndDragHandler,
     //드래그 후에 데이터 초기화
     private void DragDataReset()
     {
+        //리셋
+        //SoundManager.Instance.PlaySFX(E_SFX.SHAPE_BLOCK_RESET);
         transform.position = GameManager.Instance.shapeBlockPos.transform.position;
+        transform.localScale = Vector3.one * BlockDefine.SHAPE_BLOCK_SCALE;
         touchOriPos = Vector3.zero;
     }
+
+    
 }

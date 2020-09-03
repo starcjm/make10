@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using DG.Tweening;
+using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using UnityEngine;
@@ -15,35 +16,35 @@ public class GameManager : Singleton<GameManager>
 {
     public float screenAspect = 1.775F;
 
+    //메인 스크린 UI연동
+    public MainScreen mainScreen;
+
     //모양 블록 좌표용 오브젝트
     public GameObject shapeBlockPos;
     public GameObject nextShapeBlockPos;
     public GameObject shapeBlockLayer;
     public GameObject blockLayer;
     public GameObject alphablockLayer;
-    public GameObject addScoreLayer;
-
-    public MainScreen mainScreen;
-
-    private int currentScore = 0;
-    private int currentLevel = 1;
+    public GameObject effectLayer;
 
     //현재 모양 블럭 
     private GameObject currentBlock;
     //다음 모양 블럭 
     private GameObject NextBlock;
-    //다음 모양 블럭 사이즈
-    public float nextShapeSize = 0.5f; 
     //현재 생성될 블록의 최대값
     private int blockRange = 4;
+    //콤보 저장용 카운트
+    private int comboCount = 0;
+    //현재 점수
+    private int currentScore = 0;
+
+    //해머 상태
+    private bool isHammer = false;
 
     //key = 그리드 키,  value = 블록 오브젝트  현재 배치되 있는 블록
     private Dictionary<int, GameObject> blockObject = new Dictionary<int, GameObject>();
     //key = 그리드 키,  value = 그리드 오브젝트 
     private Dictionary<int, GameObject> gridObject = new Dictionary<int, GameObject>();
-
-
-    private bool isHammer = false;
 
     //게임 상태(유아이 설정)
     private E_GAME_STATE gameState = E_GAME_STATE.GAME;
@@ -58,10 +59,9 @@ public class GameManager : Singleton<GameManager>
 
     public void GameStart()
     {
-        mainScreen.SetLevel(currentLevel);
-        mainScreen.SetExp(currentScore);
+        mainScreen.SetScore(0, 0);
         CreteGrid();
-        SetBlockblockRangeMax(BlockDefine.START_BLOCK_RANGE);
+        SetBlockblockRangeMax(Const.START_BLOCK_RANGE);
         InitCreateShapeBlock();
         SetGameState(E_GAME_STATE.GAME);
     }
@@ -93,13 +93,21 @@ public class GameManager : Singleton<GameManager>
         Vector3 pos = Vector3.zero;
         currentScore += score;
         UserInfo.Instance.HighScore = currentScore;
-        mainScreen.SetScore(currentScore);
-        mainScreen.SetExp(currentScore);
+        mainScreen.SetScore(currentScore, score);
         if (gridObject.ContainsKey(key))
         {
             pos = gridObject[key].transform.position;
         };
-        ScoreGenerator.Instance.CreateAddScore(addScoreLayer.transform, pos, score);
+        ScoreGenerator.Instance.CreateAddScore(effectLayer.transform, pos, score);
+    }
+
+    private void ComboEffect()
+    {
+        if(comboCount > 1)
+        {
+            ScoreGenerator.Instance.CreateComboEffect(effectLayer.transform,
+                                                  mainScreen.BgGrid.transform.position, comboCount);
+        }
     }
 
     public void AddCoin(int coin)
@@ -181,7 +189,7 @@ public class GameManager : Singleton<GameManager>
         if (shapeBlockPos)
         {
             currentBlock = ShapeBlock();
-            currentBlock.transform.localScale = Vector3.one;
+            currentBlock.transform.localScale = Vector3.one * BlockDefine.SHAPE_BLOCK_SCALE;
             currentBlock.transform.position = shapeBlockPos.transform.position;
             var blockMove = currentBlock.GetComponent<BlockMove>();
             if (blockMove)
@@ -192,7 +200,7 @@ public class GameManager : Singleton<GameManager>
         if (shapeBlockPos)
         {
             NextBlock = ShapeBlock();
-            NextBlock.transform.localScale = Vector3.one * nextShapeSize;
+            NextBlock.transform.localScale = Vector3.one * BlockDefine.NEXT_SHAPE_BLOCK_SCALE;
             NextBlock.transform.position = nextShapeBlockPos.transform.position;
             var blockMove = NextBlock.GetComponent<BlockMove>();
             if (blockMove)
@@ -208,7 +216,7 @@ public class GameManager : Singleton<GameManager>
         if (shapeBlockPos)
         {
             currentBlock = NextBlock;
-            currentBlock.transform.localScale = Vector3.one;
+            currentBlock.transform.localScale = Vector3.one * BlockDefine.SHAPE_BLOCK_SCALE;
             currentBlock.transform.position = shapeBlockPos.transform.position;
             var blockMove = currentBlock.GetComponent<BlockMove>();
             if (blockMove)
@@ -219,7 +227,7 @@ public class GameManager : Singleton<GameManager>
         if (nextShapeBlockPos)
         {
             NextBlock = ShapeBlock();
-            NextBlock.transform.localScale = Vector3.one * nextShapeSize;
+            NextBlock.transform.localScale = Vector3.one * BlockDefine.NEXT_SHAPE_BLOCK_SCALE;
             NextBlock.transform.position = nextShapeBlockPos.transform.position;
             var blockMove = NextBlock.GetComponent<BlockMove>();
             if (blockMove)
@@ -276,12 +284,17 @@ public class GameManager : Singleton<GameManager>
     }
 
     //그리드위에 배치할 블록 생성
-    public void CreateGridOverBlock(GridData gridData, Vector3 gridPos)
+    public void CreateGridOverBlock(GridData gridData, Vector3 gridPos, bool scaleAni = false)
     {
         if (shapeBlockPos)
         {
-            var shapeBlock = BlockGenerator.Instance.CreateGridOverBlock(gridData, blockLayer.transform);
-            shapeBlock.transform.position = gridPos;
+            var block = BlockGenerator.Instance.CreateGridOverBlock(gridData, blockLayer.transform);
+            block.transform.position = gridPos;
+            if(scaleAni)
+            {
+                block.transform.localScale = Vector3.one * BlockDefine.BLOCK_SCALE_SIZE;
+                block.transform.DOScale(Vector3.one, 0.3f);
+            }
         }
     }
 
@@ -300,18 +313,19 @@ public class GameManager : Singleton<GameManager>
     //여러 블럭이 동시에 합쳐질 경우 연출을 위한 딜레이
     public void MergeDelayCheck(List<GameObject> tempGrids)
     {
+        //블록 놓일떄 콤보 초기화
+        comboCount = 0;
         int mergeCount = 0;
         for (int i = 0; i < tempGrids.Count; ++i)
         {
             Grid grid = tempGrids[i].GetComponent<Grid>();
-            int key = BlockDefine.GetGridKey(grid.data.column, grid.data.row);
-            if (blockObject.ContainsKey(key))
+            if (blockObject.ContainsKey(grid.data.key))
             {
-                Block block = blockObject[key].GetComponent<Block>();
+                Block block = blockObject[grid.data.key].GetComponent<Block>();
                 if (block)
                 {
                     BlockCalculate blockCalculate = new BlockCalculate();
-                    blockCalculate.CheckBlock(block.data);
+                    blockCalculate.CheckBlock(block.data, true);
                     if (MergeCheck(blockCalculate.GetMergeData()))
                     {
                         ++mergeCount;
@@ -321,9 +335,9 @@ public class GameManager : Singleton<GameManager>
                 }
             }
         }
+        //블록 놓았을떄 머지할 블럭이 없을때
         if(mergeCount == 0)
         {
-            //다음 블럭으로 검사
             GameOverCheck(NextBlock);
         }
     }
@@ -338,47 +352,69 @@ public class GameManager : Singleton<GameManager>
             if(block)
             {
                 BlockCalculate blockCalculate = new BlockCalculate();
-                blockCalculate.SetTargetBlock(column, row);
-                blockCalculate.CheckBlock(block.data);
-                var mergeData = blockCalculate.GetMergeData();
-
-                if (MergeBlockRemove(mergeData, block.data.blockType))
-                {
-                    SetBlockblockRangeMax((int)block.data.blockType + 1);
-                    //블록 머지된곳에 새로운 상위값 블록 생성
-                    if (block.data.blockType < E_BLOCK_TYPE.STAR) //블록 최대값이면 그냥 삭제
-                    {
-                        if(gridObject.ContainsKey(key))
-                        {
-                            //외부에서 그리드에 올릴 블럭 타입 설정 하고 생성
-                            var grid = gridObject[key].GetComponent<Grid>();
-                            grid.data.blockType = block.data.blockType + 1;
-                            CreateGridOverBlock(grid.data, gridObject[key].transform.position);
-                            StartCoroutine(MergeBlockDelay(column, row, BlockDefine.MERGE_DELAY_TIME));
-                        }
-                    }
-                    else
-                    {
-                        //별모양 터트렸을때 효과
-                        blockCalculate.StarBlockEffect();
-                        StartCoroutine(MergeBlockRemoveDelay(blockCalculate.GetStarBlockEffect(),
-                                                             block.data.blockType));
-                    }
+                blockCalculate.SetStartBlock(block);
+                blockCalculate.CheckBlock(block.data, false);
+                int blockCount = blockCalculate.MergeBlockLastCheck();
+                if(blockCount + 1 >= BlockDefine.MERGE_COUNT)
+                { 
+                    //머지가 된다면 콤보 추가
+                    ++comboCount; 
                 }
                 else
                 {
-                    //현재 블럭으로 검사
-                    GameOverCheck(currentBlock);   
+                    ComboEffect();
+                    //머지할 블록이 없을때
+                    GameOverCheck(NextBlock);
                 }
-                blockCalculate.DataClear();
             }
         }
     }
 
-    IEnumerator MergeBlockRemoveDelay(List<int> mergeBlock, E_BLOCK_TYPE type)
+    public void MergeCompleteRemoveblock(List<Block> mergeData, Block block, BlockCalculate calc)
     {
-        yield return new WaitForSeconds(BlockDefine.MERGE_DELAY_TIME);
-        MergeBlockRemove(mergeBlock, type);
+        MergeBlockRemove(mergeData);
+        SetBlockblockRangeMax((int)block.data.blockType + 1);
+        //블록 머지된곳에 새로운 상위값 블록 생성
+        if (block.data.blockType < E_BLOCK_TYPE.STAR)
+        {
+            if (gridObject.ContainsKey(block.data.key))
+            {
+                //그리드에 올릴 블럭 타입 설정 하고 생성
+                var grid = gridObject[block.data.key].GetComponent<Grid>();
+                grid.data.blockType = block.data.blockType + 1;
+                CreateGridOverBlock(grid.data, gridObject[block.data.key].transform.position, true);
+                StartCoroutine(MergeBlockDelay(block.data.column, block.data.row, 
+                                                BlockDefine.MERGE_DELAY_TIME));
+            }
+        }
+        else
+        {
+            //별모양 터트렸을때 효과
+            calc.StarBlockEffect();
+            var blocks = calc.GetStarBlockEffect();
+            ChangeStarblock(blocks);
+            StartCoroutine(StarBlockRemoveDelay(blocks));
+        }
+    }
+
+    //별모양 터트릴때 주변 블록들 별모양으로 변경
+    private void ChangeStarblock(List<Block> blocks)
+    {
+        for(int i = 0; i < blocks.Count; ++i)
+        {
+            var block = blocks[i];
+            if(block)
+            {
+                block.ChangeImage(E_BLOCK_TYPE.STAR);
+            }
+        }
+    }
+
+    //블록 관련 타이밍 조절 함수들
+    IEnumerator StarBlockRemoveDelay(List<Block> mergeBlock)
+    {
+        yield return new WaitForSeconds(BlockDefine.MERGE_DELAY_TIME * 2.0f);
+        MergeBlockRemove(mergeBlock);
     }
 
     IEnumerator MergeBlockDelay(int column, int row, float time)
@@ -388,9 +424,9 @@ public class GameManager : Singleton<GameManager>
     }
 
     //머지 데이터 체크용
-    private bool MergeCheck(List<int> mergeBlock)
+    private bool MergeCheck(List<Block> mergeBlock)
     {
-        if (mergeBlock.Count > 2)
+        if (mergeBlock.Count >= BlockDefine.MERGE_COUNT)
         {
             return true;
         }
@@ -398,21 +434,20 @@ public class GameManager : Singleton<GameManager>
     }
 
     //머지 데이터가 자신 포함 3개 이상일때 블록 삭제 후 생성
-    private bool MergeBlockRemove(List<int> mergeBlock, E_BLOCK_TYPE type)
+    private void MergeBlockRemove(List<Block> mergeBlock)
     {
-        int totalScore = 0;
-        if(mergeBlock.Count > 2)
+        if(mergeBlock.Count > 0)
         {
+            int totalScore = 0;
+            SoundManager.Instance.PlaySFX(E_SFX.BLOCK_MERGE);
             for (int i = 0; i < mergeBlock.Count; ++i)
             {
-                var blockTyp = gridObject[mergeBlock[i]].GetComponent<Grid>().data.blockType;
+                var blockTyp = gridObject[mergeBlock[i].data.key].GetComponent<Grid>().data.blockType;
                 totalScore += (int)blockTyp;
-                RemoveBlockData(mergeBlock[i]);
+                RemoveBlockData(mergeBlock[i].data.key);
             }
-            AddScore((int)totalScore, mergeBlock[0]);
-            return true;
+            AddScore(totalScore, mergeBlock[0].data.key);
         }
-        return false;
     }
 
     //이어하기 했을때 가운데 3 * 3 블럭 삭제
@@ -436,6 +471,7 @@ public class GameManager : Singleton<GameManager>
         mainScreen.ShowContinuePopup(currentScore);
     }
 
+    //게임 종료 체크
     private void GameOverCheck(GameObject shapeBlock)
     {
         var blockMove = shapeBlock.GetComponent<BlockMove>();

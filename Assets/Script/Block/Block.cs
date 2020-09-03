@@ -1,12 +1,14 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 //블럭 랜더 클래스
 public class Block : MonoBehaviour
 {
     public readonly float hammerTime = 0.4f;
 
+    public Image mainImg;
     public GameObject imgX;
     public GameObject hammer;
     public BlockData data = new BlockData();
@@ -45,8 +47,11 @@ public class Block : MonoBehaviour
     IEnumerator HammerTouchDelay()
     {
         yield return new WaitForSeconds(hammerTime);
-        int key = BlockDefine.GetGridKey(data.column, data.row);
-        GameManager.Instance.RemoveBlockData(key);
-        
+        GameManager.Instance.RemoveBlockData(data.key);
+    }
+
+    public void ChangeImage(E_BLOCK_TYPE type)
+    {
+        mainImg.sprite = BlockGenerator.Instance.blockSprite[(int)type - 1];
     }
 }

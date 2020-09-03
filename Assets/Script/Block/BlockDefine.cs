@@ -40,12 +40,20 @@ public static class BlockDefine
         return (int)pos.x * 1000 + (int)pos.y;
     }
 
-    public const int START_BLOCK_RANGE = 4;
-
     //블럭 확률 (합쳐서 100)
     public const int ONE_BLOCK_PERCENT = 50;
     public const int TWO_BLOCK_PERCENT = 45;
     public const int THREE_BLOCK_PERCENT = 5;
 
-    public const float MERGE_DELAY_TIME = 0.2f;
+    //머지 구간 딜레이 타임
+    public const float MERGE_DELAY_TIME = 0.35f;
+
+    //모양 블럭 기본 스케일
+    public const float SHAPE_BLOCK_SCALE = 0.8f;
+    //모양 블럭 넥스트 스케일
+    public const float NEXT_SHAPE_BLOCK_SCALE = 0.4f;
+    
+    public const float BLOCK_SCALE_SIZE = 1.3f;
+
+    public const int MERGE_COUNT = 3;
 }

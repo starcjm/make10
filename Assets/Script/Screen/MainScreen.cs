@@ -9,26 +9,35 @@ using UnityEngine.UI;
 /// </summary>
 public class MainScreen : MonoBehaviour, IAndroidBackButton
 {
+    public GameObject BgGrid;
+
     //현재 점수 
     public Text currentScore;
     //최대 점수
     public Text highScore;
 
     public Text Level;
-    public Text NextLevel;
     public Text Coin;
 
     public Text HammerCoin;
     public Text NextBlockCoin;
 
-    public Image FiledExp;
+    public Text GiftCount; 
+
+    public Image FiledGift;
+
+    public GameObject offGift;
+    public GameObject onGift;
+
+    //코인 연출용
+    public GameObject coinIcon;
 
     //인게임 유아이
     public GameObject inGameUI;
 
     //팝업들
     public GameObject Main;
-    public GameObject LevelUp;
+    public GameObject Gift;
     public GameObject GameOver;
     public GameObject Continue;
     public GameObject Setting;
@@ -36,7 +45,11 @@ public class MainScreen : MonoBehaviour, IAndroidBackButton
     public GameObject Shop;
     public GameObject MessageBox;
 
-    private int currentLevel = 1;
+    //획득한 점수
+    public int saveScore = 0;
+
+    //기프트 카운트 (획득할떄마다 증가)
+    private int giftCount = 1;
 
     private void Start()
     {
@@ -123,6 +136,19 @@ public class MainScreen : MonoBehaviour, IAndroidBackButton
         }
     }
 
+    public void ShowGiftPopup()
+    {
+        saveScore = 0;
+        ++giftCount;
+        UpdateGiftIcon();
+        var giftPopup = Gift.GetComponent<PopupGift>();
+        if(giftPopup)
+        {
+            giftPopup.DataInit();
+        }
+        Gift.SetActive(true);
+    }
+
     public void ShowGameOver()
     {
         GameManager.Instance.SetGameState(E_GAME_STATE.PAUSE);
@@ -137,26 +163,6 @@ public class MainScreen : MonoBehaviour, IAndroidBackButton
         }
     }
 
-    public void SetLevel(int level)
-    {
-        UserInfo.Instance.Level = level;
-        if(currentLevel != level)
-        {
-            GameManager.Instance.SetGameState(E_GAME_STATE.PAUSE);
-            LevelUp.SetActive(true);
-        }
-        
-        currentLevel = level;
-        if (Level)
-        {
-            Level.text = level.ToString();
-        }
-        if(NextLevel)
-        {
-            NextLevel.text = (level + 1).ToString();
-        }
-    }
-
     public void SetCoin(int coin)
     {
         if(Coin)
@@ -165,18 +171,25 @@ public class MainScreen : MonoBehaviour, IAndroidBackButton
         }
     }
 
-    public void SetExp(int score)
+    public void SetGift()
     {
-        float fillAmount = (float)score / Const.MAX_EXP;
-        int quotient = (int)fillAmount + 1;
-        SetLevel(quotient);
-        int remainder = score % Const.MAX_EXP;
-        FiledExp.fillAmount = (float)remainder / Const.MAX_EXP;
+        FiledGift.fillAmount = (float)saveScore / Const.MAX_GIFT;
+        GiftCount.text = giftCount.ToString();
     }
 
-    public void SetScore(int score)
+
+    private void UpdateGiftIcon()
     {
-        if(currentScore)
+        offGift.SetActive(saveScore < Const.MAX_GIFT);
+        onGift.SetActive(saveScore >= Const.MAX_GIFT);
+        SetGift();
+    }
+
+    public void SetScore(int score, int addScore)
+    {
+        saveScore += addScore;
+        UpdateGiftIcon();
+        if (currentScore)
         {
             currentScore.text = score.ToString();
         }
@@ -233,5 +246,20 @@ public class MainScreen : MonoBehaviour, IAndroidBackButton
         {
             ShowShopPopup();
         }
+    }
+
+    //동전 획득 연출
+    public void CreateCoinEffect(Vector3 startPos)
+    {
+        for(int i = 0; i < Const.COIN_EFFECT_COUNT; ++i)
+        {
+            StartCoroutine(CreateCoin(startPos, coinIcon.transform.position, i));
+        }
+    }
+
+    IEnumerator CreateCoin(Vector3 startPos, Vector3 endPos, int index)
+    {
+        yield return new WaitForSeconds(0.1f * index);
+        CoinGenerator.Instance.CreateCoinEffect(startPos, endPos);
     }
 }

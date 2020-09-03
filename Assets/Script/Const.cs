@@ -13,10 +13,16 @@ public class Const
     public const int GRID_COLUMN_COUNT = 7;
     public const int GRID_ROW_COUNT = 7;
 
-    public const int MAX_EXP = 200;
+    public const int START_BLOCK_RANGE = 4;
 
-    //레벨업 획득 코인
-    public const int LEVEL_COIN = 5;
+    //기프트 점수 
+    public const int MAX_GIFT = 500;
+
+    //기프트 획득 인
+    public const int GIFT_COIN = 10;
+
+    public const int COIN_EFFECT_COUNT = 5;
+
     //가격
     public const int HAMMER_PRICE = 30;
     public const int BLOCK_NEXT_PRICE = 25;

@@ -36,8 +36,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 43, y: 0}
-  m_SizeDelta: {x: 80, y: 80}
+  m_AnchoredPosition: {x: 41, y: 0}
+  m_SizeDelta: {x: 78, y: 78}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &2587813021060799421
 CanvasRenderer:
@@ -101,7 +101,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 80, y: 80}
+  m_Size: {x: 78, y: 78}
   m_EdgeRadius: 0
 --- !u!114 &1036138854953307829
 MonoBehaviour:
@@ -115,6 +115,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aca505600105ad54b97fc6e035d5fe1f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  mainImg: {fileID: 0}
+  imgX: {fileID: 0}
+  hammer: {fileID: 0}
+  data:
+    mergeLast: 0
 --- !u!1 &8011704158794097101
 GameObject:
   m_ObjectHideFlags: 0
@@ -142,7 +147,7 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8011704158794097101}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -269,8 +274,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -40, y: 0}
-  m_SizeDelta: {x: 80, y: 80}
+  m_AnchoredPosition: {x: -41, y: 0}
+  m_SizeDelta: {x: 78, y: 78}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8011704160679233891
 CanvasRenderer:
@@ -334,7 +339,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 80, y: 80}
+  m_Size: {x: 78, y: 78}
   m_EdgeRadius: 0
 --- !u!114 &8347834371812305218
 MonoBehaviour:
@@ -348,3 +353,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aca505600105ad54b97fc6e035d5fe1f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  mainImg: {fileID: 0}
+  imgX: {fileID: 0}
+  hammer: {fileID: 0}
+  data:
+    mergeLast: 0

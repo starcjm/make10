@@ -33,6 +33,7 @@ public class BlockGenerator : Singleton<BlockGenerator>
             block.data.blockType = gridData.blockType;
             block.data.column = gridData.column;
             block.data.row = gridData.row;
+            block.data.key = BlockDefine.GetGridKey(gridData.column, gridData.row);
             block.ShowImgX(false);
         }
         Image image = cloneBlock.GetComponent<Image>();
@@ -45,8 +46,7 @@ public class BlockGenerator : Singleton<BlockGenerator>
             }
             image.sprite = blockSprite[value];
         }
-        int key = BlockDefine.GetGridKey(block.data.column, block.data.row);
-        GameManager.Instance.AddBlockData(key, cloneBlock);
+        GameManager.Instance.AddBlockData(block.data.key, cloneBlock);
         return cloneBlock;
     }
 

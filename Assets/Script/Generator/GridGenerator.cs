@@ -28,6 +28,7 @@ public class GridGenerator : Singleton<GridGenerator>
                     grid.data.row = i + 1;
                     grid.data.blockType = E_BLOCK_TYPE.NONE;
                     int key = BlockDefine.GetGridKey(grid.data.column, grid.data.row);
+                    grid.data.key = key;
                     GameManager.Instance.AddGridData(key, cloneGrid);
                 }
             }
