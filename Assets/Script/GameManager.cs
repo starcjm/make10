@@ -34,7 +34,7 @@ public class GameManager : Singleton<GameManager>
     //현재 생성될 블록의 최대값
     private int blockRange = 4;
     //콤보 저장용 카운트
-    public int comboCount = 0;
+    private int comboCount = 0;
     //현재 점수
     private int currentScore = 0;
 
@@ -97,20 +97,6 @@ public class GameManager : Singleton<GameManager>
         if (mergeCheckBlockQueue.Contains(block))
         {
             mergeCheckBlockQueue.Remove(block);
-            //mergeCheckBlockQueue.Sort(delegate (Block A, Block B)
-            //{
-            //    Block gridA = A;
-            //    Block gridB = B;
-            //    if (gridA.data.blockType < gridB.data.blockType)
-            //    {
-            //        return 1;
-            //    }
-            //    else if (gridA.data.blockType > gridB.data.blockType)
-            //    {
-            //        return -1;
-            //    }
-            //    return 0;
-            //});
         }
     }
 
@@ -156,6 +142,7 @@ public class GameManager : Singleton<GameManager>
             ScoreGenerator.Instance.CreateComboEffect(effectLayer.transform,
                                                   mainScreen.BgGrid.transform.position, comboCount);
         }
+        ComboInit();
     }
 
     public void AddCoin(int coin)
@@ -360,27 +347,31 @@ public class GameManager : Singleton<GameManager>
         }
     }
 
-    //모양 블럭 그리드에 넣었을때 머지 체크 시작
+    public void ComboInit()
+    {
+        comboCount = 0;
+    }
+
+    //머지 체크 시작
     public void MergeCheckStart()
     {
         if(mergeCheckBlockQueue.Count > 0)
         {
             var block = mergeCheckBlockQueue[0];
             RemoveMergeQueue(block);
-            //머지 체크 시작
             MergeDelayCheck(block);
         }
         else
         {
             ComboEffect();
-            GameOverCheck(NextBlock);
+            NextShapeBlock();
+            GameOverCheck(currentBlock);
         }
     }
 
     //여러 블럭이 동시에 합쳐질 경우 연출을 위한 딜레이
     public void MergeDelayCheck(Block block)
     {
-        
         BlockCalculate blockCalculate = new BlockCalculate();
         blockCalculate.CheckBlock(block.data, true);
         if (MergeCheck(blockCalculate.GetMergeData()))
@@ -404,11 +395,6 @@ public class GameManager : Singleton<GameManager>
         {
             //머지가 된다면 콤보 추가
             ++comboCount;
-        }
-        else
-        {
-            //머지할 블록이 없을때
-            GameOverCheck(NextBlock);
         }
     }
 
@@ -442,6 +428,7 @@ public class GameManager : Singleton<GameManager>
         else
         {
             //별모양 터트렸을때 효과
+            NextShapeBlock();
             calc.StarBlockEffect();
             var starBlocks = calc.GetStarBlockEffect();
             ChangeStarblock(starBlocks);

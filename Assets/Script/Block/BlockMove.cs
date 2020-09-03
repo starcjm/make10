@@ -351,11 +351,8 @@ public class BlockMove : MonoBehaviour, IDragHandler, IEndDragHandler,
                 }
             }
         }
-        //콤보 초기화
-        GameManager.Instance.comboCount = 0;
         //머지 검사할 데이터 넣어주고 검사 시작
         GameManager.Instance.MergeCheckStart();
-        //GameManager.Instance.MergeDelayCheck(tempGrids);
     }
 
     private void CheckDropShapeObject()
@@ -374,8 +371,6 @@ public class BlockMove : MonoBehaviour, IDragHandler, IEndDragHandler,
                 //모양 블록 매칭
                 BlockSendQuque(tempGrids);
 
-                //드랍이 되면 새 모양 블록 만들어주고 자신 삭제
-                CreateNextShapeBlock();
                 Destroy(this.gameObject);
             }
             else
@@ -397,11 +392,6 @@ public class BlockMove : MonoBehaviour, IDragHandler, IEndDragHandler,
             }
         }
         alphaShapeBlock.Clear();
-    }
-
-    public void CreateNextShapeBlock()
-    {
-        GameManager.Instance.NextShapeBlock(); 
     }
 
     //드래그 후에 데이터 초기화

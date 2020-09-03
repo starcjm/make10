@@ -105,25 +105,6 @@ public class BlockCalculate
         }
     }
 
-    //머지될떄 움직이고 비활성화
-    //public int MergeBlockLastCheck()
-    //{
-    //    //스타트 블럭 포함해서 계산
-    //    if(mergeBlock.Count + 1 >= BlockDefine.MERGE_COUNT)
-    //    {
-    //        for (int i = 0; i < mergeBlock.Count; ++i)
-    //        {
-    //            var block = mergeBlock[i];
-    //            if (block.data.mergeLast)
-    //            {
-    //                //마지막 블록이라면 같은 블록 같이 잇는 옆 칸으로 이동
-    //                MergeBlockNearMove(block);
-    //            }
-    //        }
-    //    }
-    //    return mergeBlock.Count;
-    //}
-
     public bool MergeBlockLastCheck()
     {
         //스타트 블럭 포함해서 계산
