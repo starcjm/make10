@@ -10,6 +10,7 @@ public class GridGenerator : Singleton<GridGenerator>
     public GameObject BgGrid;
     //bg 블록 프리팹
     public GameObject prefabBlock;
+    public Queue<int> nema;
 
     public void Init()
     {

@@ -34,7 +34,7 @@ public class GameManager : Singleton<GameManager>
     //현재 생성될 블록의 최대값
     private int blockRange = 4;
     //콤보 저장용 카운트
-    private int comboCount = 0;
+    public int comboCount = 0;
     //현재 점수
     private int currentScore = 0;
 
@@ -45,6 +45,9 @@ public class GameManager : Singleton<GameManager>
     private Dictionary<int, GameObject> blockObject = new Dictionary<int, GameObject>();
     //key = 그리드 키,  value = 그리드 오브젝트 
     private Dictionary<int, GameObject> gridObject = new Dictionary<int, GameObject>();
+
+    //머지 체크 해야할 블럭
+    private List<Block> mergeCheckBlockQueue = new List<Block>();
 
     //게임 상태(유아이 설정)
     private E_GAME_STATE gameState = E_GAME_STATE.GAME;
@@ -64,6 +67,51 @@ public class GameManager : Singleton<GameManager>
         SetBlockblockRangeMax(Const.START_BLOCK_RANGE);
         InitCreateShapeBlock();
         SetGameState(E_GAME_STATE.GAME);
+    }
+
+    //머지 할 데이터 큐에 저장
+    public void AddMergeQueue(Block block)
+    {
+        if(!mergeCheckBlockQueue.Contains(block))
+        {
+            mergeCheckBlockQueue.Add(block);
+            mergeCheckBlockQueue.Sort(delegate (Block A, Block B)
+            {
+                Block gridA = A;
+                Block gridB = B;
+                if (gridA.data.blockType < gridB.data.blockType)
+                {
+                    return -1;
+                }
+                else if (gridA.data.blockType > gridB.data.blockType)
+                {
+                    return 1;
+                }
+                return 0;
+            });
+        }
+    }
+
+    public void RemoveMergeQueue(Block block)
+    {
+        if (mergeCheckBlockQueue.Contains(block))
+        {
+            mergeCheckBlockQueue.Remove(block);
+            //mergeCheckBlockQueue.Sort(delegate (Block A, Block B)
+            //{
+            //    Block gridA = A;
+            //    Block gridB = B;
+            //    if (gridA.data.blockType < gridB.data.blockType)
+            //    {
+            //        return 1;
+            //    }
+            //    else if (gridA.data.blockType > gridB.data.blockType)
+            //    {
+            //        return -1;
+            //    }
+            //    return 0;
+            //});
+        }
     }
 
     public void SetGameState(E_GAME_STATE state)
@@ -284,7 +332,7 @@ public class GameManager : Singleton<GameManager>
     }
 
     //그리드위에 배치할 블록 생성
-    public void CreateGridOverBlock(GridData gridData, Vector3 gridPos, bool scaleAni = false)
+    public GameObject CreateGridOverBlock(GridData gridData, Vector3 gridPos, bool scaleAni = false)
     {
         if (shapeBlockPos)
         {
@@ -295,7 +343,9 @@ public class GameManager : Singleton<GameManager>
                 block.transform.localScale = Vector3.one * BlockDefine.BLOCK_SCALE_SIZE;
                 block.transform.DOScale(Vector3.one, 0.3f);
             }
+            return block;
         }
+        return null;
     }
 
     //현재 화면에 생성될 블록의 최대값 설정
@@ -310,66 +360,65 @@ public class GameManager : Singleton<GameManager>
         }
     }
 
-    //여러 블럭이 동시에 합쳐질 경우 연출을 위한 딜레이
-    public void MergeDelayCheck(List<GameObject> tempGrids)
+    //모양 블럭 그리드에 넣었을때 머지 체크 시작
+    public void MergeCheckStart()
     {
-        //블록 놓일떄 콤보 초기화
-        comboCount = 0;
-        int mergeCount = 0;
-        for (int i = 0; i < tempGrids.Count; ++i)
+        if(mergeCheckBlockQueue.Count > 0)
         {
-            Grid grid = tempGrids[i].GetComponent<Grid>();
-            if (blockObject.ContainsKey(grid.data.key))
-            {
-                Block block = blockObject[grid.data.key].GetComponent<Block>();
-                if (block)
-                {
-                    BlockCalculate blockCalculate = new BlockCalculate();
-                    blockCalculate.CheckBlock(block.data, true);
-                    if (MergeCheck(blockCalculate.GetMergeData()))
-                    {
-                        ++mergeCount;
-                        StartCoroutine(MergeBlockDelay(grid.data.column, grid.data.row,
-                            BlockDefine.MERGE_DELAY_TIME * (mergeCount)));
-                    }
-                }
-            }
+            var block = mergeCheckBlockQueue[0];
+            RemoveMergeQueue(block);
+            //머지 체크 시작
+            MergeDelayCheck(block);
         }
-        //블록 놓았을떄 머지할 블럭이 없을때
-        if(mergeCount == 0)
+        else
         {
+            ComboEffect();
             GameOverCheck(NextBlock);
         }
     }
 
-    //블록 놓인곳 검사
-    public void MergeCheck(int column, int row)
+    //여러 블럭이 동시에 합쳐질 경우 연출을 위한 딜레이
+    public void MergeDelayCheck(Block block)
     {
-        int key = BlockDefine.GetGridKey(column, row);
-        if (blockObject.ContainsKey(key))
+        
+        BlockCalculate blockCalculate = new BlockCalculate();
+        blockCalculate.CheckBlock(block.data, true);
+        if (MergeCheck(blockCalculate.GetMergeData()))
         {
-            Block block = blockObject[key].GetComponent<Block>();
-            if(block)
-            {
-                BlockCalculate blockCalculate = new BlockCalculate();
-                blockCalculate.SetStartBlock(block);
-                blockCalculate.CheckBlock(block.data, false);
-                int blockCount = blockCalculate.MergeBlockLastCheck();
-                if(blockCount + 1 >= BlockDefine.MERGE_COUNT)
-                { 
-                    //머지가 된다면 콤보 추가
-                    ++comboCount; 
-                }
-                else
-                {
-                    ComboEffect();
-                    //머지할 블록이 없을때
-                    GameOverCheck(NextBlock);
-                }
-            }
+            StartCoroutine(MergeBlockDelay(block,
+                BlockDefine.MERGE_DELAY_TIME));
+        }
+        else
+        {
+            //머지할 블록이 없다면 다음 블록
+            MergeCheckStart();
         }
     }
 
+    public void MergeCheck(Block block)
+    {
+        BlockCalculate blockCalculate = new BlockCalculate();
+        blockCalculate.SetStartBlock(block);
+        blockCalculate.CheckBlock(block.data, false);
+        if (blockCalculate.MergeBlockLastCheck())
+        {
+            //머지가 된다면 콤보 추가
+            ++comboCount;
+        }
+        else
+        {
+            //머지할 블록이 없을때
+            GameOverCheck(NextBlock);
+        }
+    }
+
+    IEnumerator MergeBlockDelay(Block block, float time)
+    {
+        yield return new WaitForSeconds(time);
+        MergeCheck(block);
+    }
+
+    //머지된 블럭들 연출후 실제 데이터 삭제
     public void MergeCompleteRemoveblock(List<Block> mergeData, Block block, BlockCalculate calc)
     {
         MergeBlockRemove(mergeData);
@@ -382,18 +431,21 @@ public class GameManager : Singleton<GameManager>
                 //그리드에 올릴 블럭 타입 설정 하고 생성
                 var grid = gridObject[block.data.key].GetComponent<Grid>();
                 grid.data.blockType = block.data.blockType + 1;
-                CreateGridOverBlock(grid.data, gridObject[block.data.key].transform.position, true);
-                StartCoroutine(MergeBlockDelay(block.data.column, block.data.row, 
-                                                BlockDefine.MERGE_DELAY_TIME));
+                var gridOverBlock = CreateGridOverBlock(grid.data, gridObject[block.data.key].transform.position, true);
+
+
+                //새로운 블록 머지 큐에 넣어주고 머지 스타트
+                AddMergeQueue(gridOverBlock.GetComponent<Block>());
+                MergeCheckStart();
             }
         }
         else
         {
             //별모양 터트렸을때 효과
             calc.StarBlockEffect();
-            var blocks = calc.GetStarBlockEffect();
-            ChangeStarblock(blocks);
-            StartCoroutine(StarBlockRemoveDelay(blocks));
+            var starBlocks = calc.GetStarBlockEffect();
+            ChangeStarblock(starBlocks);
+            StartCoroutine(StarBlockRemoveDelay(starBlocks));
         }
     }
 
@@ -417,12 +469,6 @@ public class GameManager : Singleton<GameManager>
         MergeBlockRemove(mergeBlock);
     }
 
-    IEnumerator MergeBlockDelay(int column, int row, float time)
-    {
-        yield return new WaitForSeconds(time);
-        MergeCheck(column, row);
-    }
-
     //머지 데이터 체크용
     private bool MergeCheck(List<Block> mergeBlock)
     {
@@ -442,8 +488,9 @@ public class GameManager : Singleton<GameManager>
             SoundManager.Instance.PlaySFX(E_SFX.BLOCK_MERGE);
             for (int i = 0; i < mergeBlock.Count; ++i)
             {
-                var blockTyp = gridObject[mergeBlock[i].data.key].GetComponent<Grid>().data.blockType;
+                var blockTyp = mergeBlock[i].data.blockType;
                 totalScore += (int)blockTyp;
+                RemoveMergeQueue(mergeBlock[i]);
                 RemoveBlockData(mergeBlock[i].data.key);
             }
             AddScore(totalScore, mergeBlock[0].data.key);

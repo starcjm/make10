@@ -320,7 +320,7 @@ public class BlockMove : MonoBehaviour, IDragHandler, IEndDragHandler,
     }
 
     //블록 매칭
-    private void BlockMatching(List<GameObject> tempGrids)
+    private void BlockSendQuque(List<GameObject> tempGrids)
     {
         tempGrids.Sort(delegate (GameObject A, GameObject B)
         {
@@ -336,7 +336,26 @@ public class BlockMove : MonoBehaviour, IDragHandler, IEndDragHandler,
             }
             return 0;
         });
-        GameManager.Instance.MergeDelayCheck(tempGrids);
+        
+        //큐에 머지확인해야할 블록 데이터 보내고 
+        for(int i = 0; i < tempGrids.Count; ++i)
+        {
+            var grid = tempGrids[i].GetComponent<Grid>();
+            if(grid)
+            {
+                var blocks = GameManager.Instance.GetBlockObject();
+                if(blocks.ContainsKey(grid.data.key))
+                {
+                    var block = blocks[grid.data.key].GetComponent<Block>();
+                    GameManager.Instance.AddMergeQueue(block);
+                }
+            }
+        }
+        //콤보 초기화
+        GameManager.Instance.comboCount = 0;
+        //머지 검사할 데이터 넣어주고 검사 시작
+        GameManager.Instance.MergeCheckStart();
+        //GameManager.Instance.MergeDelayCheck(tempGrids);
     }
 
     private void CheckDropShapeObject()
@@ -353,7 +372,7 @@ public class BlockMove : MonoBehaviour, IDragHandler, IEndDragHandler,
                 //모양 블록 배치
                 DropObject(tempGrids);
                 //모양 블록 매칭
-                BlockMatching(tempGrids);
+                BlockSendQuque(tempGrids);
 
                 //드랍이 되면 새 모양 블록 만들어주고 자신 삭제
                 CreateNextShapeBlock();
