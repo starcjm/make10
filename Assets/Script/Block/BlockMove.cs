@@ -31,8 +31,6 @@ public class BlockMove : MonoBehaviour, IDragHandler, IEndDragHandler,
     private bool isTouch = false;
     //모양 블럭이 드래그 할떄 손에 가려져서 살짝 위로
     private float dragYDelta = 1.0f;
-    //선행 블록일때는 터지 안되야댐
-    private bool isTouchFlag = false;
     //회전중 다시 회전 금지
     private bool isRot = false;
     //모양 블럭 회전 시간
@@ -42,11 +40,6 @@ public class BlockMove : MonoBehaviour, IDragHandler, IEndDragHandler,
 
     //알파적용된 모양블럭 
     private Dictionary<int, AlphaBlock> alphaShapeBlock = new Dictionary<int, AlphaBlock>();
-
-    public void SetTouchFlag(bool flag)
-    {
-        isTouchFlag = flag;
-    }
 
     private void TouchInit()
     {
@@ -73,19 +66,16 @@ public class BlockMove : MonoBehaviour, IDragHandler, IEndDragHandler,
         {
             return;
         }
-        if (isTouchFlag)
+        if (shapeType != E_BLOCK_SHAPE_TYPE.ONE)
         {
-            if (shapeType != E_BLOCK_SHAPE_TYPE.ONE)
+            isTouch = true;
+            if (isTouch)
             {
-                isTouch = true;
-                if (isTouch)
-                {
-                    Invoke("TouchInit", touchInitTime);
-                }
-                Vector3 pos = Camera.main.ScreenToWorldPoint(touchPos);
-                pos.z = 0;
-                touchOriPos = pos;
+                Invoke("TouchInit", touchInitTime);
             }
+            Vector3 pos = Camera.main.ScreenToWorldPoint(touchPos);
+            pos.z = 0;
+            touchOriPos = pos;
         }
     }
 
@@ -104,34 +94,32 @@ public class BlockMove : MonoBehaviour, IDragHandler, IEndDragHandler,
         {
             return;
         }
-        if (isTouchFlag)
+
+        //타겟 블럭 터치 할떄 -90도씩 회전
+        if (!isRot && isTouch && shapeType != E_BLOCK_SHAPE_TYPE.ONE)
         {
-            //타겟 블럭 터치 할떄 -90도씩 회전
-            if (!isRot && isTouch && shapeType != E_BLOCK_SHAPE_TYPE.ONE)
+            SoundManager.Instance.PlaySFX(E_SFX.SHAPE_BLOCK_ROT);
+            Vector3 pos = Camera.main.ScreenToWorldPoint(touchPos);
+            pos.z = 0;
+            float tempDis = math.distance(touchOriPos, (Vector2)pos);
+            if (tempDis < touchRecognitionDis)
             {
-                SoundManager.Instance.PlaySFX(E_SFX.SHAPE_BLOCK_ROT);
-                Vector3 pos = Camera.main.ScreenToWorldPoint(touchPos);
-                pos.z = 0;
-                float tempDis = math.distance(touchOriPos, (Vector2)pos);
-                if (tempDis < touchRecognitionDis)
+                //터치 했을때 모양 블록 회전
+                isRot = true;
+                var tween = TweenRot(transform, rotTime, new Vector3(0.0f, 0.0f, -90.0f));
+                tween.OnUpdate(() =>
                 {
-                    //터치 했을때 모양 블록 회전
-                    isRot = true;
-                    var tween = TweenRot(transform, rotTime, new Vector3(0.0f, 0.0f, -90.0f));
-                    tween.OnUpdate(() =>
+                    for (int i = 0; i < transform.childCount; ++i)
                     {
-                        for (int i = 0; i < transform.childCount; ++i)
-                        {
-                            var block = transform.GetChild(i);
-                            //하위 오브젝트의 방향은 위
-                            block.rotation = quaternion.Euler(0.0f, 0.0f, 0.0f);
-                        }
-                    });
-                    tween.OnComplete(() =>
-                    {
-                        isRot = false;
-                    });
-                }
+                        var block = transform.GetChild(i);
+                        //하위 오브젝트의 방향은 위
+                        block.rotation = quaternion.Euler(0.0f, 0.0f, 0.0f);
+                    }
+                });
+                tween.OnComplete(() =>
+                {
+                    isRot = false;
+                });
             }
         }
     }
@@ -163,23 +151,20 @@ public class BlockMove : MonoBehaviour, IDragHandler, IEndDragHandler,
         {
             return;
         }
-        if (isTouchFlag)
+        if (!isTouch)
         {
-            if (!isTouch)
+            if(!dragSoundFlag)
             {
-                if(!dragSoundFlag)
-                {
-                    dragSoundFlag = true;
-                    SoundManager.Instance.PlaySFX(E_SFX.SHAPE_BLOCK_UP);
-                }
-                
-                Vector3 pos = Camera.main.ScreenToWorldPoint(touchPos);
-                pos.z = 0;
-                pos.y += dragYDelta;
-                transform.position = pos;
-                transform.localScale = Vector3.one;
-                CheckAlphaBlock();
+                dragSoundFlag = true;
+                SoundManager.Instance.PlaySFX(E_SFX.SHAPE_BLOCK_UP);
             }
+                
+            Vector3 pos = Camera.main.ScreenToWorldPoint(touchPos);
+            pos.z = 0;
+            pos.y += dragYDelta;
+            transform.position = pos;
+            transform.localScale = Vector3.one;
+            CheckAlphaBlock();
         }
     }
 
@@ -357,27 +342,25 @@ public class BlockMove : MonoBehaviour, IDragHandler, IEndDragHandler,
 
     private void CheckDropShapeObject()
     {
-        if (isTouchFlag)
-        {
-            //현재 드래그 하고 있는 블록들 검사용 공간
-            List<GameObject> tempGrids = new List<GameObject>();
-            //모양 블록과 그리드공간에 매칭 검사
-            GridCheck(ref tempGrids);
-            //모양 블록 갯수와 그리드 빈공간의 갯수가 일치 하다면 그리드에 블록 배치
-            if (tempGrids.Count == transform.childCount)
-            {
-                //모양 블록 배치
-                DropObject(tempGrids);
-                //모양 블록 매칭
-                BlockSendQuque(tempGrids);
 
-                Destroy(this.gameObject);
-            }
-            else
-            {
-                //블록 중에 하나라도 안맞는다면 리셋
-                DragDataReset();
-            }
+        //현재 드래그 하고 있는 블록들 검사용 공간
+        List<GameObject> tempGrids = new List<GameObject>();
+        //모양 블록과 그리드공간에 매칭 검사
+        GridCheck(ref tempGrids);
+        //모양 블록 갯수와 그리드 빈공간의 갯수가 일치 하다면 그리드에 블록 배치
+        if (tempGrids.Count == transform.childCount)
+        {
+            //모양 블록 배치
+            DropObject(tempGrids);
+            //모양 블록 매칭
+            BlockSendQuque(tempGrids);
+
+            Destroy(this.gameObject);
+        }
+        else
+        {
+            //블록 중에 하나라도 안맞는다면 리셋
+            DragDataReset();
         }
     }
     

@@ -58,7 +58,7 @@ public class UserInfo : Singleton<UserInfo>
         else
         {
             Sound = (int)E_SOUND_SET.ON;
-            //SoundManager.Instance.PlayBGM(E_BGM.BGM_ONE);
+            SoundManager.Instance.PlayBGM(E_BGM.BGM_ONE);
         }
     }
 

@@ -32,7 +32,8 @@ public class SoundManager : Singleton<SoundManager>
 
     public void Init()
     {       
-        float volume = PlayerPrefs.GetFloat("volumeBGM", 1);
+        float volume = PlayerPrefs.GetFloat("volumeBGM", 0.7f);
+        volume = 0.3f;
 
         var _bgmAudioSource = new GameObject("bgmSource");
         _bgmAudioSource.transform.SetParent(Instance.transform);
@@ -55,7 +56,7 @@ public class SoundManager : Singleton<SoundManager>
         }
         if(UserInfo.Instance.IsSound())
         {
-            //PlayBGM(E_BGM.BGM_ONE);
+            PlayBGM(E_BGM.BGM_ONE);
         }
         else
         {

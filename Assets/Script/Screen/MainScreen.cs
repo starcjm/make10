@@ -16,15 +16,15 @@ public class MainScreen : MonoBehaviour, IAndroidBackButton
     //최대 점수
     public Text highScore;
 
-    public Text Level;
     public Text Coin;
 
     public Text HammerCoin;
     public Text NextBlockCoin;
 
-    public Text GiftCount; 
-
     public Image FiledGift;
+
+    public GameObject onHammer;
+    public GameObject offHammer;
 
     public GameObject offGift;
     public GameObject onGift;
@@ -47,9 +47,6 @@ public class MainScreen : MonoBehaviour, IAndroidBackButton
 
     //획득한 점수
     public int saveScore = 0;
-
-    //기프트 카운트 (획득할떄마다 증가)
-    private int giftCount = 1;
 
     private void Start()
     {
@@ -109,6 +106,13 @@ public class MainScreen : MonoBehaviour, IAndroidBackButton
         Main.SetActive(on);
     }
 
+    public void OpenShopPopup(PopupShop.E_SHOP_TYPE type)
+    {
+        Shop.GetComponent<PopupShop>().SetShopType(type);
+        GameManager.Instance.SetGameState(E_GAME_STATE.SHOP);
+        Shop.SetActive(true);
+    }
+
     public void ShowSettingPopup()
     {
         SoundManager.Instance.PlaySFX(E_SFX.BUTTON);
@@ -129,17 +133,12 @@ public class MainScreen : MonoBehaviour, IAndroidBackButton
     public void ShowShopPopup()
     {
         SoundManager.Instance.PlaySFX(E_SFX.BUTTON);
-        if (GameManager.Instance.GetState() == E_GAME_STATE.GAME)
-        {
-            GameManager.Instance.SetGameState(E_GAME_STATE.PAUSE);
-            Shop.SetActive(true);
-        }
+        OpenShopPopup(PopupShop.E_SHOP_TYPE.IN_GAME);
     }
 
     public void ShowGiftPopup()
     {
         saveScore = 0;
-        ++giftCount;
         UpdateGiftIcon();
         var giftPopup = Gift.GetComponent<PopupGift>();
         if(giftPopup)
@@ -153,6 +152,7 @@ public class MainScreen : MonoBehaviour, IAndroidBackButton
     {
         GameManager.Instance.SetGameState(E_GAME_STATE.PAUSE);
         GameOver.SetActive(true);
+        GameOver.GetComponent<PopupGameOver>().SetTimer();
     }
 
     public void ShowGameEnd()
@@ -174,7 +174,6 @@ public class MainScreen : MonoBehaviour, IAndroidBackButton
     public void SetGift()
     {
         FiledGift.fillAmount = (float)saveScore / Const.MAX_GIFT;
-        GiftCount.text = giftCount.ToString();
     }
 
 
@@ -246,6 +245,12 @@ public class MainScreen : MonoBehaviour, IAndroidBackButton
         {
             ShowShopPopup();
         }
+    }
+
+    public void HammerIconState()
+    {
+        onHammer.SetActive(GameManager.Instance.GetState() == E_GAME_STATE.ITEM);
+        offHammer.SetActive(GameManager.Instance.GetState() != E_GAME_STATE.ITEM);
     }
 
     //동전 획득 연출

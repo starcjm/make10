@@ -5,7 +5,14 @@ using UnityEngine.UI;
 
 public class PopupShop : PopupBase
 {
+    public enum E_SHOP_TYPE
+    {
+        LOBBY,
+        IN_GAME,
+    }
+
     public MainScreen mainScreen;
+    public PopupMain popupMain;
 
     public Text CurrentCoin;
 
@@ -22,9 +29,16 @@ public class PopupShop : PopupBase
     public Text NoAds;
     public Text PriceNoAds;
 
+    private E_SHOP_TYPE shopType;
+
     public override void OnTouchAndroidBackButton()
     {
         OnTouchClose();
+    }
+
+    public void SetShopType(E_SHOP_TYPE type)
+    {
+        shopType = type;
     }
 
     private void Start()
@@ -57,7 +71,14 @@ public class PopupShop : PopupBase
     public void OnTouchClose()
     {
         SoundManager.Instance.PlaySFX(E_SFX.BUTTON);
-        GameManager.Instance.SetGameState(E_GAME_STATE.GAME);
+        if(shopType == E_SHOP_TYPE.LOBBY)
+        {
+            GameManager.Instance.SetGameState(E_GAME_STATE.PAUSE);
+        }
+        else if(shopType == E_SHOP_TYPE.IN_GAME)
+        {
+            GameManager.Instance.SetGameState(E_GAME_STATE.GAME);
+        }
         gameObject.SetActive(false);
     }
 
@@ -66,6 +87,7 @@ public class PopupShop : PopupBase
         GameManager.Instance.AddCoin(Const.ADS_COIN);
         mainScreen.SetCoin(UserInfo.Instance.Coin);
         CurrentCoin.text = UserInfo.Instance.Coin.ToString();
+        popupMain.SetCoin();
     }
 
     public void OnTouch200()
@@ -73,6 +95,7 @@ public class PopupShop : PopupBase
         GameManager.Instance.AddCoin(Const.COIN_200);
         mainScreen.SetCoin(UserInfo.Instance.Coin);
         CurrentCoin.text = UserInfo.Instance.Coin.ToString();
+        popupMain.SetCoin();
     }
 
     public void OnTouch500()
@@ -80,6 +103,7 @@ public class PopupShop : PopupBase
         GameManager.Instance.AddCoin(Const.COIN_500);
         mainScreen.SetCoin(UserInfo.Instance.Coin);
         CurrentCoin.text = UserInfo.Instance.Coin.ToString();
+        popupMain.SetCoin();
     }
 
     public void OnTouch1250()
@@ -87,6 +111,7 @@ public class PopupShop : PopupBase
         GameManager.Instance.AddCoin(Const.COIN_1250);
         mainScreen.SetCoin(UserInfo.Instance.Coin);
         CurrentCoin.text = UserInfo.Instance.Coin.ToString();
+        popupMain.SetCoin();
     }
 
     public void OnTouch3500()
@@ -94,6 +119,7 @@ public class PopupShop : PopupBase
         GameManager.Instance.AddCoin(Const.COIN_3500);
         mainScreen.SetCoin(UserInfo.Instance.Coin);
         CurrentCoin.text = UserInfo.Instance.Coin.ToString();
+        popupMain.SetCoin();
     }
 
     public void OnTouchNoADS()

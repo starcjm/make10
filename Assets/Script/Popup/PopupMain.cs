@@ -14,7 +14,10 @@ public class PopupMain : PopupBase
 
     public override void OnTouchAndroidBackButton()
     {
-        mainScreen.ShowGameEnd();
+        if(GameManager.Instance.GetState() != E_GAME_STATE.SHOP)
+        { 
+            mainScreen.ShowGameEnd();
+        }
     }
 
     public void SetCoin()
@@ -69,5 +72,16 @@ public class PopupMain : PopupBase
     {
         SoundManager.Instance.PlaySFX(E_SFX.BUTTON);
         mainScreen.ShowSettingPopup();
+    }
+
+    public void OnTouchAdsCoin()
+    {
+        SoundManager.Instance.PlaySFX(E_SFX.BUTTON);
+    }
+
+    public void OnTouchShop()
+    {
+        SoundManager.Instance.PlaySFX(E_SFX.BUTTON);
+        mainScreen.OpenShopPopup(PopupShop.E_SHOP_TYPE.LOBBY);
     }
 }

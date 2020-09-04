@@ -13,7 +13,7 @@ public class PopupGift : PopupBase
 
     private bool isTouchButton = false;
 
-    private float effectTime = 0.7f;
+    private float effectTime = 1.5f;
 
     public override void OnTouchAndroidBackButton()
     {
@@ -49,7 +49,7 @@ public class PopupGift : PopupBase
         {
             isTouchButton = true;
             GetGift();
-            coinIcon.SetActive(true);
+            Invoke("CoinIconActive", 0.7f);
             SetCoin(Const.GIFT_COIN * 2);
             GameManager.Instance.AddCoin(Const.GIFT_COIN * 2);
             SoundManager.Instance.PlaySFX(E_SFX.BUTTON);
@@ -64,12 +64,17 @@ public class PopupGift : PopupBase
         {
             isTouchButton = true;
             GetGift();
-            coinIcon.SetActive(true);
+            Invoke("CoinIconActive", 0.7f);
             SetCoin(Const.GIFT_COIN);
             GameManager.Instance.AddCoin(Const.GIFT_COIN);
             SoundManager.Instance.PlaySFX(E_SFX.BUTTON);
             Invoke("StartCoinEffect", effectTime);
         }
+    }
+
+    public void CoinIconActive()
+    {
+        coinIcon.SetActive(true);
     }
 
     public void StartCoinEffect()

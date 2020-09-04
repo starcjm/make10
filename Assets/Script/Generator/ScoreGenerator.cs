@@ -8,7 +8,7 @@ using UnityEngine;
 /// </summary>
 public class ScoreGenerator : Singleton<ScoreGenerator>
 {
-    private readonly float aniTime = 0.4f;
+    private readonly float aniTime = 1.0f;
     public GameObject prefabScore;
 
     public GameObject prefabCombo1;

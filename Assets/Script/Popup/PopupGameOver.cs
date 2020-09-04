@@ -4,9 +4,15 @@ using UnityEngine;
 
 public class PopupGameOver : PopupBase
 {
+
+    public void SetTimer()
+    {
+        Invoke("OnTouchGameOver", 1.5f);
+    }
+
     public override void OnTouchAndroidBackButton()
     {
-        OnTouchGameOver();
+        //OnTouchGameOver();
     }
 
     public void OnTouchGameOver()

@@ -4,11 +4,13 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public enum E_GAME_STATE
 {
     GAME,
     ITEM, //해머 아이템
+    SHOP,
     PAUSE,
 }
 
@@ -134,6 +136,13 @@ public class GameManager : Singleton<GameManager>
         };
         ScoreGenerator.Instance.CreateAddScore(effectLayer.transform, pos, score);
     }
+    
+    IEnumerator comboEffectDelay()
+    {
+        float comboDelayTiem = 0.8f;
+        yield return new WaitForSeconds(comboDelayTiem);
+        ComboEffect();
+    }
 
     private void ComboEffect()
     {
@@ -171,6 +180,7 @@ public class GameManager : Singleton<GameManager>
                 }
             }
         }
+        mainScreen.HammerIconState();
     }
 
     public void RemoveBlockData(int key)
@@ -219,6 +229,15 @@ public class GameManager : Singleton<GameManager>
         GridGenerator.Instance.Init();
     }
 
+    private void SetImageRay(GameObject imageObject, bool on)
+    {
+        var images = imageObject.GetComponentsInChildren<Image>();
+        for(int i = 0; i < images.Length; ++i)
+        {
+            images[i].raycastTarget = on;
+        }
+    }
+
     private void InitCreateShapeBlock()
     {
         if (shapeBlockPos)
@@ -226,22 +245,14 @@ public class GameManager : Singleton<GameManager>
             currentBlock = ShapeBlock();
             currentBlock.transform.localScale = Vector3.one * BlockDefine.SHAPE_BLOCK_SCALE;
             currentBlock.transform.position = shapeBlockPos.transform.position;
-            var blockMove = currentBlock.GetComponent<BlockMove>();
-            if (blockMove)
-            {
-                blockMove.SetTouchFlag(true);
-            }
+            SetImageRay(currentBlock, true);
         }
         if (shapeBlockPos)
         {
             NextBlock = ShapeBlock();
             NextBlock.transform.localScale = Vector3.one * BlockDefine.NEXT_SHAPE_BLOCK_SCALE;
             NextBlock.transform.position = nextShapeBlockPos.transform.position;
-            var blockMove = NextBlock.GetComponent<BlockMove>();
-            if (blockMove)
-            {
-                blockMove.SetTouchFlag(false);
-            }
+            SetImageRay(NextBlock, false);
         }
     }
 
@@ -253,22 +264,14 @@ public class GameManager : Singleton<GameManager>
             currentBlock = NextBlock;
             currentBlock.transform.localScale = Vector3.one * BlockDefine.SHAPE_BLOCK_SCALE;
             currentBlock.transform.position = shapeBlockPos.transform.position;
-            var blockMove = currentBlock.GetComponent<BlockMove>();
-            if (blockMove)
-            {
-                blockMove.SetTouchFlag(true);
-            }
+            SetImageRay(currentBlock, true);
         }
         if (nextShapeBlockPos)
         {
             NextBlock = ShapeBlock();
             NextBlock.transform.localScale = Vector3.one * BlockDefine.NEXT_SHAPE_BLOCK_SCALE;
             NextBlock.transform.position = nextShapeBlockPos.transform.position;
-            var blockMove = NextBlock.GetComponent<BlockMove>();
-            if (blockMove)
-            {
-                blockMove.SetTouchFlag(false);
-            }
+            SetImageRay(NextBlock, false);
         }
     }
 
@@ -363,7 +366,7 @@ public class GameManager : Singleton<GameManager>
         }
         else
         {
-            ComboEffect();
+            StartCoroutine(comboEffectDelay());
             NextShapeBlock();
             GameOverCheck(currentBlock);
         }
@@ -428,7 +431,6 @@ public class GameManager : Singleton<GameManager>
         else
         {
             //별모양 터트렸을때 효과
-            NextShapeBlock();
             calc.StarBlockEffect();
             var starBlocks = calc.GetStarBlockEffect();
             ChangeStarblock(starBlocks);
@@ -452,8 +454,9 @@ public class GameManager : Singleton<GameManager>
     //블록 관련 타이밍 조절 함수들
     IEnumerator StarBlockRemoveDelay(List<Block> mergeBlock)
     {
-        yield return new WaitForSeconds(BlockDefine.MERGE_DELAY_TIME * 2.0f);
+        yield return new WaitForSeconds(BlockDefine.MERGE_DELAY_TIME * 4.0f);
         MergeBlockRemove(mergeBlock);
+        MergeCheckStart();
     }
 
     //머지 데이터 체크용

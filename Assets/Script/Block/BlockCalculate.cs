@@ -31,7 +31,7 @@ public class BlockCalculate
     private bool isLast = false;
 
     //블록 움직임 시간
-    private readonly float moveTime = 0.08f;
+    private readonly float moveTime = 0.17f;
 
     public void SetStartBlock(Block block)
     {
