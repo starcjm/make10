@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Unity.Mathematics;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 /// <summary>
@@ -52,9 +53,8 @@ public class MainScreen : MonoBehaviour, IAndroidBackButton
     {
         if(UserInfo.Instance.isRetry)
         {
-            UserInfo.Instance.isRetry = false;
-            GameStart();
             SetMainPopup(false);
+            GameStart();
         }
     }
 
@@ -220,7 +220,10 @@ public class MainScreen : MonoBehaviour, IAndroidBackButton
 
     public void GameClose()
     {
-        GameManager.Instance.GameClose();
+        UserInfo.Instance.InitUserData();
+        Destroy(UserInfo.Instance.gameObject);
+        PlayerPrefs.DeleteAll();
+        SceneManager.LoadScene((int)E_SCENE.SPLASH);
     }
 
     public void ShowContinuePopup(int score)

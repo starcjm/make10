@@ -21,6 +21,8 @@ public class Const
     //기프트 획득 인
     public const int GIFT_COIN = 10;
 
+    public const int TUTORIAL_COIN = 100;
+
     public const int COIN_EFFECT_COUNT = 5;
 
     //가격

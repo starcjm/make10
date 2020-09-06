@@ -31,7 +31,7 @@ public class PopupPause : PopupBase
     public void OnTouchHome()
     {
         SoundManager.Instance.PlaySFX(E_SFX.BUTTON);
-        SceneManager.LoadScene(1);
+        SceneManager.LoadScene((int)E_SCENE.GAME);
     }
 
     public void OnTouchSound()

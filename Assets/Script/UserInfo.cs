@@ -12,11 +12,24 @@ public class UserInfo : Singleton<UserInfo>
         ON = 0,
         OFF,
     }
+
+    public enum E_TUTORIAL_SET
+    {
+        NO = 0,
+        YES,
+    }
     //세이브 파일 이름
-    private string LevelLabel = "LEVEL";
     private string HighScoreLabel = "HIGHSCORE";
     private string SoundLabel = "SOUND";
     private string CoinLabel = "COIN";
+    private string TutorialLabel = "TUTORIAL";
+
+    //튜토리얼 플래그 (true 면 튜로리얼 완료)
+    public bool isTutorial = false;
+    public bool IsTuroial()
+    {
+        return isTutorial;
+    }
 
     //재시작일 경우 플래그
     public bool isRetry = false;
@@ -28,6 +41,27 @@ public class UserInfo : Singleton<UserInfo>
     {
         return isSound;
     }
+
+    /// <summary>
+    /// 0이면 튜토리얼 안한거 1이면 한거 
+    /// </summary>
+    public int Tutorial
+    {
+        get { return PlayerPrefs.GetInt(TutorialLabel, 0); }
+        set
+        {
+            if (value == (int)E_TUTORIAL_SET.NO)
+            {
+                isTutorial = false;
+            }
+            else
+            {
+                isTutorial = true;
+            }
+            PlayerPrefs.SetInt(TutorialLabel, value);
+        }
+    }
+
     /// <summary>
     /// 0이면 사운드 온 1이면 오프
     /// </summary>
@@ -76,20 +110,6 @@ public class UserInfo : Singleton<UserInfo>
         }
     }
 
-    private int level = 0;
-    public int Level
-    {
-        get { return level; }
-        set
-        {
-            if (level < value)
-            {
-                level = value;
-                PlayerPrefs.SetInt(LevelLabel, level);
-            }
-        }
-    }
-
     private int coin = 0;
     public int Coin
     {
@@ -103,14 +123,23 @@ public class UserInfo : Singleton<UserInfo>
 
     private void Start()
     {
-        DontDestroyOnLoad(UserInfo.Instance);
+        DontDestroyOnLoad(Instance);
+    }
+
+    public void InitUserData()
+    {
+        Coin = 1000;
+        highScore = 0;
+        PlayerPrefs.SetInt(HighScoreLabel, highScore);
+        Sound = (int)E_SOUND_SET.ON;
+        Tutorial = (int)E_TUTORIAL_SET.NO;
     }
 
     public void LoadUserData()
     {
         coin = PlayerPrefs.GetInt(CoinLabel, 1000);
         HighScore = PlayerPrefs.GetInt(HighScoreLabel, 0);
-        Level = PlayerPrefs.GetInt(LevelLabel, 1);
         Sound = PlayerPrefs.GetInt(SoundLabel, 0);
+        Tutorial = PlayerPrefs.GetInt(TutorialLabel, 0);
     }
 }

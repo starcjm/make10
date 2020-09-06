@@ -54,14 +54,6 @@ public class SoundManager : Singleton<SoundManager>
             sfxSource[i].volume = volume;
             sfxSource[i].loop = false;
         }
-        if(UserInfo.Instance.IsSound())
-        {
-            PlayBGM(E_BGM.BGM_ONE);
-        }
-        else
-        {
-            StopBGM();
-        }
     }
 
     public void PlaySFX(E_SFX type)

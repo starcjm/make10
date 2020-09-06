@@ -11,11 +11,13 @@ public class PopupMessageBox : PopupBase
 
     public void OnTouchYes()
     {
+        SoundManager.Instance.PlaySFX(E_SFX.BUTTON);
         Application.Quit();
     }
 
     public void OnTouchNo()
     {
+        SoundManager.Instance.PlaySFX(E_SFX.BUTTON);
         gameObject.SetActive(false);
     }
 }

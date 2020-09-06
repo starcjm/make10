@@ -57,9 +57,18 @@ public class GameManager : Singleton<GameManager>
     private void Start()
     {
         ScreenInit();
+        //임시 스플래쉬 씬부터 하면 필요없음
         UserInfo.Instance.LoadUserData();
         SoundManager.Instance.Init();
-        SetGameState(E_GAME_STATE.PAUSE);
+        if (!UserInfo.Instance.isRetry)
+        {
+            SetGameState(E_GAME_STATE.PAUSE);
+        }
+        else
+        {
+            UserInfo.Instance.isRetry = false;
+        }
+        SoundManager.Instance.PlayBGM(E_BGM.BGM_ONE);
     }
 
     public void GameStart()
@@ -179,8 +188,8 @@ public class GameManager : Singleton<GameManager>
                     block.ShowImgX(isHammer);
                 }
             }
+            mainScreen.HammerIconState();
         }
-        mainScreen.HammerIconState();
     }
 
     public void RemoveBlockData(int key)
@@ -527,7 +536,7 @@ public class GameManager : Singleton<GameManager>
     public void Retry()
     {
         UserInfo.Instance.isRetry = true;
-        SceneManager.LoadScene(1);
+        SceneManager.LoadScene((int)E_SCENE.GAME);
     }
 
     public void GameClose()

@@ -48,11 +48,11 @@ public class PopupGift : PopupBase
         if(!isTouchButton)
         {
             isTouchButton = true;
+            SoundManager.Instance.PlaySFX(E_SFX.BUTTON);
             GetGift();
             Invoke("CoinIconActive", 0.7f);
             SetCoin(Const.GIFT_COIN * 2);
             GameManager.Instance.AddCoin(Const.GIFT_COIN * 2);
-            SoundManager.Instance.PlaySFX(E_SFX.BUTTON);
             Invoke("StartCoinEffect", effectTime);
             
         }
@@ -63,11 +63,11 @@ public class PopupGift : PopupBase
         if(!isTouchButton)
         {
             isTouchButton = true;
+            SoundManager.Instance.PlaySFX(E_SFX.BUTTON);
             GetGift();
             Invoke("CoinIconActive", 0.7f);
             SetCoin(Const.GIFT_COIN);
             GameManager.Instance.AddCoin(Const.GIFT_COIN);
-            SoundManager.Instance.PlaySFX(E_SFX.BUTTON);
             Invoke("StartCoinEffect", effectTime);
         }
     }
