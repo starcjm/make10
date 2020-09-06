@@ -2,6 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// 게임관련 상수 클래스
+/// </summary>
+/// 
 public class Const
 {
     public const int screenWidth = 720;

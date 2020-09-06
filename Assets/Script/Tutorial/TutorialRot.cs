@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// 튜토리얼 이미지 회전 클래스
+/// </summary>
 public class TutorialRot : MonoBehaviour
 {
     public float rotateSpeed = 0.1f;

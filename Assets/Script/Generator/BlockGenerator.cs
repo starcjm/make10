@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using Unity.Mathematics;
 
 /// <summary>
 /// 블럭 생성 클래스
@@ -60,6 +61,7 @@ public class BlockGenerator : Singleton<BlockGenerator>
         cloneBlock.transform.SetParent(parent);
         cloneBlock.transform.position = pos;
         cloneBlock.transform.localScale = Vector3.one;
+        cloneBlock.transform.rotation = quaternion.Euler(0.0f, 0.0f, 0.0f);
         var image = cloneBlock.transform.GetComponent<Image>();
         if(image)
         {
@@ -126,20 +128,20 @@ public class BlockGenerator : Singleton<BlockGenerator>
         switch (shppeType)
         {
             case E_BLOCK_SHAPE_TYPE.ONE:
-                value = Random.Range((int)E_BLOCK_TYPE.ONE, range + 1);
+                value = UnityEngine.Random.Range((int)E_BLOCK_TYPE.ONE, range + 1);
                 blockTempValue.Add(value);
                 break;
             case E_BLOCK_SHAPE_TYPE.TWO:
                 for(int i = 0; i < 2; ++i)
                 {
-                    value = Random.Range((int)E_BLOCK_TYPE.ONE, range + 1);
+                    value = UnityEngine.Random.Range((int)E_BLOCK_TYPE.ONE, range + 1);
                     blockTempValue.Add(value);
                 }
                 break;
             case E_BLOCK_SHAPE_TYPE.THREE:
                 for (int i = 0; i < 3; ++i)
                 {
-                    value = Random.Range((int)E_BLOCK_TYPE.ONE, range + 1);
+                    value = UnityEngine.Random.Range((int)E_BLOCK_TYPE.ONE, range + 1);
                     blockTempValue.Add(value);
                 }
                 break;

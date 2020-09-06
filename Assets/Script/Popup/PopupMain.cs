@@ -5,7 +5,6 @@ using UnityEngine.UI;
 
 public class PopupMain : PopupBase
 {
-    public MainScreen mainScreen;
 
     public GameObject textGroup;
 
@@ -16,7 +15,7 @@ public class PopupMain : PopupBase
     {
         if(GameManager.Instance.GetState() != E_GAME_STATE.SHOP)
         { 
-            mainScreen.ShowGameEnd();
+            GameManager.Instance.GetMainScreen().ShowGameEnd();
         }
     }
 
@@ -60,7 +59,7 @@ public class PopupMain : PopupBase
     {
         SoundManager.Instance.PlaySFX(E_SFX.BUTTON);
         gameObject.SetActive(false);
-        mainScreen.GameStart();
+        GameManager.Instance.GetMainScreen().GameStart();
     }
 
     public void OnTouchRank()
@@ -71,7 +70,7 @@ public class PopupMain : PopupBase
     public void OnTouchSetting()
     {
         SoundManager.Instance.PlaySFX(E_SFX.BUTTON);
-        mainScreen.ShowSettingPopup();
+        GameManager.Instance.GetMainScreen().ShowSettingPopup();
     }
 
     public void OnTouchAdsCoin()
@@ -82,6 +81,6 @@ public class PopupMain : PopupBase
     public void OnTouchShop()
     {
         SoundManager.Instance.PlaySFX(E_SFX.BUTTON);
-        mainScreen.OpenShopPopup(PopupShop.E_SHOP_TYPE.LOBBY);
+        GameManager.Instance.GetMainScreen().OpenShopPopup(PopupShop.E_SHOP_TYPE.LOBBY);
     }
 }

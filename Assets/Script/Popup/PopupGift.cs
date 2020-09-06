@@ -79,7 +79,7 @@ public class PopupGift : PopupBase
 
     public void StartCoinEffect()
     {
-        GameManager.Instance.mainScreen.CreateCoinEffect(coinIcon.transform.position);
+        GameManager.Instance.GetMainScreen().CreateCoinEffect(coinIcon.transform.position);
         gameObject.SetActive(false);
     }
 }

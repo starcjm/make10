@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-//그리드 랜더 클래스
+/// <summary>
+/// 그리드 클래스
+/// </summary>
 public class Grid : MonoBehaviour
 {
     public GridData data = new GridData();

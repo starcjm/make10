@@ -10,32 +10,27 @@ using UnityEngine.UI;
 /// </summary>
 public class MainScreen : MonoBehaviour, IAndroidBackButton
 {
-    public GameObject BgGrid;
-
     //현재 점수 
     public Text currentScore;
     //최대 점수
     public Text highScore;
-
     public Text Coin;
-
     public Text HammerCoin;
     public Text NextBlockCoin;
 
     public Image FiledGift;
 
+    //그리드
+    public GameObject BgGrid;
+
     public GameObject onHammer;
     public GameObject offHammer;
-
     public GameObject offGift;
     public GameObject onGift;
-
     //코인 연출용
     public GameObject coinIcon;
-
     //인게임 유아이
     public GameObject inGameUI;
-
     //팝업들
     public GameObject Main;
     public GameObject Gift;

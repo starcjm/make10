@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// 를록관련 상수클래스
+/// </summary>
 //블록 넘버 타입
 public enum E_BLOCK_TYPE
 {

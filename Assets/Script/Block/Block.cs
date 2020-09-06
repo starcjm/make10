@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-//블럭 랜더 클래스
+/// <summary>
+/// 블럭 클래스
+/// </summary>
 public class Block : MonoBehaviour
 {
     public readonly float hammerTime = 0.4f;
@@ -23,7 +25,7 @@ public class Block : MonoBehaviour
     {
         GameManager.Instance.ShowBlockX();
         GameManager.Instance.AddCoin(-Const.HAMMER_PRICE);
-        GameManager.Instance.mainScreen.SetCoin(UserInfo.Instance.Coin);
+        GameManager.Instance.GetMainScreen().SetCoin(UserInfo.Instance.Coin);
         CreateHammer();
         StartCoroutine(HammerTouchDelay());
     }

@@ -11,7 +11,6 @@ public class PopupShop : PopupBase
         IN_GAME,
     }
 
-    public MainScreen mainScreen;
     public PopupMain popupMain;
 
     public Text CurrentCoin;
@@ -85,7 +84,7 @@ public class PopupShop : PopupBase
     public void OnTouchAds()
     {
         GameManager.Instance.AddCoin(Const.ADS_COIN);
-        mainScreen.SetCoin(UserInfo.Instance.Coin);
+        GameManager.Instance.GetMainScreen().SetCoin(UserInfo.Instance.Coin);
         CurrentCoin.text = UserInfo.Instance.Coin.ToString();
         popupMain.SetCoin();
     }
@@ -93,7 +92,7 @@ public class PopupShop : PopupBase
     public void OnTouch200()
     {
         GameManager.Instance.AddCoin(Const.COIN_200);
-        mainScreen.SetCoin(UserInfo.Instance.Coin);
+        GameManager.Instance.GetMainScreen().SetCoin(UserInfo.Instance.Coin);
         CurrentCoin.text = UserInfo.Instance.Coin.ToString();
         popupMain.SetCoin();
     }
@@ -101,7 +100,7 @@ public class PopupShop : PopupBase
     public void OnTouch500()
     {
         GameManager.Instance.AddCoin(Const.COIN_500);
-        mainScreen.SetCoin(UserInfo.Instance.Coin);
+        GameManager.Instance.GetMainScreen().SetCoin(UserInfo.Instance.Coin);
         CurrentCoin.text = UserInfo.Instance.Coin.ToString();
         popupMain.SetCoin();
     }
@@ -109,7 +108,7 @@ public class PopupShop : PopupBase
     public void OnTouch1250()
     {
         GameManager.Instance.AddCoin(Const.COIN_1250);
-        mainScreen.SetCoin(UserInfo.Instance.Coin);
+        GameManager.Instance.GetMainScreen().SetCoin(UserInfo.Instance.Coin);
         CurrentCoin.text = UserInfo.Instance.Coin.ToString();
         popupMain.SetCoin();
     }
@@ -117,7 +116,7 @@ public class PopupShop : PopupBase
     public void OnTouch3500()
     {
         GameManager.Instance.AddCoin(Const.COIN_3500);
-        mainScreen.SetCoin(UserInfo.Instance.Coin);
+        GameManager.Instance.GetMainScreen().SetCoin(UserInfo.Instance.Coin);
         CurrentCoin.text = UserInfo.Instance.Coin.ToString();
         popupMain.SetCoin();
     }

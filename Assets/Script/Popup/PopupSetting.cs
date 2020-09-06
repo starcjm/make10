@@ -4,8 +4,6 @@ using UnityEngine;
 
 public class PopupSetting : PopupBase
 {
-    public MainScreen mainScreen;
-
     public GameObject SoundON;
     public GameObject SoundOff;
 
@@ -25,7 +23,7 @@ public class PopupSetting : PopupBase
     {
         SoundManager.Instance.PlaySFX(E_SFX.BUTTON);
         gameObject.SetActive(false);
-        mainScreen.SetMainPopup(true);
+        GameManager.Instance.GetMainScreen().SetMainPopup(true);
     }
 
     public void OnTouchSound()

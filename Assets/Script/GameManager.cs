@@ -19,7 +19,8 @@ public class GameManager : Singleton<GameManager>
     public float screenAspect = 1.775F;
 
     //메인 스크린 UI연동
-    public MainScreen mainScreen;
+    [SerializeField]
+    private MainScreen mainScreen = null;
 
     //모양 블록 좌표용 오브젝트
     public GameObject shapeBlockPos;
@@ -28,18 +29,17 @@ public class GameManager : Singleton<GameManager>
     public GameObject blockLayer;
     public GameObject alphablockLayer;
     public GameObject effectLayer;
-
     //현재 모양 블럭 
     private GameObject currentBlock;
     //다음 모양 블럭 
     private GameObject NextBlock;
     //현재 생성될 블록의 최대값
+
     private int blockRange = 4;
     //콤보 저장용 카운트
     private int comboCount = 0;
     //현재 점수
     private int currentScore = 0;
-
     //해머 상태
     private bool isHammer = false;
 
@@ -78,6 +78,11 @@ public class GameManager : Singleton<GameManager>
         SetBlockblockRangeMax(Const.START_BLOCK_RANGE);
         InitCreateShapeBlock();
         SetGameState(E_GAME_STATE.GAME);
+    }
+
+    public MainScreen GetMainScreen()
+    {
+        return mainScreen;
     }
 
     //머지 할 데이터 큐에 저장

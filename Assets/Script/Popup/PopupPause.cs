@@ -4,8 +4,6 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 public class PopupPause : PopupBase
 {
-    public MainScreen mainScreen;
-
     public GameObject SoundON;
     public GameObject SoundOff;
 
