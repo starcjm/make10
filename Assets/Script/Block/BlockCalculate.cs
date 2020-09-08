@@ -105,26 +105,6 @@ public class BlockCalculate
         }
     }
 
-    public void MergeBlockSort()
-    {
-        mergeBlock.Sort(delegate (Block A, Block B)
-        {
-            float a = Vector2.Distance(new Vector2(startBlock.data.column, startBlock.data.row)
-                                     , new Vector2(A.data.column, A.data.row));
-            float b = Vector2.Distance(new Vector2(startBlock.data.column, startBlock.data.row)
-                                     , new Vector2(B.data.column, B.data.row));
-            if(a < b)
-            {
-                return -1;
-            }
-            else if(a > b)
-            {
-                return 1;
-            }
-            return 0;
-        });
-    }
-
     public bool MergeBlockLastCheck()
     {
         //스타트 블럭 포함해서 계산
@@ -182,27 +162,20 @@ public class BlockCalculate
     private void MoveLastBlock(Block block)
     {
         moveBlock.Add(block);
-        if(CurrentBlockLastNear(block))
+        var lastTween = block.gameObject.transform.DOMove(startBlock.transform.position, moveTime);
+        lastTween.OnComplete(() =>
         {
-            var lastTween = block.gameObject.transform.DOMove(startBlock.transform.position, moveTime);
-            lastTween.OnComplete(() =>
+            moveCompleteBlock.Add(block);
+            if (moveCompleteBlock.Count >= mergeBlock.Count)
             {
-                moveCompleteBlock.Add(block);
-                if (moveCompleteBlock.Count >= mergeBlock.Count)
+                if (!isLast)
                 {
-                    if (!isLast)
-                    {
-                        isLast = true;
-                        mergeBlock.Add(startBlock);
-                        GameManager.Instance.MergeCompleteRemoveblock(mergeBlock, startBlock, this);
-                    }
+                    isLast = true;
+                    mergeBlock.Add(startBlock);
+                    GameManager.Instance.MergeCompleteRemoveblock(mergeBlock, startBlock, this);
                 }
-            });
-        }
-        else
-        {
-            block.gameObject.SetActive(false);
-        }
+            }
+        });
     }
 
     //갈대가 없는 현재 블럭이 스타트 블럭 옆인지 확인
