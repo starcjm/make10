@@ -420,7 +420,6 @@ public class GameManager : Singleton<GameManager>
         BlockCalculate blockCalculate = new BlockCalculate();
         blockCalculate.SetStartBlock(block);
         blockCalculate.CheckBlock(block.data, false);
-        blockCalculate.MergeBlockSort();
         if (blockCalculate.MergeBlockLastCheck())
         {
             //머지가 된다면 콤보 추가
