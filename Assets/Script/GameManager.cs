@@ -43,6 +43,9 @@ public class GameManager : Singleton<GameManager>
     //해머 상태
     private bool isHammer = false;
 
+    //머지중인지 아닌지 체크(연출중인지 체크)
+    private bool isMerging = false;
+
     //key = 그리드 키,  value = 블록 오브젝트  현재 배치되 있는 블록
     private Dictionary<int, GameObject> blockObject = new Dictionary<int, GameObject>();
     //key = 그리드 키,  value = 그리드 오브젝트 
@@ -78,11 +81,17 @@ public class GameManager : Singleton<GameManager>
         SetBlockblockRangeMax(Const.START_BLOCK_RANGE);
         InitCreateShapeBlock();
         SetGameState(E_GAME_STATE.GAME);
+        UserInfo.Instance.IsHighScore = false;
     }
 
     public MainScreen GetMainScreen()
     {
         return mainScreen;
+    }
+
+    public bool GetMergeState()
+    {
+        return isMerging;
     }
 
     //머지 할 데이터 큐에 저장
@@ -93,13 +102,13 @@ public class GameManager : Singleton<GameManager>
             mergeCheckBlockQueue.Add(block);
             mergeCheckBlockQueue.Sort(delegate (Block A, Block B)
             {
-                Block gridA = A;
-                Block gridB = B;
-                if (gridA.data.blockType < gridB.data.blockType)
+                Block blockA = A;
+                Block blockB = B;
+                if (blockA.data.blockType < blockB.data.blockType)
                 {
                     return -1;
                 }
-                else if (gridA.data.blockType > gridB.data.blockType)
+                else if (blockA.data.blockType > blockB.data.blockType)
                 {
                     return 1;
                 }
@@ -123,7 +132,7 @@ public class GameManager : Singleton<GameManager>
 
     public void SetGameItemState()
     {
-        if(gameState == E_GAME_STATE.GAME && blockObject.Count > 0)
+        if(gameState == E_GAME_STATE.GAME)
         {
             SetGameState(E_GAME_STATE.ITEM);
         }
@@ -142,6 +151,10 @@ public class GameManager : Singleton<GameManager>
     {
         Vector3 pos = Vector3.zero;
         currentScore += score;
+        if(currentScore > UserInfo.Instance.HighScore)
+        {
+            UserInfo.Instance.IsHighScore = true;
+        }
         UserInfo.Instance.HighScore = currentScore;
         mainScreen.SetScore(currentScore, score);
         if (gridObject.ContainsKey(key))
@@ -182,19 +195,16 @@ public class GameManager : Singleton<GameManager>
     //블럭 위에 x이미지 
     public void ShowBlockX()
     {
-        if (blockObject.Count > 0)
+        isHammer = !isHammer;
+        foreach (GameObject blockObject in blockObject.Values)
         {
-            isHammer = !isHammer;
-            foreach (GameObject blockObject in blockObject.Values)
+            var block = blockObject.GetComponent<Block>();
+            if (block)
             {
-                var block = blockObject.GetComponent<Block>();
-                if (block)
-                {
-                    block.ShowImgX(isHammer);
-                }
+                block.ShowImgX(isHammer);
             }
-            mainScreen.HammerIconState();
         }
+        mainScreen.HammerIconState();
     }
 
     public void RemoveBlockData(int key)
@@ -374,6 +384,7 @@ public class GameManager : Singleton<GameManager>
     {
         if(mergeCheckBlockQueue.Count > 0)
         {
+            isMerging = true;
             var block = mergeCheckBlockQueue[0];
             RemoveMergeQueue(block);
             MergeDelayCheck(block);
@@ -383,6 +394,7 @@ public class GameManager : Singleton<GameManager>
             StartCoroutine(comboEffectDelay());
             NextShapeBlock();
             GameOverCheck(currentBlock);
+            isMerging = false;
         }
     }
 
@@ -408,6 +420,7 @@ public class GameManager : Singleton<GameManager>
         BlockCalculate blockCalculate = new BlockCalculate();
         blockCalculate.SetStartBlock(block);
         blockCalculate.CheckBlock(block.data, false);
+        blockCalculate.MergeBlockSort();
         if (blockCalculate.MergeBlockLastCheck())
         {
             //머지가 된다면 콤보 추가
@@ -434,6 +447,10 @@ public class GameManager : Singleton<GameManager>
                 //그리드에 올릴 블럭 타입 설정 하고 생성
                 var grid = gridObject[block.data.key].GetComponent<Grid>();
                 grid.data.blockType = block.data.blockType + 1;
+                if(grid.data.blockType == E_BLOCK_TYPE.STAR)
+                {
+                    mainScreen.ShowTenBlockPopup();
+                }
                 var gridOverBlock = CreateGridOverBlock(grid.data, gridObject[block.data.key].transform.position, true);
 
 
@@ -448,6 +465,7 @@ public class GameManager : Singleton<GameManager>
             calc.StarBlockEffect();
             var starBlocks = calc.GetStarBlockEffect();
             ChangeStarblock(starBlocks);
+            StarBlockAni(starBlocks);
             StartCoroutine(StarBlockRemoveDelay(starBlocks));
         }
     }
@@ -465,10 +483,37 @@ public class GameManager : Singleton<GameManager>
         }
     }
 
+    private void StarBlockAni(List<Block> mergeBlock)
+    {
+        StartCoroutine(StarBlockAlphaZero(mergeBlock, 0.5f));
+        StartCoroutine(StarBlockAlphaOne(mergeBlock, 1.0f));
+        StartCoroutine(StarBlockAlphaZero(mergeBlock, 1.5f));
+        StartCoroutine(StarBlockAlphaOne(mergeBlock, 2.0f));
+    }
+
+    IEnumerator StarBlockAlphaZero(List<Block> mergeBlock, float time)
+    {
+        yield return new WaitForSeconds(time);
+        for (int i = 0; i < mergeBlock.Count; ++i)
+        {
+            mergeBlock[i].gameObject.GetComponent<Image>().color = new Color(1.0f, 1.0f, 1.0f, 0.0f);
+        }
+    }
+
+    IEnumerator StarBlockAlphaOne(List<Block> mergeBlock, float time)
+    {
+        yield return new WaitForSeconds(time);
+        for (int i = 0; i < mergeBlock.Count; ++i)
+        {
+            mergeBlock[i].gameObject.GetComponent<Image>().color = new Color(1.0f, 1.0f, 1.0f, 1.0f);
+        }
+    }
+
     //블록 관련 타이밍 조절 함수들
     IEnumerator StarBlockRemoveDelay(List<Block> mergeBlock)
     {
-        yield return new WaitForSeconds(BlockDefine.MERGE_DELAY_TIME * 4.0f);
+        yield return new WaitForSeconds(BlockDefine.MERGE_DELAY_TIME * 7.0f);
+        SoundManager.Instance.PlaySFX(E_SFX.TEN_BLOCK_EFFECT);
         MergeBlockRemove(mergeBlock);
         MergeCheckStart();
     }

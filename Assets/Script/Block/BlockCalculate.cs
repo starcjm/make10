@@ -16,7 +16,7 @@ public class BlockCalculate
     //시작 머지 타겟 
     private Block startBlock; 
 
-    //머지 데이터 int = key
+    //머지 데이터 
     private List<Block> mergeBlock = new List<Block>();
 
     //머지 움직임 시작한 데이터
@@ -105,6 +105,26 @@ public class BlockCalculate
         }
     }
 
+    public void MergeBlockSort()
+    {
+        mergeBlock.Sort(delegate (Block A, Block B)
+        {
+            float a = Vector2.Distance(new Vector2(startBlock.data.column, startBlock.data.row)
+                                     , new Vector2(A.data.column, A.data.row));
+            float b = Vector2.Distance(new Vector2(startBlock.data.column, startBlock.data.row)
+                                     , new Vector2(B.data.column, B.data.row));
+            if(a < b)
+            {
+                return -1;
+            }
+            else if(a > b)
+            {
+                return 1;
+            }
+            return 0;
+        });
+    }
+
     public bool MergeBlockLastCheck()
     {
         //스타트 블럭 포함해서 계산
@@ -162,27 +182,64 @@ public class BlockCalculate
     private void MoveLastBlock(Block block)
     {
         moveBlock.Add(block);
-        var lastTween = block.gameObject.transform.DOMove(startBlock.transform.position, moveTime);
-        lastTween.OnComplete(() =>
+        if(CurrentBlockLastNear(block))
         {
-            moveCompleteBlock.Add(block);
-            if (moveCompleteBlock.Count >= mergeBlock.Count)
+            var lastTween = block.gameObject.transform.DOMove(startBlock.transform.position, moveTime);
+            lastTween.OnComplete(() =>
             {
-                if(!isLast)
+                moveCompleteBlock.Add(block);
+                if (moveCompleteBlock.Count >= mergeBlock.Count)
                 {
-                    isLast = true;
-                    mergeBlock.Add(startBlock);
-                    GameManager.Instance.MergeCompleteRemoveblock(mergeBlock, startBlock, this);
+                    if (!isLast)
+                    {
+                        isLast = true;
+                        mergeBlock.Add(startBlock);
+                        GameManager.Instance.MergeCompleteRemoveblock(mergeBlock, startBlock, this);
+                    }
                 }
-            }
-        });
+            });
+        }
+        else
+        {
+            block.gameObject.SetActive(false);
+        }
+    }
+
+    //갈대가 없는 현재 블럭이 스타트 블럭 옆인지 확인
+    private bool CurrentBlockLastNear(Block block)
+    {
+        //위
+        if(block.data.column == startBlock.data.column 
+        && block.data.row - 1 == startBlock.data.row)
+        {
+            return true;
+        }
+        //아래
+        if (block.data.column == startBlock.data.column
+        && block.data.row + 1 == startBlock.data.row)
+        {
+            return true;
+        }
+        //오른쪽
+        if (block.data.column +1 == startBlock.data.column
+        && block.data.row == startBlock.data.row)
+        {
+            return true;
+        }
+        if (block.data.column - 1 == startBlock.data.column
+        && block.data.row == startBlock.data.row)
+        {
+            return true;
+        }
+        //왼쪽
+        return false;
     }
     
     private bool NearCheck(Block preBlock, Block nearBlock)
     {
         //머지될 블록중에 근처 인지 체크
         //위
-        if(nearBlock.data.column == preBlock.data.column
+        if (nearBlock.data.column == preBlock.data.column
         && nearBlock.data.row == preBlock.data.row -1)
         {
             return true;

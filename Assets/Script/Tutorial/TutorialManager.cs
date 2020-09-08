@@ -144,6 +144,7 @@ public class TutorialManager : Singleton<TutorialManager>
     
     public void ShowCompletePopup()
     {
+        SoundManager.Instance.PlaySFX(E_SFX.TUTORIAL_COMPLETE);
         TutorialPage2.SetActive(false);
         completePopup.SetActive(true);
     }

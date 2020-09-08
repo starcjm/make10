@@ -14,12 +14,25 @@ public enum E_SCENE
 
 public class Splash : MonoBehaviour
 {
-     
     public float time = 2.0f;
     private void Start()
     {
+        LoadLanguage();
         UserInfo.Instance.LoadUserData();
         Invoke("MainScene", time);
+    }
+
+    private void LoadLanguage()
+    {
+        string sysLanguage = Application.systemLanguage.ToString();
+        if(sysLanguage == "Korean")
+        {
+            PlayerPrefs.SetString("systemLanguage", "Korean");
+        }
+        else
+        {
+            PlayerPrefs.SetString("systemLanguage", "English");
+        }
     }
 
     private void MainScene()

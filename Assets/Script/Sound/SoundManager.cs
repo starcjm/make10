@@ -16,7 +16,13 @@ public enum E_SFX
     SHAPE_BLOCK_ROT,
     BLOCK_MERGE,
     BLOCK_DROP,
-    OPEN_POPUP,
+    ITEM_HAMMER,
+    CHEST_COIN,
+    TEN_BLOCK_EFFECT,
+    ADD_COIN,
+    MISSION_FAIL,
+    BEST_SCORE,
+    TUTORIAL_COMPLETE
 }
 
 public class SoundManager : Singleton<SoundManager>

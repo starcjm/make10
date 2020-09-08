@@ -38,6 +38,7 @@ public class Block : MonoBehaviour
         cloneGrid.transform.localScale = Vector3.one;
         cloneGrid.transform.position = gameObject.transform.position;
         GameManager.Instance.SetGameState(E_GAME_STATE.GAME);
+        SoundManager.Instance.PlaySFX(E_SFX.ITEM_HAMMER);
         DestroyHammer(cloneGrid);
     }
 

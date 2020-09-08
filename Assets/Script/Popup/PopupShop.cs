@@ -25,7 +25,6 @@ public class PopupShop : PopupBase
     public Text Coin3500;
     public Text Price3500;
 
-    public Text NoAds;
     public Text PriceNoAds;
 
     private E_SHOP_TYPE shopType;
@@ -61,7 +60,6 @@ public class PopupShop : PopupBase
         Coin3500.text = Const.COIN_3500.ToString();
         Price3500.text = string.Format("${0}", Const.PRICE_3500);
 
-        NoAds.text = "No ADS";
         PriceNoAds.text = string.Format("${0}", Const.NO_ADS);
 
         CurrentCoin.text = UserInfo.Instance.Coin.ToString();

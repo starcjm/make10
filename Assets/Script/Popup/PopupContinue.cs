@@ -56,7 +56,16 @@ public class PopupContinue : PopupBase
 
     public void OnTouchHome()
     {
-        SoundManager.Instance.PlaySFX(E_SFX.BUTTON);
-        SceneManager.LoadScene((int)E_SCENE.GAME);
+        if(UserInfo.Instance.IsHighScore)
+        {
+            UserInfo.Instance.IsHighScore = false;
+            GameManager.Instance.GetMainScreen().ShowBestScorePopup();
+            gameObject.SetActive(false);
+        }
+        else
+        {
+            SoundManager.Instance.PlaySFX(E_SFX.BUTTON);
+            SceneManager.LoadScene((int)E_SCENE.GAME);
+        }
     }
 }

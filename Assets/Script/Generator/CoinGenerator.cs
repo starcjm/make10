@@ -20,6 +20,7 @@ public class CoinGenerator : Singleton<CoinGenerator>
         cloneCoin.transform.position = startPos;
         cloneCoin.transform.DOMove(targetPos, aniTime).OnComplete(() =>
         {
+            SoundManager.Instance.PlaySFX(E_SFX.ADD_COIN);
             Destroy(cloneCoin);
         });
         return cloneCoin;

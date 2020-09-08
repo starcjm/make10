@@ -74,6 +74,7 @@ public class PopupGift : PopupBase
 
     public void CoinIconActive()
     {
+        SoundManager.Instance.PlaySFX(E_SFX.CHEST_COIN);
         coinIcon.SetActive(true);
     }
 

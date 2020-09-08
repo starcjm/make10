@@ -40,9 +40,13 @@ public class MainScreen : MonoBehaviour, IAndroidBackButton
     public GameObject Pause;
     public GameObject Shop;
     public GameObject MessageBox;
+    public GameObject HammerMessage;
+    public GameObject Review;
+    public GameObject BestScore;
+    public GameObject TenBlock;
 
     //획득한 점수
-    public int saveScore = 0;
+    public int giftScore = 0;
 
     private void Start()
     {
@@ -82,6 +86,18 @@ public class MainScreen : MonoBehaviour, IAndroidBackButton
         SetInGameUI(true);
         InitPriceData();
         GameManager.Instance.GameStart();
+        if(!UserInfo.Instance.IsReviewOk())
+        {
+            UserInfo.Instance.ReviewCount++;
+            if (UserInfo.Instance.IsReviewNoFirst())
+            {
+                Review.SetActive(UserInfo.Instance.ReviewCount >= 10);
+            }
+            else
+            {
+                Review.SetActive(UserInfo.Instance.ReviewCount >= 3);
+            }
+        }
     }
 
     private void InitPriceData()
@@ -94,6 +110,11 @@ public class MainScreen : MonoBehaviour, IAndroidBackButton
     public void SetInGameUI(bool on)
     {
         inGameUI.SetActive(on);
+    }
+
+    public void SetHammerMessage(bool on)
+    {
+        HammerMessage.SetActive(on);
     }
 
     public void SetMainPopup(bool on)
@@ -133,7 +154,7 @@ public class MainScreen : MonoBehaviour, IAndroidBackButton
 
     public void ShowGiftPopup()
     {
-        saveScore = 0;
+        giftScore = 0;
         UpdateGiftIcon();
         var giftPopup = Gift.GetComponent<PopupGift>();
         if(giftPopup)
@@ -143,8 +164,28 @@ public class MainScreen : MonoBehaviour, IAndroidBackButton
         Gift.SetActive(true);
     }
 
+    public void ShowReviewPopup()
+    {
+        Review.SetActive(true);
+    }
+
+    public void ShowBestScorePopup()
+    {
+        BestScore.SetActive(true);
+    }
+
+    public void ShowTenBlockPopup()
+    {
+        if (!UserInfo.Instance.IsTenBlockPopup())
+        {
+            UserInfo.Instance.TenBlock = (int)UserInfo.E_TEN_BLOCK.YES;
+            TenBlock.SetActive(true);
+        }
+    }
+
     public void ShowGameOver()
     {
+        SoundManager.Instance.PlaySFX(E_SFX.MISSION_FAIL);
         GameManager.Instance.SetGameState(E_GAME_STATE.PAUSE);
         GameOver.SetActive(true);
         GameOver.GetComponent<PopupGameOver>().SetTimer();
@@ -158,6 +199,16 @@ public class MainScreen : MonoBehaviour, IAndroidBackButton
         }
     }
 
+    public void ShowContinuePopup(int score)
+    {
+        var popUp = Continue.GetComponent<PopupContinue>();
+        if (popUp)
+        {
+            popUp.SetScore(score);
+        }
+        Continue.SetActive(true);
+    }
+
     public void SetCoin(int coin)
     {
         if(Coin)
@@ -168,20 +219,20 @@ public class MainScreen : MonoBehaviour, IAndroidBackButton
 
     public void SetGift()
     {
-        FiledGift.fillAmount = (float)saveScore / Const.MAX_GIFT;
+        FiledGift.fillAmount = (float)giftScore / Const.MAX_GIFT;
     }
 
 
     private void UpdateGiftIcon()
     {
-        offGift.SetActive(saveScore < Const.MAX_GIFT);
-        onGift.SetActive(saveScore >= Const.MAX_GIFT);
+        offGift.SetActive(giftScore < Const.MAX_GIFT);
+        onGift.SetActive(giftScore >= Const.MAX_GIFT);
         SetGift();
     }
 
     public void SetScore(int score, int addScore)
     {
-        saveScore += addScore;
+        giftScore += addScore;
         UpdateGiftIcon();
         if (currentScore)
         {
@@ -189,6 +240,7 @@ public class MainScreen : MonoBehaviour, IAndroidBackButton
         }
         SetHighScore();
     }
+    
 
     public void SetHighScore()
     {
@@ -201,15 +253,18 @@ public class MainScreen : MonoBehaviour, IAndroidBackButton
     public void ChangeShapeBlock()
     {
         SoundManager.Instance.PlaySFX(E_SFX.BUTTON);
-        if (UserInfo.Instance.Coin >= Const.BLOCK_NEXT_PRICE)
+        if(!GameManager.Instance.GetMergeState())
         {
-            GameManager.Instance.AddCoin(-Const.BLOCK_NEXT_PRICE);
-            SetCoin(UserInfo.Instance.Coin);
-            GameManager.Instance.ChangeShapeBlock();
-        }
-        else
-        {
-            ShowShopPopup();
+            if (UserInfo.Instance.Coin >= Const.BLOCK_NEXT_PRICE)
+            {
+                GameManager.Instance.AddCoin(-Const.BLOCK_NEXT_PRICE);
+                SetCoin(UserInfo.Instance.Coin);
+                GameManager.Instance.ChangeShapeBlock();
+            }
+            else
+            {
+                ShowShopPopup();
+            }
         }
     }
 
@@ -221,32 +276,31 @@ public class MainScreen : MonoBehaviour, IAndroidBackButton
         SceneManager.LoadScene((int)E_SCENE.SPLASH);
     }
 
-    public void ShowContinuePopup(int score)
-    {
-        var popUp = Continue.GetComponent<PopupContinue>();
-        if(popUp)
-        {
-            popUp.SetScore(score);
-        }
-        Continue.SetActive(true);
-    }
+   
 
     public void OnTouchHammer()
     {
         SoundManager.Instance.PlaySFX(E_SFX.BUTTON);
-        if (UserInfo.Instance.Coin >= Const.HAMMER_PRICE)
+        if (!GameManager.Instance.GetMergeState())
         {
-            GameManager.Instance.ShowBlockX();
-            GameManager.Instance.SetGameItemState();
-        }
-        else
-        {
-            ShowShopPopup();
+            if (UserInfo.Instance.Coin >= Const.HAMMER_PRICE)
+            {
+                if(GameManager.Instance.GetBlockObject().Count > 0)
+                {
+                    GameManager.Instance.ShowBlockX();
+                    GameManager.Instance.SetGameItemState();
+                }
+            }
+            else
+            {
+                ShowShopPopup();
+            }
         }
     }
 
     public void HammerIconState()
     {
+        SetHammerMessage(GameManager.Instance.GetState() != E_GAME_STATE.ITEM);
         onHammer.SetActive(GameManager.Instance.GetState() == E_GAME_STATE.ITEM);
         offHammer.SetActive(GameManager.Instance.GetState() != E_GAME_STATE.ITEM);
     }

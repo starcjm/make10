@@ -12,6 +12,11 @@ public class PopupTutorialComplete : PopupBase
 
     private bool isComplete = false;
 
+    private void Start()
+    {
+        
+    }
+
     public override void OnTouchAndroidBackButton()
     {
         OnTouchClaim();
@@ -39,6 +44,7 @@ public class PopupTutorialComplete : PopupBase
 
     public void CoinIconActive()
     {
+        SoundManager.Instance.PlaySFX(E_SFX.CHEST_COIN);
         coin.SetActive(true);
     }
 
