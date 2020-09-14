@@ -55,6 +55,7 @@ public class PopupBestScore : PopupBase
 
     public void OnTouchClose()
     {
+        AdsManager.Instance.InterstitialAdShow();
         SceneManager.LoadScene((int)E_SCENE.GAME);
     }
 }

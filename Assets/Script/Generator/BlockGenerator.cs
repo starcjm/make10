@@ -16,6 +16,9 @@ public class BlockGenerator : Singleton<BlockGenerator>
     //현재 화면에 올라와 있는 모양 블록
     private GameObject shapeObject;
 
+    //머지 됫을때 효과
+    public GameObject mergeEffect;
+
     //숫자 블록 이미지
     public Sprite[] blockSprite;
 
@@ -152,5 +155,14 @@ public class BlockGenerator : Singleton<BlockGenerator>
     public void SettingDataClear()
     {
         blockTempValue.Clear();
+    }
+
+    public void CreateMergeEffec(Transform parent, Vector3 pos)
+    {
+        GameObject cloneEffect = (GameObject)Instantiate(mergeEffect);
+        cloneEffect.transform.SetParent(parent);
+        cloneEffect.transform.position = pos;
+        cloneEffect.transform.localScale = Vector3.one;
+        Destroy(cloneEffect, 1.0f);
     }
 }

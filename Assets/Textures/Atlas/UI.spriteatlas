@@ -1,0 +1,79 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!687078895 &4343727234628468602
+SpriteAtlas:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: UI
+  m_EditorData:
+    serializedVersion: 2
+    textureSettings:
+      serializedVersion: 2
+      anisoLevel: 1
+      compressionQuality: 50
+      maxTextureSize: 2048
+      textureCompression: 0
+      filterMode: 1
+      generateMipMaps: 0
+      readable: 0
+      crunchedCompression: 0
+      sRGB: 1
+    platformSettings:
+    - serializedVersion: 3
+      m_BuildTarget: DefaultTexturePlatform
+      m_MaxTextureSize: 1024
+      m_ResizeAlgorithm: 0
+      m_TextureFormat: -1
+      m_TextureCompression: 1
+      m_CompressionQuality: 50
+      m_CrunchedCompression: 0
+      m_AllowsAlphaSplitting: 0
+      m_Overridden: 0
+      m_AndroidETC2FallbackOverride: 0
+      m_ForceMaximumCompressionQuality_BC6H_BC7: 0
+    packingSettings:
+      serializedVersion: 2
+      padding: 4
+      blockOffset: 1
+      allowAlphaSplitting: 0
+      enableRotation: 1
+      enableTightPacking: 0
+    secondaryTextureSettings: {}
+    variantMultiplier: 1
+    packables:
+    - {fileID: 102900000, guid: 94a862a0d10ec6a43a47f0bc60d602a1, type: 3}
+    totalSpriteSurfaceArea: 513185
+    bindAsDefault: 1
+    isAtlasV2: 0
+    cachedData: {fileID: 0}
+  m_MasterAtlas: {fileID: 0}
+  m_PackedSprites:
+  - {fileID: 21300000, guid: 1c0187b3a71b340499e7b83c1844f980, type: 3}
+  - {fileID: 21300000, guid: 5e2959d5862041d4f8ea77bd0fcdb930, type: 3}
+  - {fileID: 21300000, guid: ee8d6b478fa464d4b9fc7d3d1f6c66aa, type: 3}
+  - {fileID: 21300000, guid: e5fda6f7df29a9e4d89d44b015f54e9d, type: 3}
+  - {fileID: 21300000, guid: c21a7819a028fae4d994d02a3553027c, type: 3}
+  - {fileID: 21300000, guid: 6201c389f6f04394f809c6770b45769a, type: 3}
+  - {fileID: 21300000, guid: 731004bba5b95bf4698d82202b4e65df, type: 3}
+  - {fileID: 21300000, guid: 71cabf8cc2985d84a9c289246d62bc9c, type: 3}
+  - {fileID: 21300000, guid: 1711d8cc55fd0484997a1ad3525424ba, type: 3}
+  - {fileID: 21300000, guid: 7e70438d53dda7e4daf271b65bf52b20, type: 3}
+  - {fileID: 21300000, guid: 45434f5edd81be74a91c93e6d79b4797, type: 3}
+  - {fileID: 21300000, guid: 2fb5786e19caca44c8a4e84b94f8186d, type: 3}
+  m_PackedSpriteNamesToIndex:
+  - hammer_iconoff
+  - Item_chaneblock
+  - hammer_icon
+  - game_pauseBt
+  - born_10block
+  - highscore_mini
+  - Crown_highscore
+  - item_textBg
+  - Next
+  - move_getcoin
+  - game_coin
+  - circle
+  m_Tag: UI
+  m_IsVariant: 0

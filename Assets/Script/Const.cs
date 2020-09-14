@@ -46,4 +46,14 @@ public class Const
     public const int COIN_1250 = 1250;
     public const int COIN_3500 = 3500;
 
+    //광고 보상
+    public const int MAIN_ADS_COIN = 100;
+
+    //광고id
+    //배너
+    public const string ADS_ID_BANNER = "ca-app-pub-3940256099942544/6300978111";
+    //전면
+    public const string ADS_ID_FRONT = "ca-app-pub-3940256099942544/1033173712";
+    //보상형 동영상
+    public const string ADS_ID_REWARD = "ca-app-pub-3940256099942544/5224354917";
 }

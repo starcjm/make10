@@ -1,4 +1,8 @@
-﻿using System.Collections;
+﻿using DG.Tweening;
+using DG.Tweening.Core;
+using DG.Tweening.Plugins.Options;
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using Unity.Mathematics;
 using UnityEngine;
@@ -44,9 +48,14 @@ public class MainScreen : MonoBehaviour, IAndroidBackButton
     public GameObject Review;
     public GameObject BestScore;
     public GameObject TenBlock;
+    public GameObject AdsCoin;
 
     //획득한 점수
     public int giftScore = 0;
+
+    //획득 점수 연출용
+    public int prevScore = 0;
+    TweenerCore<int, int, NoOptions> scoreTween;
 
     private void Start()
     {
@@ -122,6 +131,15 @@ public class MainScreen : MonoBehaviour, IAndroidBackButton
         Main.SetActive(on);
     }
 
+    public void MainPopupUIRefresh()
+    {
+        var popup = Main.GetComponent<PopupMain>();
+        if(popup)
+        {
+            popup.SetCoin();
+        }
+    }
+
     public void OpenShopPopup(PopupShop.E_SHOP_TYPE type)
     {
         Shop.GetComponent<PopupShop>().SetShopType(type);
@@ -152,6 +170,15 @@ public class MainScreen : MonoBehaviour, IAndroidBackButton
         OpenShopPopup(PopupShop.E_SHOP_TYPE.IN_GAME);
     }
 
+    public void ShopUIRefresh()
+    {
+        var popup = Shop.GetComponent<PopupShop>();
+        if(popup)
+        {
+            popup.SetCoin();
+        }
+    }
+
     public void ShowGiftPopup()
     {
         giftScore = 0;
@@ -180,6 +207,16 @@ public class MainScreen : MonoBehaviour, IAndroidBackButton
         {
             UserInfo.Instance.TenBlock = (int)UserInfo.E_TEN_BLOCK.YES;
             TenBlock.SetActive(true);
+        }
+    }
+
+    public void ShowAdsCoinPopup(int addCoin)
+    {
+        AdsCoin.SetActive(true);
+        var popup = AdsCoin.GetComponent<PopupAdsCoin>();
+        if(popup)
+        {
+            popup.SetCoin(addCoin);
         }
     }
 
@@ -234,13 +271,12 @@ public class MainScreen : MonoBehaviour, IAndroidBackButton
     {
         giftScore += addScore;
         UpdateGiftIcon();
-        if (currentScore)
-        {
-            currentScore.text = score.ToString();
-        }
+        scoreTween.Kill(true);
+        scoreTween = DOTween.To(() => prevScore, x => currentScore.text = x.ToString(), score, 0.3f)
+            .OnComplete(() => { prevScore = score; });
         SetHighScore();
     }
-    
+
 
     public void SetHighScore()
     {

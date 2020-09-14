@@ -7,6 +7,9 @@ public class PopupSetting : PopupBase
     public GameObject SoundON;
     public GameObject SoundOff;
 
+    public GameObject MusicON;
+    public GameObject MusicOff;
+
     public override void OnTouchAndroidBackButton()
     {
         OnTouchBack();
@@ -17,6 +20,10 @@ public class PopupSetting : PopupBase
         bool isSound = UserInfo.Instance.IsSound();
         SoundON.SetActive(isSound);
         SoundOff.SetActive(!isSound);
+
+        bool isMusic = UserInfo.Instance.IsMusic();
+        MusicON.SetActive(isMusic);
+        MusicOff.SetActive(!isMusic);
     }
 
     public void OnTouchBack()
@@ -33,6 +40,15 @@ public class PopupSetting : PopupBase
         bool isSound = UserInfo.Instance.IsSound();
         SoundON.SetActive(isSound);
         SoundOff.SetActive(!isSound);
+    }
+
+    public void OnTouchMusic()
+    {
+        SoundManager.Instance.PlaySFX(E_SFX.BUTTON);
+        UserInfo.Instance.SetMusic();
+        bool isMusic = UserInfo.Instance.IsMusic();
+        MusicON.SetActive(isMusic);
+        MusicOff.SetActive(!isMusic);
     }
 
     public void OnTouchShare()

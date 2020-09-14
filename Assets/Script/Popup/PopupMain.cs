@@ -5,7 +5,6 @@ using UnityEngine.UI;
 
 public class PopupMain : PopupBase
 {
-
     public GameObject textGroup;
 
     public Text HighScore;
@@ -52,7 +51,6 @@ public class PopupMain : PopupBase
 
     public void OnTouchAds()
     {
-        SoundManager.Instance.PlaySFX(E_SFX.BUTTON);
     }
 
     public void OnTouchPlay()
@@ -76,6 +74,8 @@ public class PopupMain : PopupBase
     public void OnTouchAdsCoin()
     {
         SoundManager.Instance.PlaySFX(E_SFX.BUTTON);
+        AdsManager.Instance.SetRewardType(E_REWARD_TYPE.MAIN_COIN_ADD);
+        AdsManager.Instance.RewardAdShow();
     }
 
     public void OnTouchShop()

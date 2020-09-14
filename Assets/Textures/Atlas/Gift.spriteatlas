@@ -1,0 +1,90 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!687078895 &4343727234628468602
+SpriteAtlas:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Gift
+  m_EditorData:
+    serializedVersion: 2
+    textureSettings:
+      serializedVersion: 2
+      anisoLevel: 1
+      compressionQuality: 50
+      maxTextureSize: 2048
+      textureCompression: 0
+      filterMode: 1
+      generateMipMaps: 0
+      readable: 0
+      crunchedCompression: 0
+      sRGB: 1
+    platformSettings:
+    - serializedVersion: 3
+      m_BuildTarget: DefaultTexturePlatform
+      m_MaxTextureSize: 1024
+      m_ResizeAlgorithm: 0
+      m_TextureFormat: -1
+      m_TextureCompression: 1
+      m_CompressionQuality: 50
+      m_CrunchedCompression: 0
+      m_AllowsAlphaSplitting: 0
+      m_Overridden: 0
+      m_AndroidETC2FallbackOverride: 0
+      m_ForceMaximumCompressionQuality_BC6H_BC7: 0
+    packingSettings:
+      serializedVersion: 2
+      padding: 4
+      blockOffset: 1
+      allowAlphaSplitting: 0
+      enableRotation: 1
+      enableTightPacking: 0
+    secondaryTextureSettings: {}
+    variantMultiplier: 1
+    packables:
+    - {fileID: 2800000, guid: f9fed0077fdda4d4f86110ff7a716386, type: 3}
+    - {fileID: 2800000, guid: ff022d405fe0ea44b87d9113745346c7, type: 3}
+    - {fileID: 2800000, guid: c92b43507de100c4ba979c246a46d526, type: 3}
+    - {fileID: 2800000, guid: 71d07e8108da7c247a45453adbadc63c, type: 3}
+    - {fileID: 2800000, guid: 34e496807e73117478e3e137845917fd, type: 3}
+    - {fileID: 2800000, guid: 00bac2503cc13c5458fe429fbea026e2, type: 3}
+    - {fileID: 2800000, guid: 33419ee2a787c774ab84f997c99a7c12, type: 3}
+    - {fileID: 2800000, guid: add63498511cb504d894736b1dbafc13, type: 3}
+    - {fileID: 2800000, guid: b8f9356b62b73cc4fbcf764b408a0e9d, type: 3}
+    - {fileID: 2800000, guid: 32360026a9e44104a9772eb0b9082224, type: 3}
+    - {fileID: 2800000, guid: 2feda221a378f6442872ecaa3a994b31, type: 3}
+    - {fileID: 2800000, guid: 326ded23313aba84e9045f8849f68601, type: 3}
+    totalSpriteSurfaceArea: 489378
+    bindAsDefault: 1
+    isAtlasV2: 0
+    cachedData: {fileID: 0}
+  m_MasterAtlas: {fileID: 0}
+  m_PackedSprites:
+  - {fileID: 21300000, guid: ff022d405fe0ea44b87d9113745346c7, type: 3}
+  - {fileID: 21300000, guid: 00bac2503cc13c5458fe429fbea026e2, type: 3}
+  - {fileID: 21300000, guid: c92b43507de100c4ba979c246a46d526, type: 3}
+  - {fileID: 21300000, guid: 34e496807e73117478e3e137845917fd, type: 3}
+  - {fileID: 21300000, guid: 2feda221a378f6442872ecaa3a994b31, type: 3}
+  - {fileID: 21300000, guid: 71d07e8108da7c247a45453adbadc63c, type: 3}
+  - {fileID: 21300000, guid: 33419ee2a787c774ab84f997c99a7c12, type: 3}
+  - {fileID: 21300000, guid: 326ded23313aba84e9045f8849f68601, type: 3}
+  - {fileID: 21300000, guid: 32360026a9e44104a9772eb0b9082224, type: 3}
+  - {fileID: 21300000, guid: f9fed0077fdda4d4f86110ff7a716386, type: 3}
+  - {fileID: 21300000, guid: add63498511cb504d894736b1dbafc13, type: 3}
+  - {fileID: 21300000, guid: b8f9356b62b73cc4fbcf764b408a0e9d, type: 3}
+  m_PackedSpriteNamesToIndex:
+  - bigbox_open
+  - gift_moveBt
+  - gift_BG
+  - gift_getBt
+  - Lv_gageBg
+  - gift_coin
+  - giftbox_off
+  - Lv_Round
+  - Lv_gage
+  - bigbox_close
+  - giftbox_on
+  - Level_up
+  m_Tag: Gift
+  m_IsVariant: 0

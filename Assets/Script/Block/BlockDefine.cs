@@ -44,8 +44,8 @@ public static class BlockDefine
     }
 
     //블럭 확률 (합쳐서 100)
-    public const int ONE_BLOCK_PERCENT = 50;
-    public const int TWO_BLOCK_PERCENT = 45;
+    public const int ONE_BLOCK_PERCENT = 20;
+    public const int TWO_BLOCK_PERCENT = 60;
     public const int THREE_BLOCK_PERCENT = 5;
 
     //머지 구간 딜레이 타임

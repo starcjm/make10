@@ -6,6 +6,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
+
 public enum E_GAME_STATE
 {
     GAME,
@@ -450,8 +451,10 @@ public class GameManager : Singleton<GameManager>
                 {
                     mainScreen.ShowTenBlockPopup();
                 }
-                var gridOverBlock = CreateGridOverBlock(grid.data, gridObject[block.data.key].transform.position, true);
-
+                var gridOverBlock = CreateGridOverBlock(grid.data, 
+                                                        gridObject[block.data.key].transform.position, true);
+                BlockGenerator.Instance.CreateMergeEffec(blockLayer.transform, 
+                                                         gridObject[block.data.key].transform.position);
 
                 //새로운 블록 머지 큐에 넣어주고 머지 스타트
                 AddMergeQueue(gridOverBlock.GetComponent<Block>());
@@ -566,6 +569,14 @@ public class GameManager : Singleton<GameManager>
         mainScreen.ShowContinuePopup(currentScore);
     }
 
+    public void TouchContinue()
+    {
+        SoundManager.Instance.PlaySFX(E_SFX.BUTTON);
+        ContinueDestryBlock();
+        GetMainScreen().Continue.SetActive(false);
+        SetGameState(E_GAME_STATE.GAME);
+    }
+
     //게임 종료 체크
     private void GameOverCheck(GameObject shapeBlock)
     {
@@ -586,6 +597,11 @@ public class GameManager : Singleton<GameManager>
     {
         UserInfo.Instance.isRetry = true;
         SceneManager.LoadScene((int)E_SCENE.GAME);
+    }
+
+    public void ShopUiRefesh()
+    {
+        GetMainScreen().ShopUIRefresh();
     }
 
     public void GameClose()

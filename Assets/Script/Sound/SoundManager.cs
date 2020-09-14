@@ -22,7 +22,8 @@ public enum E_SFX
     ADD_COIN,
     MISSION_FAIL,
     BEST_SCORE,
-    TUTORIAL_COMPLETE
+    TUTORIAL_COMPLETE,
+    ADS_GET_COIN,
 }
 
 public class SoundManager : Singleton<SoundManager>
@@ -103,7 +104,7 @@ public class SoundManager : Singleton<SoundManager>
 
     public void PlayBGM(E_BGM type)
     {
-        if(!UserInfo.Instance.IsSound())
+        if(!UserInfo.Instance.IsMusic())
         { 
             return;
         }

@@ -1,0 +1,72 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!687078895 &4343727234628468602
+SpriteAtlas:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Continue
+  m_EditorData:
+    serializedVersion: 2
+    textureSettings:
+      serializedVersion: 2
+      anisoLevel: 1
+      compressionQuality: 50
+      maxTextureSize: 2048
+      textureCompression: 0
+      filterMode: 1
+      generateMipMaps: 0
+      readable: 0
+      crunchedCompression: 0
+      sRGB: 1
+    platformSettings:
+    - serializedVersion: 3
+      m_BuildTarget: DefaultTexturePlatform
+      m_MaxTextureSize: 512
+      m_ResizeAlgorithm: 0
+      m_TextureFormat: -1
+      m_TextureCompression: 1
+      m_CompressionQuality: 50
+      m_CrunchedCompression: 0
+      m_AllowsAlphaSplitting: 0
+      m_Overridden: 0
+      m_AndroidETC2FallbackOverride: 0
+      m_ForceMaximumCompressionQuality_BC6H_BC7: 0
+    packingSettings:
+      serializedVersion: 2
+      padding: 4
+      blockOffset: 1
+      allowAlphaSplitting: 0
+      enableRotation: 1
+      enableTightPacking: 0
+    secondaryTextureSettings: {}
+    variantMultiplier: 1
+    packables:
+    - {fileID: 2800000, guid: ed35a44ab65186d44bbd60ae0a6f99a0, type: 3}
+    - {fileID: 2800000, guid: a64b7009764a518488b6349ae64e6290, type: 3}
+    - {fileID: 2800000, guid: bb4b455986b9c4847b4ad552a7570ce9, type: 3}
+    - {fileID: 2800000, guid: 1a89e18f939d2c444a37e275de6e9ed9, type: 3}
+    - {fileID: 2800000, guid: 229c864e3a6edd84c81f97dc9e9f7162, type: 3}
+    - {fileID: 2800000, guid: 05823a3685fcec14886584cd8008ac43, type: 3}
+    totalSpriteSurfaceArea: 279876
+    bindAsDefault: 1
+    isAtlasV2: 0
+    cachedData: {fileID: 0}
+  m_MasterAtlas: {fileID: 0}
+  m_PackedSprites:
+  - {fileID: 21300000, guid: 05823a3685fcec14886584cd8008ac43, type: 3}
+  - {fileID: 21300000, guid: a64b7009764a518488b6349ae64e6290, type: 3}
+  - {fileID: 21300000, guid: bb4b455986b9c4847b4ad552a7570ce9, type: 3}
+  - {fileID: 21300000, guid: ed35a44ab65186d44bbd60ae0a6f99a0, type: 3}
+  - {fileID: 21300000, guid: 229c864e3a6edd84c81f97dc9e9f7162, type: 3}
+  - {fileID: 21300000, guid: 1a89e18f939d2c444a37e275de6e9ed9, type: 3}
+  m_PackedSpriteNamesToIndex:
+  - gage
+  - continue_adBt
+  - continue_Bt
+  - bg
+  - cover
+  - continue_text
+  m_Tag: Continue
+  m_IsVariant: 0

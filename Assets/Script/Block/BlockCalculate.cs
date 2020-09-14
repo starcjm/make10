@@ -31,7 +31,9 @@ public class BlockCalculate
     private bool isLast = false;
 
     //블록 움직임 시간
-    private readonly float moveTime = 0.17f;
+    private readonly float moveTime1 = 0.17f;
+    private readonly float moveTime2 = 0.13f;
+    private float moveTime = 0.0f;
 
     public void SetStartBlock(Block block)
     {
@@ -110,6 +112,14 @@ public class BlockCalculate
         //스타트 블럭 포함해서 계산
         if (mergeBlock.Count + 1 >= BlockDefine.MERGE_COUNT)
         {
+            if (mergeBlock.Count == 2)
+            {
+                moveTime = moveTime1;
+            }
+            else
+            {
+                moveTime = moveTime2;
+            }
             for (int i = 0; i < mergeBlock.Count; ++i)
             {
                 var block = mergeBlock[i];

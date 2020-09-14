@@ -31,9 +31,16 @@ public class UserInfo : Singleton<UserInfo>
         YES,
     }
 
+    public enum E_ADS
+    {
+        NO = 0,
+        YES,
+    }
+
     //세이브 파일 이름
     private string HighScoreLabel = "HIGHSCORE";
     private string SoundLabel = "SOUND";
+    private string MusicLabel = "MUSIC";
     private string CoinLabel = "COIN";
     private string TutorialLabel = "TUTORIAL";
     private string ReviewOkLabel = "REVIEWOK";
@@ -118,6 +125,14 @@ public class UserInfo : Singleton<UserInfo>
         return isSound;
     }
 
+    //뮤직 플래그
+    private bool isMusic = false;
+
+    public bool IsMusic()
+    {
+        return isMusic;
+    }
+
     public bool IsHighScore { get; set; } = false;
 
     /// <summary>
@@ -165,11 +180,40 @@ public class UserInfo : Singleton<UserInfo>
         if(Sound == (int)E_SOUND_SET.ON)
         {
             Sound = (int)E_SOUND_SET.OFF;
-            SoundManager.Instance.StopBGM();
         } 
         else
         {
             Sound = (int)E_SOUND_SET.ON;
+        }
+    }
+
+    public int Music
+    {
+        get { return PlayerPrefs.GetInt(MusicLabel, 0); }
+        set
+        {
+            if (value == (int)E_SOUND_SET.ON)
+            {
+                isMusic = true;
+            }
+            else
+            {
+                isMusic = false;
+            }
+            PlayerPrefs.SetInt(MusicLabel, value);
+        }
+    }
+
+    public void SetMusic()
+    {
+        if (Music == (int)E_SOUND_SET.ON)
+        {
+            Music = (int)E_SOUND_SET.OFF;
+            SoundManager.Instance.StopBGM();
+        }
+        else
+        {
+            Music = (int)E_SOUND_SET.ON;
             SoundManager.Instance.PlayBGM(E_BGM.BGM_ONE);
         }
     }
@@ -244,6 +288,7 @@ public class UserInfo : Singleton<UserInfo>
         coin = PlayerPrefs.GetInt(CoinLabel, 0);
         HighScore = PlayerPrefs.GetInt(HighScoreLabel, 0);
         Sound = PlayerPrefs.GetInt(SoundLabel, 0);
+        Music = PlayerPrefs.GetInt(MusicLabel, 0);
         Tutorial = PlayerPrefs.GetInt(TutorialLabel, 0);
         ReviewOk = PlayerPrefs.GetInt(ReviewOkLabel, 0);
         ReviewNoFirst = PlayerPrefs.GetInt(ReviewNoFirstLabel, 0);

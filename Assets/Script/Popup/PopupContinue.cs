@@ -47,11 +47,9 @@ public class PopupContinue : PopupBase
 
     public void OnTouchContinue()
     {
-        //이어하기 했을때 가운데 3 * 3블럭 삭제
         SoundManager.Instance.PlaySFX(E_SFX.BUTTON);
-        GameManager.Instance.ContinueDestryBlock();
-        gameObject.SetActive(false);
-        GameManager.Instance.SetGameState(E_GAME_STATE.GAME);
+        AdsManager.Instance.SetRewardType(E_REWARD_TYPE.COTINUE);
+        AdsManager.Instance.RewardAdShow();
     }
 
     public void OnTouchHome()
@@ -64,6 +62,7 @@ public class PopupContinue : PopupBase
         }
         else
         {
+            AdsManager.Instance.InterstitialAdShow();
             SoundManager.Instance.PlaySFX(E_SFX.BUTTON);
             SceneManager.LoadScene((int)E_SCENE.GAME);
         }

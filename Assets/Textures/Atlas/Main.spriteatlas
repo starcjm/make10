@@ -1,0 +1,84 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!687078895 &4343727234628468602
+SpriteAtlas:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Main
+  m_EditorData:
+    serializedVersion: 2
+    textureSettings:
+      serializedVersion: 2
+      anisoLevel: 1
+      compressionQuality: 50
+      maxTextureSize: 2048
+      textureCompression: 0
+      filterMode: 1
+      generateMipMaps: 0
+      readable: 0
+      crunchedCompression: 0
+      sRGB: 1
+    platformSettings:
+    - serializedVersion: 3
+      m_BuildTarget: DefaultTexturePlatform
+      m_MaxTextureSize: 512
+      m_ResizeAlgorithm: 0
+      m_TextureFormat: -1
+      m_TextureCompression: 1
+      m_CompressionQuality: 50
+      m_CrunchedCompression: 0
+      m_AllowsAlphaSplitting: 0
+      m_Overridden: 0
+      m_AndroidETC2FallbackOverride: 0
+      m_ForceMaximumCompressionQuality_BC6H_BC7: 0
+    packingSettings:
+      serializedVersion: 2
+      padding: 4
+      blockOffset: 1
+      allowAlphaSplitting: 0
+      enableRotation: 1
+      enableTightPacking: 0
+    secondaryTextureSettings: {}
+    variantMultiplier: 1
+    packables:
+    - {fileID: 2800000, guid: 3c8c67cfa06675344b38f930a9b4f244, type: 3}
+    - {fileID: 2800000, guid: db0296f741c27e04fbee684d068cc73e, type: 3}
+    - {fileID: 2800000, guid: fde13396eed09b74b9813078e360887f, type: 3}
+    - {fileID: 2800000, guid: 37a1c81ccc3e0b5428bd4cdb628e2250, type: 3}
+    - {fileID: 2800000, guid: 1da656cd8168389419334be88d1e375c, type: 3}
+    - {fileID: 2800000, guid: b2992c1aa20675b4f853f072f8591d61, type: 3}
+    - {fileID: 2800000, guid: a2ce12fa6df0d7b41aaf032208847abf, type: 3}
+    - {fileID: 2800000, guid: 5e418fa6b125331409a44d4fb814c811, type: 3}
+    - {fileID: 2800000, guid: 30a6d3deb32546240a37ba071176c3b1, type: 3}
+    - {fileID: 2800000, guid: 6cbe1ad5b17c9174db8f8a2e348b0017, type: 3}
+    totalSpriteSurfaceArea: 176915
+    bindAsDefault: 1
+    isAtlasV2: 0
+    cachedData: {fileID: 0}
+  m_MasterAtlas: {fileID: 0}
+  m_PackedSprites:
+  - {fileID: 21300000, guid: 6cbe1ad5b17c9174db8f8a2e348b0017, type: 3}
+  - {fileID: 21300000, guid: fde13396eed09b74b9813078e360887f, type: 3}
+  - {fileID: 21300000, guid: 5e418fa6b125331409a44d4fb814c811, type: 3}
+  - {fileID: 21300000, guid: db0296f741c27e04fbee684d068cc73e, type: 3}
+  - {fileID: 21300000, guid: b2992c1aa20675b4f853f072f8591d61, type: 3}
+  - {fileID: 21300000, guid: a2ce12fa6df0d7b41aaf032208847abf, type: 3}
+  - {fileID: 21300000, guid: 37a1c81ccc3e0b5428bd4cdb628e2250, type: 3}
+  - {fileID: 21300000, guid: 1da656cd8168389419334be88d1e375c, type: 3}
+  - {fileID: 21300000, guid: 30a6d3deb32546240a37ba071176c3b1, type: 3}
+  - {fileID: 21300000, guid: 3c8c67cfa06675344b38f930a9b4f244, type: 3}
+  m_PackedSpriteNamesToIndex:
+  - move_get coin
+  - coin_tag
+  - main_RankBt
+  - coin_buy
+  - main_noadsBt
+  - main_optionBt
+  - crown_big
+  - main_Logo
+  - main_startBt
+  - coin_bg
+  m_Tag: Main
+  m_IsVariant: 0

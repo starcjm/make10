@@ -79,16 +79,24 @@ public class PopupShop : PopupBase
         gameObject.SetActive(false);
     }
 
+    public void SetCoin()
+    {
+        if(CurrentCoin)
+        {
+            CurrentCoin.text = UserInfo.Instance.Coin.ToString();
+        }
+    }
+
     public void OnTouchAds()
     {
-        GameManager.Instance.AddCoin(Const.ADS_COIN);
-        GameManager.Instance.GetMainScreen().SetCoin(UserInfo.Instance.Coin);
-        CurrentCoin.text = UserInfo.Instance.Coin.ToString();
-        popupMain.SetCoin();
+        SoundManager.Instance.PlaySFX(E_SFX.BUTTON);
+        AdsManager.Instance.SetRewardType(E_REWARD_TYPE.SHOP_ADS_COIN);
+        AdsManager.Instance.RewardAdShow();
     }
 
     public void OnTouch200()
     {
+        SoundManager.Instance.PlaySFX(E_SFX.BUTTON);
         GameManager.Instance.AddCoin(Const.COIN_200);
         GameManager.Instance.GetMainScreen().SetCoin(UserInfo.Instance.Coin);
         CurrentCoin.text = UserInfo.Instance.Coin.ToString();
@@ -97,6 +105,7 @@ public class PopupShop : PopupBase
 
     public void OnTouch500()
     {
+        SoundManager.Instance.PlaySFX(E_SFX.BUTTON);
         GameManager.Instance.AddCoin(Const.COIN_500);
         GameManager.Instance.GetMainScreen().SetCoin(UserInfo.Instance.Coin);
         CurrentCoin.text = UserInfo.Instance.Coin.ToString();
@@ -105,6 +114,7 @@ public class PopupShop : PopupBase
 
     public void OnTouch1250()
     {
+        SoundManager.Instance.PlaySFX(E_SFX.BUTTON);
         GameManager.Instance.AddCoin(Const.COIN_1250);
         GameManager.Instance.GetMainScreen().SetCoin(UserInfo.Instance.Coin);
         CurrentCoin.text = UserInfo.Instance.Coin.ToString();
@@ -113,6 +123,7 @@ public class PopupShop : PopupBase
 
     public void OnTouch3500()
     {
+        SoundManager.Instance.PlaySFX(E_SFX.BUTTON);
         GameManager.Instance.AddCoin(Const.COIN_3500);
         GameManager.Instance.GetMainScreen().SetCoin(UserInfo.Instance.Coin);
         CurrentCoin.text = UserInfo.Instance.Coin.ToString();
@@ -121,5 +132,6 @@ public class PopupShop : PopupBase
 
     public void OnTouchNoADS()
     {
+        SoundManager.Instance.PlaySFX(E_SFX.BUTTON);
     }
 }
