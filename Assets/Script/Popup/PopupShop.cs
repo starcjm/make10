@@ -13,6 +13,9 @@ public class PopupShop : PopupBase
 
     public PopupMain popupMain;
 
+    public GameObject getCoinAds;
+    public GameObject noAds;
+
     public Text CurrentCoin;
 
     public Text AdsCoin;
@@ -61,6 +64,8 @@ public class PopupShop : PopupBase
         Price3500.text = string.Format("${0}", Const.PRICE_3500);
 
         PriceNoAds.text = string.Format("${0}", Const.NO_ADS);
+        noAds.SetActive(!AdsManager.Instance.IsNoAdsBuy());
+
 
         CurrentCoin.text = UserInfo.Instance.Coin.ToString();
     }
@@ -76,6 +81,7 @@ public class PopupShop : PopupBase
         {
             GameManager.Instance.SetGameState(E_GAME_STATE.GAME);
         }
+        getCoinAds.SetActive(true);
         gameObject.SetActive(false);
     }
 
@@ -92,6 +98,7 @@ public class PopupShop : PopupBase
         SoundManager.Instance.PlaySFX(E_SFX.BUTTON);
         AdsManager.Instance.SetRewardType(E_REWARD_TYPE.SHOP_ADS_COIN);
         AdsManager.Instance.RewardAdShow();
+        getCoinAds.SetActive(false);
     }
 
     public void OnTouch200()
@@ -133,5 +140,7 @@ public class PopupShop : PopupBase
     public void OnTouchNoADS()
     {
         SoundManager.Instance.PlaySFX(E_SFX.BUTTON);
+        AdsManager.Instance.BuyNoAds();
+        noAds.SetActive(!AdsManager.Instance.IsNoAdsBuy());
     }
 }

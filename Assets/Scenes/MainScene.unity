@@ -154,7 +154,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 2132340090}
-  m_RootOrder: 10
+  m_RootOrder: 9
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -1835,7 +1835,7 @@ RectTransform:
   - {fileID: 1559370437}
   - {fileID: 1414294675}
   m_Father: {fileID: 2132340090}
-  m_RootOrder: 5
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -1856,7 +1856,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -2801,7 +2801,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 2132340090}
-  m_RootOrder: 3
+  m_RootOrder: 10
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -3963,7 +3963,7 @@ GameObject:
   - component: {fileID: 507028680}
   - component: {fileID: 507028679}
   m_Layer: 0
-  m_Name: BtnSoundOn
+  m_Name: BtnMusicOn
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4033,7 +4033,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 516032782}
         m_TargetAssemblyTypeName: PopupPause, Assembly-CSharp
-        m_MethodName: OnTouchSound
+        m_MethodName: OnTouchMusic
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -4233,10 +4233,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cfd7a9556ff688443b40ada79f0e7407, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  SoundON: {fileID: 507028677}
-  SoundOff: {fileID: 697986127}
-  MusicON: {fileID: 1947187352}
-  MusicOff: {fileID: 620521980}
+  SoundON: {fileID: 1947187352}
+  SoundOff: {fileID: 620521980}
+  MusicON: {fileID: 507028677}
+  MusicOff: {fileID: 697986127}
 --- !u!1 &518233259
 GameObject:
   m_ObjectHideFlags: 0
@@ -4591,7 +4591,7 @@ RectTransform:
   - {fileID: 1343677061}
   - {fileID: 653902919}
   m_Father: {fileID: 2132340090}
-  m_RootOrder: 9
+  m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -4612,7 +4612,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -4669,7 +4669,7 @@ RectTransform:
   - {fileID: 1611960651}
   - {fileID: 629148965}
   m_Father: {fileID: 2132340090}
-  m_RootOrder: 6
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -4690,7 +4690,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -5405,7 +5405,7 @@ GameObject:
   - component: {fileID: 620521983}
   - component: {fileID: 620521982}
   m_Layer: 0
-  m_Name: BtnMusicOff
+  m_Name: BtnSoundOff
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5475,7 +5475,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 516032782}
         m_TargetAssemblyTypeName: PopupPause, Assembly-CSharp
-        m_MethodName: OnTouchMusic
+        m_MethodName: OnTouchSound
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -6249,7 +6249,7 @@ GameObject:
   - component: {fileID: 697986130}
   - component: {fileID: 697986129}
   m_Layer: 0
-  m_Name: BtnSoundOff
+  m_Name: BtnMusicOff
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6319,7 +6319,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 516032782}
         m_TargetAssemblyTypeName: PopupPause, Assembly-CSharp
-        m_MethodName: OnTouchSound
+        m_MethodName: OnTouchMusic
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -6550,7 +6550,7 @@ GameObject:
   - component: {fileID: 730794535}
   - component: {fileID: 730794534}
   m_Layer: 0
-  m_Name: BtnSoundOn
+  m_Name: BtnMusicOn
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6620,7 +6620,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1214920833}
         m_TargetAssemblyTypeName: PopupSetting, Assembly-CSharp
-        m_MethodName: OnTouchSound
+        m_MethodName: OnTouchMusic
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -6970,7 +6970,7 @@ RectTransform:
   - {fileID: 1374350577}
   - {fileID: 175727863}
   m_Father: {fileID: 2132340090}
-  m_RootOrder: 8
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -6991,7 +6991,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -7675,7 +7675,7 @@ GameObject:
   - component: {fileID: 893362520}
   - component: {fileID: 893362519}
   m_Layer: 0
-  m_Name: BtnMusicOff
+  m_Name: BtnSoundOff
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -7726,7 +7726,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1214920833}
         m_TargetAssemblyTypeName: PopupSetting, Assembly-CSharp
-        m_MethodName: OnTouchMusic
+        m_MethodName: OnTouchSound
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -9326,10 +9326,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 656bd4335a162a8428fdde1c3df7832d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  SoundON: {fileID: 730794532}
-  SoundOff: {fileID: 1490861742}
-  MusicON: {fileID: 1473909722}
-  MusicOff: {fileID: 893362518}
+  SoundON: {fileID: 1473909722}
+  SoundOff: {fileID: 893362518}
+  MusicON: {fileID: 730794532}
+  MusicOff: {fileID: 1490861742}
 --- !u!1 &1217037688
 GameObject:
   m_ObjectHideFlags: 0
@@ -11167,7 +11167,7 @@ RectTransform:
   - {fileID: 743023966}
   - {fileID: 1767627703}
   m_Father: {fileID: 2132340090}
-  m_RootOrder: 4
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -11188,7 +11188,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -11405,7 +11405,7 @@ GameObject:
   - component: {fileID: 1473909724}
   - component: {fileID: 1473909723}
   m_Layer: 0
-  m_Name: BtnMusicOn
+  m_Name: BtnSoundOn
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -11456,7 +11456,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1214920833}
         m_TargetAssemblyTypeName: PopupSetting, Assembly-CSharp
-        m_MethodName: OnTouchMusic
+        m_MethodName: OnTouchSound
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -11702,7 +11702,7 @@ GameObject:
   - component: {fileID: 1490861745}
   - component: {fileID: 1490861744}
   m_Layer: 0
-  m_Name: BtnSoundOff
+  m_Name: BtnMusicOff
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -11772,7 +11772,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1214920833}
         m_TargetAssemblyTypeName: PopupSetting, Assembly-CSharp
-        m_MethodName: OnTouchSound
+        m_MethodName: OnTouchMusic
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -12256,6 +12256,85 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1517603885}
   m_CullTransparentMesh: 0
+--- !u!1 &1521781396
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1521781399}
+  - component: {fileID: 1521781398}
+  - component: {fileID: 1521781397}
+  m_Layer: 0
+  m_Name: TextAdsCoin
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1521781397
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1521781396}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 0
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_FontData:
+    m_Font: {fileID: 12800000, guid: 9c73725aea9170040b96a604bfb8cdd7, type: 3}
+    m_FontSize: 30
+    m_FontStyle: 1
+    m_BestFit: 0
+    m_MinSize: 3
+    m_MaxSize: 40
+    m_Alignment: 4
+    m_AlignByGeometry: 0
+    m_RichText: 1
+    m_HorizontalOverflow: 0
+    m_VerticalOverflow: 0
+    m_LineSpacing: 1
+  m_Text: 25
+--- !u!222 &1521781398
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1521781396}
+  m_CullTransparentMesh: 0
+--- !u!224 &1521781399
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1521781396}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1726123324}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 60, y: 3}
+  m_SizeDelta: {x: 150, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1523397097
 GameObject:
   m_ObjectHideFlags: 0
@@ -13910,7 +13989,8 @@ RectTransform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
+  m_Children:
+  - {fileID: 1521781399}
   m_Father: {fileID: 1834028799}
   m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -15075,6 +15155,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   textGroup: {fileID: 1427832097}
+  adsButton: {fileID: 1726123323}
+  AdsCoin: {fileID: 1521781397}
   HighScore: {fileID: 1060909875}
   Coin: {fileID: 1733671022}
 --- !u!1 &1861887157
@@ -15617,7 +15699,7 @@ GameObject:
   - component: {fileID: 1947187355}
   - component: {fileID: 1947187354}
   m_Layer: 0
-  m_Name: BtnMusicOn
+  m_Name: BtnSoundOn
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -15687,7 +15769,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 516032782}
         m_TargetAssemblyTypeName: PopupPause, Assembly-CSharp
-        m_MethodName: OnTouchMusic
+        m_MethodName: OnTouchSound
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -16252,7 +16334,7 @@ RectTransform:
   - {fileID: 1125506710}
   - {fileID: 457730385}
   m_Father: {fileID: 2132340090}
-  m_RootOrder: 7
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -16273,7 +16355,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -16893,7 +16975,6 @@ RectTransform:
   - {fileID: 1002278430}
   - {fileID: 1351749726}
   - {fileID: 598536862}
-  - {fileID: 355448040}
   - {fileID: 1463182072}
   - {fileID: 290179280}
   - {fileID: 534336356}
@@ -16901,6 +16982,7 @@ RectTransform:
   - {fileID: 763493463}
   - {fileID: 534192166}
   - {fileID: 29037611}
+  - {fileID: 355448040}
   m_Father: {fileID: 951441778}
   m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -16922,6 +17004,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   popupMain: {fileID: 1834028800}
+  getCoinAds: {fileID: 1767627702}
+  noAds: {fileID: 653902918}
   CurrentCoin: {fileID: 1122877105}
   AdsCoin: {fileID: 743023967}
   Coin200: {fileID: 1559370438}

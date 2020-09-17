@@ -46,9 +46,6 @@ public class Const
     public const int COIN_1250 = 1250;
     public const int COIN_3500 = 3500;
 
-    //광고 보상
-    public const int MAIN_ADS_COIN = 100;
-
     //광고id
     //배너
     public const string ADS_ID_BANNER = "ca-app-pub-3940256099942544/6300978111";

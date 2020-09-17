@@ -95,6 +95,13 @@ public class GameManager : Singleton<GameManager>
         return isMerging;
     }
 
+    //빈공간 갯수 
+    public int GetEmptyGridCount()
+    {
+        //전체 그리드 갯수에서 현재 화면에 올라와 있는 갯수 제거
+        return (Const.GRID_COLUMN_COUNT * Const.GRID_ROW_COUNT) - blockObject.Count;
+    }
+
     //머지 할 데이터 큐에 저장
     public void AddMergeQueue(Block block)
     {
@@ -312,21 +319,30 @@ public class GameManager : Singleton<GameManager>
         }
     }
 
-    //확률에 따라 블록 생성
     private E_BLOCK_SHAPE_TYPE GetShapeBlockType()
     {
         E_BLOCK_SHAPE_TYPE type = E_BLOCK_SHAPE_TYPE.ONE;
+        int emptyGridCount = GetEmptyGridCount();
+        var shapePercent = BlockDefine.SHAPE_BLOCK_PERCENT1;
+        if (emptyGridCount <= BlockDefine.SHAPE_BLOCK_TYPE3)
+        {
+            shapePercent = BlockDefine.SHAPE_BLOCK_PERCENT3;
+        }
+        else if(emptyGridCount <= BlockDefine.SHAPE_BLOCK_TYPE2)
+        {
+            shapePercent = BlockDefine.SHAPE_BLOCK_PERCENT2;
+        }
+        
         int range = Random.Range(0, 100);
-        if(range < BlockDefine.ONE_BLOCK_PERCENT)
+        if (range < shapePercent[0])
         {
             type = E_BLOCK_SHAPE_TYPE.ONE;
         }
-        else if(range < BlockDefine.ONE_BLOCK_PERCENT + BlockDefine.TWO_BLOCK_PERCENT)
+        else if (range < shapePercent[1])
         {
             type = E_BLOCK_SHAPE_TYPE.TWO;
         }
-        else if (range < BlockDefine.ONE_BLOCK_PERCENT + BlockDefine.TWO_BLOCK_PERCENT
-                       + BlockDefine.THREE_BLOCK_PERCENT)
+        else if (range < shapePercent[2])
         {
             type = E_BLOCK_SHAPE_TYPE.THREE;
         }

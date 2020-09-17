@@ -131,24 +131,40 @@ public class BlockGenerator : Singleton<BlockGenerator>
         switch (shppeType)
         {
             case E_BLOCK_SHAPE_TYPE.ONE:
-                value = UnityEngine.Random.Range((int)E_BLOCK_TYPE.ONE, range + 1);
+                value = GetCreateBlockValue((int)E_BLOCK_TYPE.ONE, range + 1);
                 blockTempValue.Add(value);
                 break;
             case E_BLOCK_SHAPE_TYPE.TWO:
                 for(int i = 0; i < 2; ++i)
                 {
-                    value = UnityEngine.Random.Range((int)E_BLOCK_TYPE.ONE, range + 1);
+                    value = GetCreateBlockValue((int)E_BLOCK_TYPE.ONE, range + 1);
                     blockTempValue.Add(value);
                 }
                 break;
             case E_BLOCK_SHAPE_TYPE.THREE:
                 for (int i = 0; i < 3; ++i)
                 {
-                    value = UnityEngine.Random.Range((int)E_BLOCK_TYPE.ONE, range + 1);
+                    value = GetCreateBlockValue((int)E_BLOCK_TYPE.ONE, range + 1);
                     blockTempValue.Add(value);
                 }
                 break;
         }
+    }
+
+    public int GetCreateBlockValue(int min, int max)
+    {
+        int value = GetRandomValue(min, max);
+        if (value == (int)E_BLOCK_TYPE.STAR)
+        {
+            value = GetRandomValue((int)E_BLOCK_TYPE.FIVE, (int)E_BLOCK_TYPE._MAX_);
+        }
+        return value;
+    }
+
+    public int GetRandomValue(int min, int max)
+    {
+        int value = UnityEngine.Random.Range(min, max);
+        return value;
     }
 
     //블록 안에 들어갈 데이터 초기화

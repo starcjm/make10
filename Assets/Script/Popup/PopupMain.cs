@@ -7,6 +7,9 @@ public class PopupMain : PopupBase
 {
     public GameObject textGroup;
 
+    public GameObject adsButton;
+
+    public Text AdsCoin;
     public Text HighScore;
     public Text Coin;
 
@@ -42,21 +45,27 @@ public class PopupMain : PopupBase
         }
     }
 
+    private void SetAdsCoin()
+    {
+        if(AdsCoin)
+        {
+            AdsCoin.text = Const.ADS_COIN.ToString();
+        }
+    }
+
     private void Start()
     {
         textGroup.SetActive(false);
         SetText();
         SetCoin();
-    }
-
-    public void OnTouchAds()
-    {
+        SetAdsCoin();
     }
 
     public void OnTouchPlay()
     {
         SoundManager.Instance.PlaySFX(E_SFX.BUTTON);
         gameObject.SetActive(false);
+        adsButton.SetActive(true);
         GameManager.Instance.GetMainScreen().GameStart();
     }
 
@@ -73,6 +82,7 @@ public class PopupMain : PopupBase
 
     public void OnTouchAdsCoin()
     {
+        adsButton.SetActive(false);
         SoundManager.Instance.PlaySFX(E_SFX.BUTTON);
         AdsManager.Instance.SetRewardType(E_REWARD_TYPE.MAIN_COIN_ADD);
         AdsManager.Instance.RewardAdShow();
@@ -82,5 +92,11 @@ public class PopupMain : PopupBase
     {
         SoundManager.Instance.PlaySFX(E_SFX.BUTTON);
         GameManager.Instance.GetMainScreen().OpenShopPopup(PopupShop.E_SHOP_TYPE.LOBBY);
+    }
+
+    public void Close()
+    {
+        gameObject.SetActive(false);
+        adsButton.SetActive(true);
     }
 }

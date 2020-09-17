@@ -11,6 +11,12 @@ public enum E_REWARD_TYPE
     SHOP_ADS_COIN,
     COTINUE,
 }
+
+public enum E_NO_ADS_BUY
+{
+    NO = 0,
+    YES = 1,
+}
 public class AdsManager : Singleton<AdsManager>
 {
     //배너 광고
@@ -18,11 +24,11 @@ public class AdsManager : Singleton<AdsManager>
     //전면 광고
     private InterstitialAd screenAd;
     //동영상 광고
-    //private RewardBasedVideoAd rewardAd;
-
     private RewardedAd rewardAd;
 
     private E_REWARD_TYPE rewardAdType = E_REWARD_TYPE.NONE;
+
+    private bool noAdsBuy = false;
 
     public void SetRewardType(E_REWARD_TYPE type)
     {
@@ -32,10 +38,37 @@ public class AdsManager : Singleton<AdsManager>
     private void Start()
     {
         DontDestroyOnLoad(Instance);
+        
+    }
+
+    private void SetNoAds()
+    {
+        E_NO_ADS_BUY noAds = (E_NO_ADS_BUY)PlayerPrefs.GetInt("NOADSBUY", (int)E_NO_ADS_BUY.NO);
+        if (noAds == E_NO_ADS_BUY.NO)
+        {
+            noAdsBuy = false;
+        }
+        else if(noAds == E_NO_ADS_BUY.YES)
+        {
+            noAdsBuy = true;
+        }
+    }
+
+    public bool IsNoAdsBuy()
+    {
+        return noAdsBuy;
+    }
+
+    public void BuyNoAds()
+    {
+        PlayerPrefs.SetInt("NOADSBUY", (int)E_NO_ADS_BUY.YES);
+        SetNoAds();
+        DestroyAd();
     }
 
     public void Init()
     {
+        SetNoAds();
         MobileAds.Initialize(
             (initStatus) =>
             {
@@ -48,12 +81,13 @@ public class AdsManager : Singleton<AdsManager>
     //배너광고
     private void InitBannerAd()
     {
-        //banner = new BannerView(Const.ADS_ID_BANNER, AdSize.SmartBanner, AdPosition.Bottom);
-
-        AdSize adaptiveSize = AdSize.GetCurrentOrientationAnchoredAdaptiveBannerAdSizeWithWidth(AdSize.FullWidth);
-        banner = new BannerView(Const.ADS_ID_BANNER, adaptiveSize, AdPosition.Bottom);
-        AdRequest request = new AdRequest.Builder().Build();
-        banner.LoadAd(request);
+        if(!IsNoAdsBuy())
+        {
+            AdSize adaptiveSize = AdSize.GetCurrentOrientationAnchoredAdaptiveBannerAdSizeWithWidth(AdSize.FullWidth);
+            banner = new BannerView(Const.ADS_ID_BANNER, adaptiveSize, AdPosition.Bottom);
+            AdRequest request = new AdRequest.Builder().Build();
+            banner.LoadAd(request);
+        }
     }
 
     public void SetBannerAd(bool on)
@@ -68,25 +102,31 @@ public class AdsManager : Singleton<AdsManager>
         }
     }
 
-    public void DestroyAd()
+    private void DestroyAd()
     {
-        banner.Destroy();
+        if(banner != null)
+        {
+            banner.Destroy();
+        }
     }
 
     //전면 광고
     private void InitInterstitialAd()   
     {
-        if(screenAd != null)
+        if (!IsNoAdsBuy())
         {
-            screenAd.Destroy();
+            if (screenAd != null)
+            {
+                screenAd.Destroy();
+            }
+            screenAd = new InterstitialAd(Const.ADS_ID_FRONT);
+            screenAd.OnAdLoaded += HandleOnAdLoaded;
+            screenAd.OnAdFailedToLoad += HandleOnAdFailedToLoad;
+            screenAd.OnAdOpening += HandleOnAdOpened;
+            screenAd.OnAdClosed += HandleOnAdClosed;
+            screenAd.OnAdLeavingApplication += HandleOnAdLeavingApplication;
+            RequestInterstitial();
         }
-        screenAd = new InterstitialAd(Const.ADS_ID_FRONT);
-        screenAd.OnAdLoaded += HandleOnAdLoaded;
-        screenAd.OnAdFailedToLoad += HandleOnAdFailedToLoad;
-        screenAd.OnAdOpening += HandleOnAdOpened;
-        screenAd.OnAdClosed += HandleOnAdClosed;
-        screenAd.OnAdLeavingApplication += HandleOnAdLeavingApplication;
-        RequestInterstitial();
     }
 
     private void RequestInterstitial()
@@ -125,7 +165,12 @@ public class AdsManager : Singleton<AdsManager>
 
     public void InterstitialAdShow()
     {
-        StartCoroutine("ShowScreenAd");
+#if !UNITY_EDITOR
+        if (!IsNoAdsBuy())
+        {
+            StartCoroutine("ShowScreenAd");
+        }
+#endif
     }
 
     private IEnumerator ShowScreenAd()
@@ -185,10 +230,10 @@ public class AdsManager : Singleton<AdsManager>
         {
             case E_REWARD_TYPE.MAIN_COIN_ADD:
                 {
-                    GameManager.Instance.AddCoin(Const.MAIN_ADS_COIN);
+                    GameManager.Instance.AddCoin(Const.ADS_COIN);
                     GameManager.Instance.GetMainScreen().SetCoin(UserInfo.Instance.Coin);
                     GameManager.Instance.GetMainScreen().MainPopupUIRefresh();
-                    GameManager.Instance.GetMainScreen().ShowAdsCoinPopup(Const.MAIN_ADS_COIN);
+                    GameManager.Instance.GetMainScreen().ShowAdsCoinPopup(Const.ADS_COIN);
                 }
                 break;
             case E_REWARD_TYPE.SHOP_ADS_COIN:
@@ -212,7 +257,9 @@ public class AdsManager : Singleton<AdsManager>
 
     public void RewardAdShow()
     {
+#if !UNITY_EDITOR
         StartCoroutine("ShowReawardAd");
+#endif
     }
 
     private IEnumerator ShowReawardAd()

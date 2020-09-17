@@ -43,6 +43,16 @@ public static class BlockDefine
         return (int)pos.x * 1000 + (int)pos.y;
     }
 
+    //모양 블록 생성하기 위한 그리드에 빈공간 갯수
+    public const int SHAPE_BLOCK_TYPE1 = 49;
+    public const int SHAPE_BLOCK_TYPE2 = 25;
+    public const int SHAPE_BLOCK_TYPE3 = 10;
+
+    //빈공간 갯수에 따른 모양 블록 확률
+    public readonly static int[] SHAPE_BLOCK_PERCENT1 = { 25, 70, 100 };
+    public readonly static int[] SHAPE_BLOCK_PERCENT2 = { 30, 90, 100 };
+    public readonly static int[] SHAPE_BLOCK_PERCENT3 = { 50, 100, 0 };
+
     //블럭 확률 (합쳐서 100)
     public const int ONE_BLOCK_PERCENT = 20;
     public const int TWO_BLOCK_PERCENT = 60;

@@ -128,7 +128,18 @@ public class MainScreen : MonoBehaviour, IAndroidBackButton
 
     public void SetMainPopup(bool on)
     {
-        Main.SetActive(on);
+        if (on)
+        {
+            Main.SetActive(on);
+        }
+        else
+        {
+            var popup = Main.GetComponent<PopupMain>();
+            if (popup)
+            {
+                popup.Close();
+            }
+        }
     }
 
     public void MainPopupUIRefresh()
