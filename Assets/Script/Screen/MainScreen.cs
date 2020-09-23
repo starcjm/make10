@@ -181,10 +181,34 @@ public class MainScreen : MonoBehaviour, IAndroidBackButton
         OpenShopPopup(PopupShop.E_SHOP_TYPE.IN_GAME);
     }
 
+    public void ShopPopupNoAds()
+    {
+        Shop.GetComponent<PopupShop>().SetNoAds();
+    }
+
+    public void MainPopupNoAds()
+    {
+        Main.GetComponent<PopupMain>().SetNoAds();
+    }
+
+    public void SettingPopupNoAds()
+    {
+        Setting.GetComponent<PopupSetting>().SetNoAds();
+    }
+
     public void ShopUIRefresh()
     {
         var popup = Shop.GetComponent<PopupShop>();
         if(popup)
+        {
+            popup.SetCoin();
+        }
+    }
+
+    public void MainCoinRefresh()
+    {
+        var popup = Main.GetComponent<PopupMain>();
+        if (popup)
         {
             popup.SetCoin();
         }
@@ -288,7 +312,6 @@ public class MainScreen : MonoBehaviour, IAndroidBackButton
         SetHighScore();
     }
 
-
     public void SetHighScore()
     {
         if(highScore)
@@ -322,8 +345,6 @@ public class MainScreen : MonoBehaviour, IAndroidBackButton
         PlayerPrefs.DeleteAll();
         SceneManager.LoadScene((int)E_SCENE.SPLASH);
     }
-
-   
 
     public void OnTouchHammer()
     {

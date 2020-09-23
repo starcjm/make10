@@ -278,10 +278,7 @@ public class BlockCalculate
 
     public void StarBlockEffect()
     {
-        for(int i = 0; i < mergeBlock.Count; ++i)
-        {
-            StarBlockCheck(mergeBlock[i].data.key);
-        }
+        StarBlockCheck(startBlock.data.key);
     }
 
     //별 블럭 부셔질때 블럭 검사
@@ -317,29 +314,29 @@ public class BlockCalculate
                 StarBlockEffectCheck(CreateCheckData(1, 0, gridData));
             }
             
-            ////왼쪽 위
-            //if (gridData.column > 1 && gridData.row > 1)
-            //{
-            //    StarBlockEffectCheck(CreateCheckData(-1, -1, gridData));
-            //}
+            //왼쪽 위
+            if (gridData.column > 1 && gridData.row > 1)
+            {
+                StarBlockEffectCheck(CreateCheckData(-1, -1, gridData));
+            }
             
-            ////오른쪽 위
-            //if (gridData.column < Const.GRID_COLUMN_COUNT && gridData.row > 1)
-            //{
-            //    StarBlockEffectCheck(CreateCheckData(1, -1, gridData));
-            //}
+            //오른쪽 위
+            if (gridData.column < Const.GRID_COLUMN_COUNT && gridData.row > 1)
+            {
+                StarBlockEffectCheck(CreateCheckData(1, -1, gridData));
+            }
 
-            ////왼쪽 아래
-            //if (gridData.column > 1 && gridData.row < Const.GRID_ROW_COUNT)
-            //{
-            //    StarBlockEffectCheck(CreateCheckData(-1, 1, gridData));
-            //}
+            //왼쪽 아래
+            if (gridData.column > 1 && gridData.row < Const.GRID_ROW_COUNT)
+            {
+                StarBlockEffectCheck(CreateCheckData(-1, 1, gridData));
+            }
 
-            ////오른쪽 아래
-            //if (gridData.column < Const.GRID_COLUMN_COUNT && gridData.row < Const.GRID_ROW_COUNT)
-            //{
-            //    StarBlockEffectCheck(CreateCheckData(1, 1, gridData));
-            //}
+            //오른쪽 아래
+            if (gridData.column < Const.GRID_COLUMN_COUNT && gridData.row < Const.GRID_ROW_COUNT)
+            {
+                StarBlockEffectCheck(CreateCheckData(1, 1, gridData));
+            }
         }
     }
 

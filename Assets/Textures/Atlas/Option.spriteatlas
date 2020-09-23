@@ -43,13 +43,7 @@ SpriteAtlas:
     secondaryTextureSettings: {}
     variantMultiplier: 1
     packables:
-    - {fileID: 2800000, guid: 1ed100faa22475d4fbe8be92dcd38aed, type: 3}
-    - {fileID: 2800000, guid: 8fe0ee8c4b5244c49a62927d32a3c0b0, type: 3}
-    - {fileID: 2800000, guid: 3a8656437ef77d74fa060b0d148ec873, type: 3}
-    - {fileID: 2800000, guid: feecdb1937f723c459d9c1798fad29d0, type: 3}
-    - {fileID: 2800000, guid: 1f577b129aaa2bd4f8b99072c158a258, type: 3}
-    - {fileID: 2800000, guid: 3ce1393373fc9ff4387354a06355c60e, type: 3}
-    - {fileID: 2800000, guid: c410d386a17618b44b82c88ae4045115, type: 3}
+    - {fileID: 102900000, guid: 2acd210ccc5a5964090a7a61cc2cf6be, type: 3}
     totalSpriteSurfaceArea: 73772
     bindAsDefault: 1
     isAtlasV2: 0
@@ -63,6 +57,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: feecdb1937f723c459d9c1798fad29d0, type: 3}
   - {fileID: 21300000, guid: 1ed100faa22475d4fbe8be92dcd38aed, type: 3}
   - {fileID: 21300000, guid: 8fe0ee8c4b5244c49a62927d32a3c0b0, type: 3}
+  - {fileID: 21300000, guid: 5562250f9ed794f419b889e73711aa4d, type: 3}
   m_PackedSpriteNamesToIndex:
   - setting_sound_Off
   - setting_sound_On
@@ -71,5 +66,6 @@ SpriteAtlas:
   - setting_music_On
   - setting_backBt
   - setting_noads
+  - setting_share
   m_Tag: Option
   m_IsVariant: 0

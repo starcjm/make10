@@ -6,8 +6,8 @@ using UnityEngine.UI;
 public class PopupMain : PopupBase
 {
     public GameObject textGroup;
-
-    public GameObject adsButton;
+    public GameObject adsCoinButton;
+    public GameObject noAds;
 
     public Text AdsCoin;
     public Text HighScore;
@@ -59,13 +59,14 @@ public class PopupMain : PopupBase
         SetText();
         SetCoin();
         SetAdsCoin();
+        SetNoAds();
     }
 
     public void OnTouchPlay()
     {
         SoundManager.Instance.PlaySFX(E_SFX.BUTTON);
         gameObject.SetActive(false);
-        adsButton.SetActive(true);
+        adsCoinButton.SetActive(true);
         GameManager.Instance.GetMainScreen().GameStart();
     }
 
@@ -80,9 +81,15 @@ public class PopupMain : PopupBase
         GameManager.Instance.GetMainScreen().ShowSettingPopup();
     }
 
+    public void OnTouchNoAds()
+    {
+        SoundManager.Instance.PlaySFX(E_SFX.BUTTON);
+        GameManager.Instance.BuyShopItem(Const.PRODUCT_NO_ADS);
+    }
+
     public void OnTouchAdsCoin()
     {
-        adsButton.SetActive(false);
+        adsCoinButton.SetActive(false);
         SoundManager.Instance.PlaySFX(E_SFX.BUTTON);
         AdsManager.Instance.SetRewardType(E_REWARD_TYPE.MAIN_COIN_ADD);
         AdsManager.Instance.RewardAdShow();
@@ -97,6 +104,11 @@ public class PopupMain : PopupBase
     public void Close()
     {
         gameObject.SetActive(false);
-        adsButton.SetActive(true);
+        adsCoinButton.SetActive(true);
+    }
+
+    public void SetNoAds()
+    {
+        noAds.SetActive(!AdsManager.Instance.IsNoAdsBuy());
     }
 }

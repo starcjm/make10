@@ -17,7 +17,6 @@ public enum E_BLOCK_TYPE
     SIX,
     SEVEN,
     EIGHT,
-    NINE,
     STAR,
     _MAX_,
 }

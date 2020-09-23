@@ -10,6 +10,8 @@ public class PopupSetting : PopupBase
     public GameObject MusicON;
     public GameObject MusicOff;
 
+    public GameObject noAds;
+
     public override void OnTouchAndroidBackButton()
     {
         OnTouchBack();
@@ -24,6 +26,12 @@ public class PopupSetting : PopupBase
         bool isMusic = UserInfo.Instance.IsMusic();
         MusicON.SetActive(isMusic);
         MusicOff.SetActive(!isMusic);
+        SetNoAds();
+    }
+
+    public void SetNoAds()
+    {
+        noAds.SetActive(!AdsManager.Instance.IsNoAdsBuy());
     }
 
     public void OnTouchBack()
@@ -56,13 +64,15 @@ public class PopupSetting : PopupBase
         SoundManager.Instance.PlaySFX(E_SFX.BUTTON);
     }
 
-    public void OnTouchAds()
+    public void OnTouchNoAds()
     {
         SoundManager.Instance.PlaySFX(E_SFX.BUTTON);
+        GameManager.Instance.BuyShopItem(Const.PRODUCT_NO_ADS);
     }
 
     public void OnTouchRestore()
     {
         SoundManager.Instance.PlaySFX(E_SFX.BUTTON);
+        IAPManager.Instance.RestorePurchase();
     }
 }

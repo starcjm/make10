@@ -18,6 +18,7 @@ public class Splash : MonoBehaviour
     private void Start()
     {
         AdsManager.Instance.Init();
+        IAPManager.Instance.Init();
         LoadLanguage();
         UserInfo.Instance.LoadUserData();
         Invoke("MainScene", time);

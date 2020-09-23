@@ -624,4 +624,54 @@ public class GameManager : Singleton<GameManager>
     {
         Application.Quit();
     }
+
+    public void BuyNoAds()
+    {
+        //광고 삭제후 데이터 갱신
+        AdsManager.Instance.BuyNoAds();
+        GetMainScreen().ShopPopupNoAds();
+        GetMainScreen().MainPopupNoAds();
+        GetMainScreen().SettingPopupNoAds();
+    }
+
+    public void BuyShopItem(string productId)
+    {
+        IAPManager.Instance.Purchase(productId);
+    }
+
+    public void BuyCompleteShopItem(string productId)
+    {
+        if (productId == Const.PRODUCT_NO_ADS)
+        {
+            BuyNoAds();
+        }
+        else if (productId == Const.PRODUCT_COIN_200)
+        {
+            AddCoin(Const.COIN_200);
+            GetMainScreen().SetCoin(UserInfo.Instance.Coin);
+            GetMainScreen().ShopUIRefresh();
+            GetMainScreen().MainCoinRefresh();
+        }
+        else if (productId == Const.PRODUCT_COIN_500)
+        {
+            AddCoin(Const.COIN_500);
+            GetMainScreen().SetCoin(UserInfo.Instance.Coin);
+            GetMainScreen().ShopUIRefresh();
+            GetMainScreen().MainCoinRefresh();
+        }
+        else if (productId == Const.PRODUCT_COIN_1250)
+        {
+            AddCoin(Const.COIN_1250);
+            GetMainScreen().SetCoin(UserInfo.Instance.Coin);
+            GetMainScreen().ShopUIRefresh();
+            GetMainScreen().MainCoinRefresh();
+        }
+        else if (productId == Const.PRODUCT_COIN_3500)
+        {
+            AddCoin(Const.COIN_3500);
+            GetMainScreen().SetCoin(UserInfo.Instance.Coin);
+            GetMainScreen().ShopUIRefresh();
+            GetMainScreen().MainCoinRefresh();
+        }
+    }
 }

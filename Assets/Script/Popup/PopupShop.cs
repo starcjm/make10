@@ -49,23 +49,22 @@ public class PopupShop : PopupBase
 
     private void InitData()
     {
-        AdsCoin.text = "25";
+        AdsCoin.text = Const.ADS_COIN.ToString();
 
         Coin200.text = Const.COIN_200.ToString();
-        Price200.text = string.Format("${0}", Const.PRICE_200);
+        Price200.text = string.Format("{0}", IAPManager.Instance.GetPrice(Const.PRODUCT_COIN_200));
 
         Coin500.text = Const.COIN_500.ToString();
-        Price500.text = string.Format("${0}", Const.PRICE_500);
+        Price500.text = string.Format("{0}", IAPManager.Instance.GetPrice(Const.PRODUCT_COIN_500));
 
         Coin1250.text = Const.COIN_1250.ToString();
-        Price1250.text = string.Format("${0}", Const.PRICE_1250);
+        Price1250.text = string.Format("{0}", IAPManager.Instance.GetPrice(Const.PRODUCT_COIN_1250));
 
         Coin3500.text = Const.COIN_3500.ToString();
-        Price3500.text = string.Format("${0}", Const.PRICE_3500);
+        Price3500.text = string.Format("{0}", IAPManager.Instance.GetPrice(Const.PRODUCT_COIN_3500));
 
-        PriceNoAds.text = string.Format("${0}", Const.NO_ADS);
-        noAds.SetActive(!AdsManager.Instance.IsNoAdsBuy());
-
+        SetNoAds();
+        PriceNoAds.text = string.Format("{0}", IAPManager.Instance.GetPrice(Const.PRODUCT_NO_ADS));
 
         CurrentCoin.text = UserInfo.Instance.Coin.ToString();
     }
@@ -93,6 +92,11 @@ public class PopupShop : PopupBase
         }
     }
 
+    public void SetNoAds()
+    {
+        noAds.SetActive(!AdsManager.Instance.IsNoAdsBuy());
+    }
+
     public void OnTouchAds()
     {
         SoundManager.Instance.PlaySFX(E_SFX.BUTTON);
@@ -103,44 +107,27 @@ public class PopupShop : PopupBase
 
     public void OnTouch200()
     {
-        SoundManager.Instance.PlaySFX(E_SFX.BUTTON);
-        GameManager.Instance.AddCoin(Const.COIN_200);
-        GameManager.Instance.GetMainScreen().SetCoin(UserInfo.Instance.Coin);
-        CurrentCoin.text = UserInfo.Instance.Coin.ToString();
-        popupMain.SetCoin();
+        GameManager.Instance.BuyShopItem(Const.PRODUCT_COIN_200);
     }
 
     public void OnTouch500()
     {
-        SoundManager.Instance.PlaySFX(E_SFX.BUTTON);
-        GameManager.Instance.AddCoin(Const.COIN_500);
-        GameManager.Instance.GetMainScreen().SetCoin(UserInfo.Instance.Coin);
-        CurrentCoin.text = UserInfo.Instance.Coin.ToString();
-        popupMain.SetCoin();
+        GameManager.Instance.BuyShopItem(Const.PRODUCT_COIN_500);
     }
 
     public void OnTouch1250()
     {
-        SoundManager.Instance.PlaySFX(E_SFX.BUTTON);
-        GameManager.Instance.AddCoin(Const.COIN_1250);
-        GameManager.Instance.GetMainScreen().SetCoin(UserInfo.Instance.Coin);
-        CurrentCoin.text = UserInfo.Instance.Coin.ToString();
-        popupMain.SetCoin();
+        GameManager.Instance.BuyShopItem(Const.PRODUCT_COIN_1250);
     }
 
     public void OnTouch3500()
     {
-        SoundManager.Instance.PlaySFX(E_SFX.BUTTON);
-        GameManager.Instance.AddCoin(Const.COIN_3500);
-        GameManager.Instance.GetMainScreen().SetCoin(UserInfo.Instance.Coin);
-        CurrentCoin.text = UserInfo.Instance.Coin.ToString();
-        popupMain.SetCoin();
+        GameManager.Instance.BuyShopItem(Const.PRODUCT_COIN_3500);
     }
 
     public void OnTouchNoADS()
     {
         SoundManager.Instance.PlaySFX(E_SFX.BUTTON);
-        AdsManager.Instance.BuyNoAds();
-        noAds.SetActive(!AdsManager.Instance.IsNoAdsBuy());
+        GameManager.Instance.BuyShopItem(Const.PRODUCT_NO_ADS);
     }
 }
