@@ -9,6 +9,16 @@ using Unity.Mathematics;
 /// </summary>
 public class BlockGenerator : Singleton<BlockGenerator>
 {
+    public class BlockTempData
+    {
+        public E_BLOCK_TYPE type = E_BLOCK_TYPE.ONE;
+        public bool firstMark = false;
+        public BlockTempData(E_BLOCK_TYPE Type, bool FirstMark)
+        {
+            type = Type;
+            firstMark = FirstMark;
+        }
+    }
     //그리드위에 올라갈 단일 블록
     public GameObject gridOverBlock;
     //생성될 타겟 블록 프리팹 
@@ -22,12 +32,12 @@ public class BlockGenerator : Singleton<BlockGenerator>
     //숫자 블록 이미지
     public Sprite[] blockSprite;
 
-    private List<int> blockTempValue = new List<int>();
+    private List<BlockTempData> blockTempValue = new List<BlockTempData>();
     
     //그리드에 올라갈 단일 블록
     public GameObject CreateGridOverBlock(GridData gridData, Transform parent)
     {
-        GameObject cloneBlock = (GameObject)Instantiate(gridOverBlock);
+        GameObject cloneBlock = Instantiate(gridOverBlock);
         cloneBlock.name = string.Format("BLOCK{0}-{1}", gridData.column, gridData.row);
         cloneBlock.transform.SetParent(parent.transform);
         cloneBlock.transform.localScale = Vector3.one;
@@ -57,7 +67,7 @@ public class BlockGenerator : Singleton<BlockGenerator>
     //반투명 블럭 생성
     public GameObject CreateAlphaShapeBlock(GameObject block, Transform parent, Vector3 pos)
     {
-        GameObject cloneBlock = (GameObject)Instantiate(block);
+        GameObject cloneBlock = Instantiate(block);
         //알파 블록은 충돌 해제
         //cloneBlock.layer = 0;
         cloneBlock.GetComponent<BoxCollider2D>().enabled = false;
@@ -86,7 +96,7 @@ public class BlockGenerator : Singleton<BlockGenerator>
         CreateBlockValue(shppeType, range);
 
         GameObject prefabBlock = this.prefabBlock[(int)shppeType];
-        GameObject cloneBlock = (GameObject)Instantiate(prefabBlock);
+        GameObject cloneBlock = Instantiate(prefabBlock);
         cloneBlock.transform.SetParent(parent);
         cloneBlock.transform.localScale = Vector3.one;
         int childCnt = cloneBlock.transform.childCount;
@@ -94,7 +104,7 @@ public class BlockGenerator : Singleton<BlockGenerator>
         {
             if(i < blockTempValue.Count)
             {
-                E_BLOCK_TYPE blockType = (E_BLOCK_TYPE)blockTempValue[i];
+                E_BLOCK_TYPE blockType = blockTempValue[i].type;
                 var childObj = cloneBlock.transform.GetChild(i);
 
                 //생성될 블록 값
@@ -102,12 +112,9 @@ public class BlockGenerator : Singleton<BlockGenerator>
                 if (block)
                 {
                     block.data.blockType = blockType;
-                }
-                Image image = childObj.GetComponentInChildren<Image>();
-                if (image)
-                {
-                    image.sprite = blockSprite[(int)blockType - 1];
-                }
+                    block.mainImg.sprite = blockSprite[(int)blockType - 1];
+                    block.firstMark.SetActive(blockTempValue[i].firstMark);
+                } 
             }
         }
         shapeObject = cloneBlock;
@@ -125,29 +132,65 @@ public class BlockGenerator : Singleton<BlockGenerator>
     }
 
     //블록 안에 들어갈 데이터 생성
-    private void CreateBlockValue(E_BLOCK_SHAPE_TYPE shppeType, int range)
+    private void CreateBlockValue(E_BLOCK_SHAPE_TYPE shapeType, int range)
     {
         int value = 0;
-        switch (shppeType)
+        switch (shapeType)
         {
             case E_BLOCK_SHAPE_TYPE.ONE:
-                value = GetCreateBlockValue((int)E_BLOCK_TYPE.ONE, range + 1);
-                blockTempValue.Add(value);
-                break;
-            case E_BLOCK_SHAPE_TYPE.TWO:
-                for(int i = 0; i < 2; ++i)
                 {
                     value = GetCreateBlockValue((int)E_BLOCK_TYPE.ONE, range + 1);
-                    blockTempValue.Add(value);
+                    blockTempValue.Add(new BlockTempData((E_BLOCK_TYPE)value, false));
+                }
+                break;
+            case E_BLOCK_SHAPE_TYPE.TWO:
+                {
+                    for (int i = 0; i < 2; ++i)
+                    {
+                        value = GetCreateBlockValue((int)E_BLOCK_TYPE.ONE, range + 1);
+                        blockTempValue.Add(new BlockTempData((E_BLOCK_TYPE)value, false));
+                    }
                 }
                 break;
             case E_BLOCK_SHAPE_TYPE.THREE:
-                for (int i = 0; i < 3; ++i)
                 {
-                    value = GetCreateBlockValue((int)E_BLOCK_TYPE.ONE, range + 1);
-                    blockTempValue.Add(value);
+                    for (int i = 0; i < 3; ++i)
+                    {
+                        value = GetCreateBlockValue((int)E_BLOCK_TYPE.ONE, range + 1);
+                        blockTempValue.Add(new BlockTempData((E_BLOCK_TYPE)value, false));
+                    }
                 }
                 break;
+        }
+        FirstMarkCheck(shapeType);
+    }
+
+    private void FirstMarkCheck(E_BLOCK_SHAPE_TYPE shapeType)
+    {
+        if(shapeType == E_BLOCK_SHAPE_TYPE.TWO)
+        {
+            if(blockTempValue.Count >= 2)
+            {
+                if (blockTempValue[0].type == blockTempValue[1].type)
+                {
+                    blockTempValue[0].firstMark = true;
+                }
+            }
+        }
+        else if(shapeType == E_BLOCK_SHAPE_TYPE.THREE)
+        {
+            if (blockTempValue.Count >= 3)
+            {
+                if (blockTempValue[0].type == blockTempValue[1].type
+                 || blockTempValue[0].type == blockTempValue[2].type)
+                {
+                    blockTempValue[0].firstMark = true;
+                }
+                else if (blockTempValue[1].type == blockTempValue[2].type)
+                {
+                    blockTempValue[1].firstMark = true;
+                }
+            }
         }
     }
 
@@ -175,7 +218,7 @@ public class BlockGenerator : Singleton<BlockGenerator>
 
     public void CreateMergeEffec(Transform parent, Vector3 pos)
     {
-        GameObject cloneEffect = (GameObject)Instantiate(mergeEffect);
+        GameObject cloneEffect = Instantiate(mergeEffect);
         cloneEffect.transform.SetParent(parent);
         cloneEffect.transform.position = pos;
         cloneEffect.transform.localScale = Vector3.one;

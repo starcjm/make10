@@ -6,10 +6,13 @@ using UnityEngine.UI;
 public class PopupMain : PopupBase
 {
     public GameObject textGroup;
-    public GameObject adsCoinButton;
-    public GameObject noAds;
+    public GameObject adsCoinButtonOn;
+    public GameObject adsCoinButtonOff;
+    public GameObject noAdsOn;
+    public GameObject noAdsOff;
 
-    public Text AdsCoin;
+    public Text AdsCoinOn;
+    public Text AdsCoinOff;
     public Text HighScore;
     public Text Coin;
 
@@ -47,9 +50,13 @@ public class PopupMain : PopupBase
 
     private void SetAdsCoin()
     {
-        if(AdsCoin)
+        if(AdsCoinOn)
         {
-            AdsCoin.text = Const.ADS_COIN.ToString();
+            AdsCoinOn.text = Const.ADS_COIN.ToString();
+        }
+        if (AdsCoinOff)
+        {
+            AdsCoinOff.text = Const.ADS_COIN.ToString();
         }
     }
 
@@ -66,13 +73,15 @@ public class PopupMain : PopupBase
     {
         SoundManager.Instance.PlaySFX(E_SFX.BUTTON);
         gameObject.SetActive(false);
-        adsCoinButton.SetActive(true);
+        adsCoinButtonOn.SetActive(true);
+        adsCoinButtonOff.SetActive(false);
         GameManager.Instance.GetMainScreen().GameStart();
     }
 
     public void OnTouchRank()
     {
         SoundManager.Instance.PlaySFX(E_SFX.BUTTON);
+        GameManager.Instance.ShowRanking();
     }
 
     public void OnTouchSetting()
@@ -89,7 +98,8 @@ public class PopupMain : PopupBase
 
     public void OnTouchAdsCoin()
     {
-        adsCoinButton.SetActive(false);
+        adsCoinButtonOn.SetActive(false);
+        adsCoinButtonOff.SetActive(true);
         SoundManager.Instance.PlaySFX(E_SFX.BUTTON);
         AdsManager.Instance.SetRewardType(E_REWARD_TYPE.MAIN_COIN_ADD);
         AdsManager.Instance.RewardAdShow();
@@ -104,11 +114,13 @@ public class PopupMain : PopupBase
     public void Close()
     {
         gameObject.SetActive(false);
-        adsCoinButton.SetActive(true);
+        adsCoinButtonOn.SetActive(true);
+        adsCoinButtonOff.SetActive(false);
     }
 
     public void SetNoAds()
     {
-        noAds.SetActive(!AdsManager.Instance.IsNoAdsBuy());
+        noAdsOn.SetActive(!AdsManager.Instance.IsNoAdsBuy());
+        noAdsOff.SetActive(AdsManager.Instance.IsNoAdsBuy());
     }
 }

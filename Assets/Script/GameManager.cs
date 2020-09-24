@@ -1,4 +1,5 @@
 ﻿using DG.Tweening;
+using GooglePlayGames;
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
@@ -482,9 +483,33 @@ public class GameManager : Singleton<GameManager>
             //별모양 터트렸을때 효과
             calc.StarBlockEffect();
             var starBlocks = calc.GetStarBlockEffect();
-            ChangeStarblock(starBlocks);
-            StarBlockAni(starBlocks);
+            //ChangeStarblock(starBlocks);
+            //StarBlockAni(starBlocks);
+            CreateTenBlockRange(block);
             StartCoroutine(StarBlockRemoveDelay(starBlocks));
+        }
+    }
+
+    private void CreateTenBlockRange(Block block)
+    {
+        //9방향 검사해서 영역 내면 이미지 추가
+        CreateTenBlockRange(block.data.column, block.data.row);
+        CreateTenBlockRange(block.data.column, block.data.row - 1);
+        CreateTenBlockRange(block.data.column, block.data.row + 1);
+        CreateTenBlockRange(block.data.column - 1, block.data.row);
+        CreateTenBlockRange(block.data.column + 1, block.data.row);
+        CreateTenBlockRange(block.data.column - 1, block.data.row - 1);
+        CreateTenBlockRange(block.data.column + 1, block.data.row - 1);
+        CreateTenBlockRange(block.data.column - 1, block.data.row + 1);
+        CreateTenBlockRange(block.data.column + 1, block.data.row + 1);
+    }
+
+    private void CreateTenBlockRange(int column, int row)
+    {
+        int key = BlockDefine.GetGridKey(column, row);
+        if(gridObject.ContainsKey(key))
+        {
+            ScoreGenerator.Instance.CreateTenBlockRange(effectLayer.transform, gridObject[key].transform.position);
         }
     }
 
@@ -530,10 +555,12 @@ public class GameManager : Singleton<GameManager>
     //블록 관련 타이밍 조절 함수들
     IEnumerator StarBlockRemoveDelay(List<Block> mergeBlock)
     {
-        yield return new WaitForSeconds(BlockDefine.MERGE_DELAY_TIME * 7.0f);
+        yield return new WaitForSeconds(BlockDefine.MERGE_DELAY_TIME * 1.5f);
+        
         SoundManager.Instance.PlaySFX(E_SFX.TEN_BLOCK_EFFECT);
         MergeBlockRemove(mergeBlock);
         MergeCheckStart();
+        ScoreGenerator.Instance.CreateTenBlockPopup(effectLayer.transform);
     }
 
     //머지 데이터 체크용
@@ -620,6 +647,11 @@ public class GameManager : Singleton<GameManager>
         GetMainScreen().ShopUIRefresh();
     }
 
+    public void AdsClaimCoin()
+    {
+        GetMainScreen().GiftClaimCoin();
+    }
+
     public void GameClose()
     {
         Application.Quit();
@@ -673,5 +705,32 @@ public class GameManager : Singleton<GameManager>
             GetMainScreen().ShopUIRefresh();
             GetMainScreen().MainCoinRefresh();
         }
+    }
+
+    public void ShowRanking()
+    {
+        PlayGamesPlatform.Activate();
+        Social.localUser.Authenticate((bool loginSuccess) =>
+        {
+            if(loginSuccess)
+            {
+                Social.ReportScore(UserInfo.Instance.HighScore, Const.GOOGLE_READERBOARD_ID,
+                (bool success) =>
+                {
+                    if(success)
+                    {
+                        PlayGamesPlatform.Instance.ShowLeaderboardUI(Const.GOOGLE_READERBOARD_ID);
+                    }
+                    else
+                    {
+                        Debug.LogWarning("score upload failed");
+                    }
+                });
+            }
+            else
+            {
+                Debug.LogWarning("login failed");
+            }
+        });
     }
 }

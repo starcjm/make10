@@ -205,6 +205,15 @@ public class MainScreen : MonoBehaviour, IAndroidBackButton
         }
     }
 
+    public void GiftClaimCoin()
+    {
+        var popup = Gift.GetComponent<PopupGift>();
+        if(popup)
+        {
+            popup.AdsClaimCoin();
+        }
+    }
+
     public void MainCoinRefresh()
     {
         var popup = Main.GetComponent<PopupMain>();

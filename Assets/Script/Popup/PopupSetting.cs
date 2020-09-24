@@ -10,7 +10,8 @@ public class PopupSetting : PopupBase
     public GameObject MusicON;
     public GameObject MusicOff;
 
-    public GameObject noAds;
+    public GameObject noAdsOn;
+    public GameObject noAdsOff;
 
     public override void OnTouchAndroidBackButton()
     {
@@ -31,7 +32,8 @@ public class PopupSetting : PopupBase
 
     public void SetNoAds()
     {
-        noAds.SetActive(!AdsManager.Instance.IsNoAdsBuy());
+        noAdsOn.SetActive(!AdsManager.Instance.IsNoAdsBuy());
+        noAdsOff.SetActive(AdsManager.Instance.IsNoAdsBuy());
     }
 
     public void OnTouchBack()

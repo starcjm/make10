@@ -10,6 +10,7 @@ public enum E_REWARD_TYPE
     MAIN_COIN_ADD,
     SHOP_ADS_COIN,
     COTINUE,
+    GIFT,
 }
 
 public enum E_NO_ADS_BUY
@@ -248,6 +249,11 @@ public class AdsManager : Singleton<AdsManager>
             case E_REWARD_TYPE.COTINUE:
                 {
                     GameManager.Instance.TouchContinue();
+                }
+                break;
+            case E_REWARD_TYPE.GIFT:
+                {
+                    GameManager.Instance.AdsClaimCoin();
                 }
                 break;
             default:

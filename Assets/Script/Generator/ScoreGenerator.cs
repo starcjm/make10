@@ -15,9 +15,12 @@ public class ScoreGenerator : Singleton<ScoreGenerator>
     public GameObject prefabCombo2;
     public GameObject prefabCombo3;
 
+    public GameObject TenBlockRange;
+    public GameObject TenBlockPopup;
+
     public GameObject CreateAddScore(Transform parent, Vector3 pos, int addScore)
     {
-        GameObject cloneScore = (GameObject)Instantiate(prefabScore);
+        GameObject cloneScore = Instantiate(prefabScore);
         var scoreAdd = cloneScore.GetComponent<TextScore>();
         if(scoreAdd)
         {
@@ -41,15 +44,15 @@ public class ScoreGenerator : Singleton<ScoreGenerator>
 
         if(combo == 2)
         {
-            cloneCombo = (GameObject)Instantiate(prefabCombo1);
+            cloneCombo = Instantiate(prefabCombo1);
         }
         else if(combo == 3)
         {
-            cloneCombo = (GameObject)Instantiate(prefabCombo2);
+            cloneCombo = Instantiate(prefabCombo2);
         }
         else if(combo > 0)
         {
-            cloneCombo = (GameObject)Instantiate(prefabCombo3);
+            cloneCombo = Instantiate(prefabCombo3);
         }
 
         cloneCombo.name = string.Format("COMBO");
@@ -61,5 +64,24 @@ public class ScoreGenerator : Singleton<ScoreGenerator>
             Destroy(cloneCombo);
         });
         return cloneCombo;
+    }
+
+    public void CreateTenBlockRange(Transform parent, Vector3 pos)
+    {
+        GameObject cloneTenBlockRange = Instantiate(TenBlockRange);
+        cloneTenBlockRange.name = string.Format("TenBlockRange");
+        cloneTenBlockRange.transform.SetParent(parent.transform);
+        cloneTenBlockRange.transform.localScale = Vector3.one;
+        cloneTenBlockRange.transform.position = pos;
+        Destroy(cloneTenBlockRange, 0.51f);
+    }
+
+    public void CreateTenBlockPopup(Transform parent)
+    {
+        GameObject cloneTenBlockPopup = Instantiate(TenBlockPopup);
+        cloneTenBlockPopup.name = string.Format("TebBlockPopup");
+        cloneTenBlockPopup.transform.SetParent(parent.transform);
+        cloneTenBlockPopup.transform.localScale = Vector3.one;
+        cloneTenBlockPopup.transform.position = Vector3.zero;
     }
 }

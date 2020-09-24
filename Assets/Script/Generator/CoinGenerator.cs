@@ -12,7 +12,7 @@ public class CoinGenerator : Singleton<CoinGenerator>
 
     public GameObject CreateCoinEffect(Vector3 startPos, Vector3 targetPos)
     {
-        GameObject cloneCoin = (GameObject)Instantiate(prefabCoin);
+        GameObject cloneCoin = Instantiate(prefabCoin);
 
         cloneCoin.name = string.Format("COIN");
         cloneCoin.transform.SetParent(effectLayer.transform);

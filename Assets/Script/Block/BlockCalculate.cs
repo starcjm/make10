@@ -56,46 +56,30 @@ public class BlockCalculate
     {
         int nearCount = 0;
         //위
-        if (blockData.row > 1)
+        if(AddMergeData(CreateCheckData(0, -1, blockData), onlyCheck))
         {
-            if(AddMergeData(CreateCheckData(0, -1, blockData), onlyCheck))
-            {
-                ++nearCount;
-            }
+            ++nearCount;
         }
-
         //아래
-        if (blockData.row < Const.GRID_COLUMN_COUNT)
+        if (AddMergeData(CreateCheckData(0, 1, blockData), onlyCheck))
         {
-            if (AddMergeData(CreateCheckData(0, 1, blockData), onlyCheck))
-            {
-                ++nearCount;
-            }
+            ++nearCount;
         }
-
         //왼쪽
-        if (blockData.column > 1)
+        if (AddMergeData(CreateCheckData(-1, 0, blockData), onlyCheck))
         {
-            if (AddMergeData(CreateCheckData(-1, 0, blockData), onlyCheck))
-            {
-                ++nearCount;
-            }
+            ++nearCount;
         }
-
         //오른쪽
-        if (blockData.column < Const.GRID_ROW_COUNT)
+        if (AddMergeData(CreateCheckData(1, 0, blockData), onlyCheck))
         {
-            if (AddMergeData(CreateCheckData(1, 0, blockData), onlyCheck))
-            {
-                ++nearCount;
-            }
+            ++nearCount;
         }
 
         //검사용인지 실제 데이터인지 체크 플래그
         if(!onlyCheck)
         {
             //시작 블록이 아니고 근처에 블록이 있는지 체크
-
             if (blockData.column != startBlock.data.column
              || blockData.row != startBlock.data.row)
             {
@@ -290,53 +274,14 @@ public class BlockCalculate
             var grid = gridObject[key].GetComponent<Grid>();
             GridData gridData = grid.data;
 
-            //위
-            if (gridData.row > 1)
-            {
-                StarBlockEffectCheck(CreateCheckData(0, -1, gridData));
-            }
-
-            //아래
-            if (gridData.row < Const.GRID_ROW_COUNT)
-            {
-                StarBlockEffectCheck(CreateCheckData(0, 1, gridData));
-            }
-
-            //왼쪽
-            if (gridData.column > 1)
-            {
-                StarBlockEffectCheck(CreateCheckData(-1, 0, gridData));
-            }
-
-            //오른쪽
-            if (gridData.column < Const.GRID_COLUMN_COUNT)
-            {
-                StarBlockEffectCheck(CreateCheckData(1, 0, gridData));
-            }
-            
-            //왼쪽 위
-            if (gridData.column > 1 && gridData.row > 1)
-            {
-                StarBlockEffectCheck(CreateCheckData(-1, -1, gridData));
-            }
-            
-            //오른쪽 위
-            if (gridData.column < Const.GRID_COLUMN_COUNT && gridData.row > 1)
-            {
-                StarBlockEffectCheck(CreateCheckData(1, -1, gridData));
-            }
-
-            //왼쪽 아래
-            if (gridData.column > 1 && gridData.row < Const.GRID_ROW_COUNT)
-            {
-                StarBlockEffectCheck(CreateCheckData(-1, 1, gridData));
-            }
-
-            //오른쪽 아래
-            if (gridData.column < Const.GRID_COLUMN_COUNT && gridData.row < Const.GRID_ROW_COUNT)
-            {
-                StarBlockEffectCheck(CreateCheckData(1, 1, gridData));
-            }
+            StarBlockEffectCheck(CreateCheckData(0, -1, gridData));
+            StarBlockEffectCheck(CreateCheckData(0, 1, gridData));
+            StarBlockEffectCheck(CreateCheckData(-1, 0, gridData));
+            StarBlockEffectCheck(CreateCheckData(1, 0, gridData));
+            StarBlockEffectCheck(CreateCheckData(-1, -1, gridData));
+            StarBlockEffectCheck(CreateCheckData(1, -1, gridData));
+            StarBlockEffectCheck(CreateCheckData(-1, 1, gridData));
+            StarBlockEffectCheck(CreateCheckData(1, 1, gridData));
         }
     }
 

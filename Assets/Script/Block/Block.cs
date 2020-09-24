@@ -11,6 +11,7 @@ public class Block : MonoBehaviour
     public readonly float hammerTime = 0.4f;
 
     public Image mainImg;
+    public GameObject firstMark;
     public GameObject imgX;
     public GameObject hammer;
     public BlockData data = new BlockData();
@@ -32,7 +33,7 @@ public class Block : MonoBehaviour
 
     public void CreateHammer()
     {
-        GameObject cloneGrid = (GameObject)Instantiate(hammer);
+        GameObject cloneGrid = Instantiate(hammer);
         cloneGrid.name = string.Format("Hammer");
         cloneGrid.transform.SetParent(GameManager.Instance.blockLayer.transform);
         cloneGrid.transform.localScale = Vector3.one;

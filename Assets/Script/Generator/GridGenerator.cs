@@ -19,7 +19,7 @@ public class GridGenerator : Singleton<GridGenerator>
         {
             for(int j = 0; j < Const.GRID_ROW_COUNT; ++j)
             {
-                GameObject cloneGrid = (GameObject)Instantiate(prefabBlock);
+                GameObject cloneGrid = Instantiate(prefabBlock);
                 cloneGrid.name = string.Format("GRID{0}-{1}", j + 1, i + 1);
                 cloneGrid.transform.SetParent(BgGrid.transform);
                 cloneGrid.transform.localScale = Vector3.one;

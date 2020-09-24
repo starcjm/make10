@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
 /// <summary>
 /// 게임관련 상수 클래스
 /// </summary>
@@ -23,7 +22,7 @@ public class Const
     public const int MAX_GIFT = 500;
 
     //기프트 획득 인
-    public const int GIFT_COIN = 50;
+    public const int GIFT_COIN = 100;
 
     public const int TUTORIAL_COIN = 100;
 
@@ -64,6 +63,8 @@ public class Const
     public const string IPHONE_COIN_500_ID = "500coins";
     public const string IPHONE_COIN_1250_ID = "1250coins";
     public const string IPHONE_COIN_3500_ID = "3500coins";
+
+    public const string GOOGLE_READERBOARD_ID = "CgkI44X8lPocEAIQAQ";
 
     //광고id
     //배너

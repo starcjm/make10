@@ -44,13 +44,14 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: 94a862a0d10ec6a43a47f0bc60d602a1, type: 3}
-    totalSpriteSurfaceArea: 513185
+    totalSpriteSurfaceArea: 654485
     bindAsDefault: 1
     isAtlasV2: 0
     cachedData: {fileID: 0}
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
   - {fileID: 21300000, guid: 1c0187b3a71b340499e7b83c1844f980, type: 3}
+  - {fileID: 21300000, guid: 87d871b472be980479bae196a81ce061, type: 3}
   - {fileID: 21300000, guid: 5e2959d5862041d4f8ea77bd0fcdb930, type: 3}
   - {fileID: 21300000, guid: ee8d6b478fa464d4b9fc7d3d1f6c66aa, type: 3}
   - {fileID: 21300000, guid: e5fda6f7df29a9e4d89d44b015f54e9d, type: 3}
@@ -59,11 +60,13 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 731004bba5b95bf4698d82202b4e65df, type: 3}
   - {fileID: 21300000, guid: 71cabf8cc2985d84a9c289246d62bc9c, type: 3}
   - {fileID: 21300000, guid: 1711d8cc55fd0484997a1ad3525424ba, type: 3}
+  - {fileID: 21300000, guid: 1e8cb1fc3f043c34a955d6258b745eb2, type: 3}
   - {fileID: 21300000, guid: 7e70438d53dda7e4daf271b65bf52b20, type: 3}
   - {fileID: 21300000, guid: 45434f5edd81be74a91c93e6d79b4797, type: 3}
   - {fileID: 21300000, guid: 2fb5786e19caca44c8a4e84b94f8186d, type: 3}
   m_PackedSpriteNamesToIndex:
   - hammer_iconoff
+  - 10block_Bombtext
   - Item_chaneblock
   - hammer_icon
   - game_pauseBt
@@ -72,6 +75,7 @@ SpriteAtlas:
   - Crown_highscore
   - item_textBg
   - Next
+  - 10block_textBg
   - move_getcoin
   - game_coin
   - circle

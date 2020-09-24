@@ -44,25 +44,29 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: b91b7660a6c2ff34ab8aa56d400ab9a7, type: 3}
-    totalSpriteSurfaceArea: 502062
+    totalSpriteSurfaceArea: 518632
     bindAsDefault: 1
     isAtlasV2: 0
     cachedData: {fileID: 0}
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
+  - {fileID: 21300000, guid: 28e1939062597e84992930015639116c, type: 3}
   - {fileID: 21300000, guid: 2c16f7a120794e444a307e352d4e2307, type: 3}
   - {fileID: 21300000, guid: 86601d05a48d78040ba516bf2a379821, type: 3}
   - {fileID: 21300000, guid: 6ceb9e968b7c7d54ca642740b7310047, type: 3}
   - {fileID: 21300000, guid: b21892a61d27a31428eb68d0f4efc48a, type: 3}
+  - {fileID: 21300000, guid: 5cd427e88b3bf0c4e95cbfe5bdb45b2d, type: 3}
   - {fileID: 21300000, guid: 12088c2a46a00de44abc2051cff51df0, type: 3}
   - {fileID: 21300000, guid: 9316a6da123c649479c1f306fe37b406, type: 3}
   - {fileID: 21300000, guid: 31eef77b88c263c4da8a0c90de3a5cd3, type: 3}
   - {fileID: 21300000, guid: cf26a2df0ae91514bbba9cf52a5d7d3a, type: 3}
   m_PackedSpriteNamesToIndex:
+  - store_moveIconoff
   - store_bg
   - store_coin
   - store_sellBar
   - store_moveIcon
+  - store_adsBtoff
   - store_adsBt
   - store_noads
   - store_close

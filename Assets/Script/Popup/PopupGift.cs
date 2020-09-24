@@ -49,13 +49,18 @@ public class PopupGift : PopupBase
         {
             isTouchButton = true;
             SoundManager.Instance.PlaySFX(E_SFX.BUTTON);
-            GetGift();
-            Invoke("CoinIconActive", 0.7f);
-            SetCoin(Const.GIFT_COIN * 2);
-            GameManager.Instance.AddCoin(Const.GIFT_COIN * 2);
-            Invoke("StartCoinEffect", effectTime);
-            
+            AdsManager.Instance.SetRewardType(E_REWARD_TYPE.GIFT);
+            AdsManager.Instance.RewardAdShow();
         }
+    }
+
+    public void AdsClaimCoin()
+    {
+        GetGift();
+        Invoke("CoinIconActive", 0.7f);
+        SetCoin(Const.GIFT_COIN * 2);
+        GameManager.Instance.AddCoin(Const.GIFT_COIN * 2);
+        Invoke("StartCoinEffect", effectTime);
     }
 
     public void OnTouchClaim()
@@ -64,12 +69,17 @@ public class PopupGift : PopupBase
         {
             isTouchButton = true;
             SoundManager.Instance.PlaySFX(E_SFX.BUTTON);
-            GetGift();
-            Invoke("CoinIconActive", 0.7f);
-            SetCoin(Const.GIFT_COIN);
-            GameManager.Instance.AddCoin(Const.GIFT_COIN);
-            Invoke("StartCoinEffect", effectTime);
+            ClaimCoin();
         }
+    }
+
+    public void ClaimCoin()
+    {
+        GetGift();
+        Invoke("CoinIconActive", 0.7f);
+        SetCoin(Const.GIFT_COIN);
+        GameManager.Instance.AddCoin(Const.GIFT_COIN);
+        Invoke("StartCoinEffect", effectTime);
     }
 
     public void CoinIconActive()

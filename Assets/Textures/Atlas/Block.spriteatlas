@@ -44,17 +44,19 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: 50e5779f9a4c1a34ea22900e04bcce2e, type: 3}
-    totalSpriteSurfaceArea: 76381
+    totalSpriteSurfaceArea: 88865
     bindAsDefault: 1
     isAtlasV2: 0
     cachedData: {fileID: 0}
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
+  - {fileID: 21300000, guid: 6d3bb380d9d894d4cacc9161e78f8d39, type: 3}
   - {fileID: 21300000, guid: 9c6232723f8eccd489516d070b9d33d8, type: 3}
   - {fileID: 21300000, guid: 10aeb1a30836c7e4f9e2c5d72d7bca68, type: 3}
   - {fileID: 21300000, guid: 88a51404613ab6e41bdb53bf569a44b2, type: 3}
   - {fileID: 21300000, guid: 3108ca64fadb60142a9191c178c11797, type: 3}
   - {fileID: 21300000, guid: 953ca09422581cc459ff3be8c402ee4a, type: 3}
+  - {fileID: 21300000, guid: 576726856fc7dc04eaf9eb93d9ec336b, type: 3}
   - {fileID: 21300000, guid: 50bd62d71ebaa8144b3ffea863c65feb, type: 3}
   - {fileID: 21300000, guid: e72f6f3bb6bbc184b80a656d041ce720, type: 3}
   - {fileID: 21300000, guid: 13e8401c9293eff41bc9fb63f589b7cf, type: 3}
@@ -65,11 +67,13 @@ SpriteAtlas:
   - {fileID: 21300000, guid: eac3a18f5f1454946963a6ef635d983e, type: 3}
   - {fileID: 21300000, guid: d9ff3d8f6da04f84fb9c12b449b445a5, type: 3}
   m_PackedSpriteNamesToIndex:
+  - tenBlockRange
   - Block_09
   - Block_06
   - Block_07
   - Block_02
   - Block_05
+  - Block_mark
   - hamme
   - Block_11
   - Block_10

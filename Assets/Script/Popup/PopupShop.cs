@@ -13,8 +13,10 @@ public class PopupShop : PopupBase
 
     public PopupMain popupMain;
 
-    public GameObject getCoinAds;
-    public GameObject noAds;
+    public GameObject getCoinAdsOn;
+    public GameObject getCoinAdsOff;
+    public GameObject noAdsOn;
+    public GameObject noAdsOff;
 
     public Text CurrentCoin;
 
@@ -28,7 +30,8 @@ public class PopupShop : PopupBase
     public Text Coin3500;
     public Text Price3500;
 
-    public Text PriceNoAds;
+    public Text PriceNoAdsOn;
+    public Text PriceNoAdsOff;
 
     private E_SHOP_TYPE shopType;
 
@@ -64,7 +67,8 @@ public class PopupShop : PopupBase
         Price3500.text = string.Format("{0}", IAPManager.Instance.GetPrice(Const.PRODUCT_COIN_3500));
 
         SetNoAds();
-        PriceNoAds.text = string.Format("{0}", IAPManager.Instance.GetPrice(Const.PRODUCT_NO_ADS));
+        PriceNoAdsOn.text = string.Format("{0}", IAPManager.Instance.GetPrice(Const.PRODUCT_NO_ADS));
+        PriceNoAdsOff.text = string.Format("{0}", IAPManager.Instance.GetPrice(Const.PRODUCT_NO_ADS));
 
         CurrentCoin.text = UserInfo.Instance.Coin.ToString();
     }
@@ -80,7 +84,8 @@ public class PopupShop : PopupBase
         {
             GameManager.Instance.SetGameState(E_GAME_STATE.GAME);
         }
-        getCoinAds.SetActive(true);
+        getCoinAdsOn.SetActive(true);
+        getCoinAdsOff.SetActive(false);
         gameObject.SetActive(false);
     }
 
@@ -94,7 +99,8 @@ public class PopupShop : PopupBase
 
     public void SetNoAds()
     {
-        noAds.SetActive(!AdsManager.Instance.IsNoAdsBuy());
+        noAdsOn.SetActive(!AdsManager.Instance.IsNoAdsBuy());
+        noAdsOff.SetActive(AdsManager.Instance.IsNoAdsBuy());
     }
 
     public void OnTouchAds()
@@ -102,7 +108,9 @@ public class PopupShop : PopupBase
         SoundManager.Instance.PlaySFX(E_SFX.BUTTON);
         AdsManager.Instance.SetRewardType(E_REWARD_TYPE.SHOP_ADS_COIN);
         AdsManager.Instance.RewardAdShow();
-        getCoinAds.SetActive(false);
+
+        getCoinAdsOn.SetActive(false);
+        getCoinAdsOff.SetActive(true);
     }
 
     public void OnTouch200()

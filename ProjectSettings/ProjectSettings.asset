@@ -170,7 +170,7 @@ PlayerSettings:
   applicationIdentifier:
     Android: com.GameTree.Make10
   buildNumber: {}
-  AndroidBundleVersionCode: 14
+  AndroidBundleVersionCode: 19
   AndroidMinSdkVersion: 19
   AndroidTargetSdkVersion: 29
   AndroidPreferredInstallLocation: 1
